@@ -77,6 +77,7 @@ const demos = defineCollection({
     order: z.number().default(0),
     durationMin: z.number().optional(),
     modality: z.enum(['explainer', 'annotated', 'scenario']).default('explainer'),
+    note: z.string().optional(),
     personas: z.array(Persona).default([]),
     visibility: z.enum(['indexed', 'noindex', 'private']).default('noindex'),
     presenterChecklist: z.array(z.string()).optional(),

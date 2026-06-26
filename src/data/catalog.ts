@@ -22,6 +22,7 @@ export interface PlannedDemo {
   modality: 'explainer' | 'annotated' | 'scenario';
   personas: string[];
   durationMin?: number;
+  note?: string;
 }
 
 export const TOPICS: Topic[] = [
@@ -50,10 +51,10 @@ export const MODALITY_LABELS: Record<string, string> = {
 export const PLANNED: PlannedDemo[] = [
   { topic: 'cowork', slug: 'meet-cowork', title: 'Meet Cowork',
     blurb: 'The 90-second “what is it and why” for any room.', modality: 'explainer',
-    personas: ['exec', 'end-user'], durationMin: 2 },
+    personas: ['exec', 'end-user'], durationMin: 2, note: '2-min version' },
   { topic: 'cowork', slug: 'cowork-vs-copilot', title: 'Cowork vs Copilot',
     blurb: 'The decision rule — when to reach for which, with the audience lens.', modality: 'explainer',
-    personas: ['exec', 'end-user', 'technical'], durationMin: 4 },
+    personas: ['exec', 'end-user', 'technical'], durationMin: 4, note: 'they always ask this' },
   { topic: 'cowork', slug: 'researcher-run', title: 'Researcher run',
     blurb: 'A captured run: prompt → reasoning → cited brief, paced by you.', modality: 'scenario',
     personas: ['end-user', 'technical'], durationMin: 6 },
@@ -62,7 +63,7 @@ export const PLANNED: PlannedDemo[] = [
     personas: ['exec', 'cost'], durationMin: 6 },
   { topic: 'cowork', slug: 'admin-tour', title: 'Admin & controls tour',
     blurb: 'Annotated walkthrough of spend caps, in-tenant data and audit.', modality: 'annotated',
-    personas: ['security', 'cost'], durationMin: 5 },
+    personas: ['security', 'cost'], durationMin: 5, note: 'security teams love this' },
   { topic: 'scout', slug: 'meet-scout', title: 'Meet Scout',
     blurb: 'What agentic research looks like — and where it fits.', modality: 'explainer',
     personas: ['exec', 'technical'], durationMin: 3 },

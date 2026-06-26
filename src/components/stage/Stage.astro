@@ -30,14 +30,6 @@ const { demoTitle, topic, scenes } = Astro.props;
     <button class="navbtn" data-nav="next" title="Next (→ / space)">›</button>
   </div>
 
-  <div class="modebar">
-    <span>view as →</span>
-    <div class="seg" role="group" aria-label="Audience mode">
-      <button data-mode="customer" aria-pressed="true">Customer</button>
-      <button data-mode="presenter" aria-pressed="false">Presenter</button>
-    </div>
-  </div>
-
   <div class="notes" data-notes-drawer>
     <div class="nlab">speaker notes</div>
     <p data-notes-text></p>
@@ -108,11 +100,6 @@ const { demoTitle, topic, scenes } = Astro.props;
   .counter { font-family: var(--hand); color: var(--brass); font-size: 20px; min-width: 64px; text-align: center; }
   .setchip { display: inline-flex; align-items: center; gap: 6px; background: var(--brass-soft); border: 1px solid var(--brass); color: var(--brass); font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 999px; }
   .setchip[hidden] { display: none; }
-  .modebar { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--hair); border-radius: 999px; padding: 6px 8px; box-shadow: var(--shadow); }
-  .modebar > span { font-size: 11.5px; color: var(--inklite); font-weight: 600; padding: 0 6px; }
-  .seg { display: inline-flex; background: var(--paper); border: 1px solid var(--hair); border-radius: 999px; padding: 3px; gap: 2px; }
-  .seg button { border: 0; background: transparent; color: var(--inklite); font-family: var(--ui); font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 999px; cursor: pointer; transition: all .18s; }
-  .seg button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
   .notes { position: fixed; left: 0; right: 0; bottom: -46vh; height: 42vh; z-index: 50; background: var(--card); border-top: 3px solid var(--navy); box-shadow: 0 -20px 50px -20px rgba(0,0,0,.4); padding: 22px 30px; transition: bottom .35s cubic-bezier(.22,.61,.36,1); overflow: auto; }
   .notes.open { bottom: 0; }
   .notes .nlab { font-family: var(--hand); color: var(--brass); font-size: 24px; margin-bottom: 8px; }
@@ -242,13 +229,6 @@ const { demoTitle, topic, scenes } = Astro.props;
     stage.querySelector('[data-hud="full"]')!.addEventListener('click', () => { document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.(); });
     stage.querySelector('[data-hud="help"]')!.addEventListener('click', () => help.classList.toggle('open'));
     help.addEventListener('click', (e) => { if (e.target === help) help.classList.remove('open'); });
-
-    // mode
-    stage.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.addEventListener('click', () => {
-      stage.querySelectorAll('[data-mode]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
-      b.setAttribute('aria-pressed', 'true');
-      document.body.dataset.mode = b.dataset.mode!;
-    }));
 
     // panic reset
     function reset() { order = [...Array(N).keys()]; pos = 0; selected.clear(); overview.classList.remove('open'); notesDrawer.classList.remove('open'); help.classList.remove('open'); render(); }

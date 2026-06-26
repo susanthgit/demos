@@ -1,0 +1,53 @@
+---
+topic: cowork
+title: "Cost & Control"
+blurb: "Usage-based billing, live spend controls, in-tenant. The exec proving ground."
+order: 3
+durationMin: 5
+personas: [exec, cost, security]
+visibility: noindex
+presenterChecklist:
+  - "Drag THEIR team size first — anchor to their reality before any number"
+  - "Flip to 'Analyst hours' for the ROI moment"
+  - "Open /cowork-cost-calculator for real math if they push on figures"
+ledger:
+  claims:
+    - "Cowork bills on usage, not flat seats"
+    - "Admins set spend caps per team"
+    - "Runs stay inside the tenant"
+  sources: []
+  lastVerified: "2026-06-26"
+  staleAfter: "2026-09-26"
+  classification: public
+scenes:
+  - type: cover
+    eyebrow: "Microsoft 365 · Cowork"
+    kicker: "no surprises"
+    headline: "You pay for *work done*, not _seats parked_."
+    lead: "Cowork bills on usage. The people who never open it cost you nothing — and every run stays in your tenant."
+    signature: "— the control story that decides the deal."
+    why:
+      label: "why it matters"
+      body: "No blanket licence for the whole org. You fund the *work*, not the chairs."
+    notes: "Open on control. Cost is what turns a pilot into a yes. Don't rush to numbers — set the frame first."
+  - type: costMeter
+    kicker: "make it their pilot"
+    headline: "Shape the numbers to _their_ world."
+    model: cowork-cost-illustrative
+    inputs:
+      - { id: users, label: "People who'd actually use it", hint: "Usage-based — non-users cost nothing.", min: 5, max: 500, step: 5, default: 25 }
+      - { id: packs, label: "Decision packs / person / month", hint: "Each pack used to take an analyst days.", min: 1, max: 20, step: 1, default: 4 }
+    baselines: [flatSeat, analystHours]
+    notes: "Drag THEIR team size first. Then flip to 'Analyst hours' for the gut-punch. Say the numbers are illustrative."
+  - type: closing
+    kicker: "go deeper"
+    headline: "Story here. _Real math_ next door."
+    lead: "This scene frames the conversation. For an actual estimate, jump to the calculator — and the cost blog."
+    crossLinks:
+      - { label: "Do the real math →", url: "https://www.aguidetocloud.com/cowork-cost-calculator/" }
+      - { label: "Read the Cowork cost blog →", url: "https://www.aguidetocloud.com/blog/" }
+    notes: "Hand them somewhere to go. The demo opens the door; the calculator closes the detail."
+---
+
+Speaker reference (not shown on stage): this demo is the MVP proving ground — it forces accurate
+numbers, source discipline, and the exec/security/cost lenses. Figures are illustrative placeholders.

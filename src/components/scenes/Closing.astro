@@ -1,0 +1,32 @@
+---
+// Closing scene — wrap + cross-links (blog ↔ demo).
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen closing-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+    <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    {scene.lead && <p class="lead" style="margin-top:8px">{scene.lead}</p>}
+    {scene.crossLinks && scene.crossLinks.length > 0 && (
+      <div class="links">
+        {scene.crossLinks.map((l: any) => (
+          <a class="xlink" href={l.url} target="_blank" rel="noopener">
+            <span class="arrow">→</span><span>{l.label}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+  .xlink { display: inline-flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--hair); border-left: 5px solid var(--brass); border-radius: 12px; padding: 16px 22px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: clamp(15px,1.7vw,19px); box-shadow: var(--shadow); transition: transform .18s, border-color .18s; }
+  .xlink:hover { transform: translateY(-3px); border-color: var(--navy); }
+  .xlink .arrow { font-family: var(--hand); color: var(--navy); font-size: 30px; line-height: .8; }
+</style>

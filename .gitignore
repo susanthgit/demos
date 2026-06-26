@@ -1,0 +1,15 @@
+# build output
+dist/
+.astro/
+
+# deps
+node_modules/
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# secrets — never commit (deploy reads token from ~/.copilot/secrets)
+.env
+.env.*

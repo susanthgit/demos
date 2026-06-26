@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import Stage from '../../components/stage/Stage.astro';
+import Cover from '../../components/scenes/Cover.astro';
+import CostMeter from '../../components/scenes/CostMeter.astro';
+import Closing from '../../components/scenes/Closing.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const demos = await getCollection('demos', (d) => d.data.visibility !== 'private');
+  return demos.map((demo) => {
+    const [topic, slug] = demo.id.split('/');
+    return { params: { topic, demo: slug }, props: { demo } };
+  });
+}
+
+const { demo } = Astro.props;
+const d = demo.data;
+
+// derive a short title per scene for the overview/dots
+const sceneTitle = (s: any): string => {
+  if (s.type === 'cover') return 'Cover';
+  if (s.type === 'costMeter') return 'Cost meter';
+  if (s.type === 'closing') return 'Wrap';
+  return s.type;
+};
+const sceneMeta = d.scenes.map((s: any) => ({ title: sceneTitle(s), notes: s.notes }));
+const noindex = d.visibility !== 'indexed';
+---
+<Base title={`${d.title} — Demos · A Guide to Cloud`} description={d.blurb} noindex={noindex}>
+  <Stage demoTitle={d.title} topic={d.topic} scenes={sceneMeta}>
+    {d.scenes.map((scene: any, i: number) => {
+      if (scene.type === 'cover') return <Cover scene={scene} index={i} />;
+      if (scene.type === 'costMeter') return <CostMeter scene={scene} index={i} />;
+      if (scene.type === 'closing') return <Closing scene={scene} index={i} />;
+      return null;
+    })}
+  </Stage>
+</Base>

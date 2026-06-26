@@ -1,0 +1,26 @@
+{
+  "name": "demos-aguidetocloud",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive customer demo decks — premium notebook stage engine. demos.aguidetocloud.com. Zero CDN, offline-safe for live customer rooms.",
+  "scripts": {
+    "dev": "astro dev --port 4291",
+    "start": "astro dev --port 4291",
+    "build": "astro build",
+    "preview": "astro preview --port 4291",
+    "deploy": "astro build && node deploy.mjs",
+    "qa": "node scripts/qa-audit.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.0.0",
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@noble/hashes": "^2.2.0",
+    "@types/node": "^22.0.0",
+    "playwright": "^1.59.1",
+    "typescript": "^5.6.0"
+  }
+}

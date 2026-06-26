@@ -1,65 +1,257 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { TOPICS, PLANNED, PERSONA_LABELS, MODALITY_LABELS } from '../data/catalog';
 
-const demos = await getCollection('demos', (d) => d.data.visibility !== 'private');
-const byTopic = new Map<string, typeof demos>();
-for (const d of demos.sort((a, b) => a.data.order - b.data.order)) {
-  const arr = byTopic.get(d.data.topic) ?? [];
-  arr.push(d); byTopic.set(d.data.topic, arr);
+// ---- merge BUILT demos (collection) + PLANNED teasers into one card list ----
+const built = await getCollection('demos', (d) => d.data.visibility !== 'private');
+type Card = {
+  topic: string; slug: string; title: string; blurb: string;
+  modality: string; personas: string[]; durationMin?: number;
+  status: 'ready' | 'soon'; href?: string;
+};
+
+const cards: Card[] = [];
+const seen = new Set<string>();
+for (const d of built) {
+  const [topic, slug] = d.id.split('/');
+  seen.add(`${topic}/${slug}`);
+  cards.push({
+    topic, slug, title: d.data.title, blurb: d.data.blurb,
+    modality: d.data.modality, personas: d.data.personas,
+    durationMin: d.data.durationMin, status: 'ready', href: `/${d.id}`,
+  });
 }
-const topics = [...byTopic.keys()];
+for (const p of PLANNED) {
+  if (seen.has(`${p.topic}/${p.slug}`)) continue;       // built version wins
+  cards.push({ ...p, status: 'soon' });
+}
+
+// order: ready first, then by topic order
+const topicOrder = new Map(TOPICS.map((t) => [t.id, t.order]));
+cards.sort((a, b) => {
+  if (a.status !== b.status) return a.status === 'ready' ? -1 : 1;
+  return (topicOrder.get(a.topic) ?? 99) - (topicOrder.get(b.topic) ?? 99);
+});
+
+// filter facets present in the data
+const allPersonas = [...new Set(cards.flatMap((c) => c.personas))]
+  .sort((a, b) => Object.keys(PERSONA_LABELS).indexOf(a) - Object.keys(PERSONA_LABELS).indexOf(b));
+const allModalities = [...new Set(cards.map((c) => c.modality))];
+const topicMap = new Map(TOPICS.map((t) => [t.id, t]));
+const readyCount = cards.filter((c) => c.status === 'ready').length;
+
+const topicLabel = (id: string) => topicMap.get(id)?.label ?? id;
 ---
-<Base title="Demos — A Guide to Cloud" description="Interactive demo decks for live customer sessions." noindex={true}>
-  <main class="catalog">
-    <header class="cat-head">
-      <div class="eyebrow">A Guide to Cloud</div>
-      <h1 class="scene-h1">Interactive <span class="uline">demos</span></h1>
-      <p class="lead">Premium, launchable demo decks for live customer sessions — explainers, annotated tours and scenario replays. Pick one and present.</p>
+<Base title="Demos — A Guide to Cloud" description="Interactive demo decks for live customer sessions — pick one and present." noindex={true}>
+  <main class="home">
+    <div class="topbar">
+      <div class="brand"><span class="logo">D</span><b>Demos</b><span class="by">· A Guide to Cloud</span></div>
+      <button id="theme" class="iconbtn" title="Day / night">◐</button>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow">Interactive · launch live · works offline</div>
+      <h1 class="scene-h1">A shelf of <span class="uline">demos</span> you can <span class="accent">present</span>.</h1>
+      <p class="lead">Premium, interactive decks for customer sessions — explainers, annotated tours and scenario replays. Pick one, go fullscreen, tell the story. No slides, no failed live demos.</p>
     </header>
 
-    {topics.map((topic) => (
-      <section class="topic">
-        <h2 class="topic-h"><span class="kicker">{topic}</span></h2>
-        <div class="cards">
-          {byTopic.get(topic)!.map((d) => (
-            <a class="card" href={`/${d.id}`}>
-              <div class="card-num">{String(d.data.order).padStart(2, '0')}</div>
-              <h3>{d.data.title}</h3>
-              <p>{d.data.blurb}</p>
-              <div class="card-foot">
-                {d.data.durationMin && <span class="dur">≈{d.data.durationMin} min</span>}
-                <span class="personas">{d.data.personas.join(' · ')}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    ))}
+    <div class="controls">
+      <div class="searchwrap">
+        <span class="sicon">⌕</span>
+        <input id="search" type="search" placeholder="Search demos…" autocomplete="off" aria-label="Search demos" />
+      </div>
 
-    <footer class="cat-foot">
-      Personal demo companion by Sush. Not official Microsoft documentation — product claims cite public Microsoft sources.
+      <div class="filters">
+        <div class="frow" data-filter-group="topic">
+          <span class="flabel">Topic</span>
+          <button class="chip on" data-val="all">All</button>
+          {TOPICS.map((t) => <button class="chip" data-val={t.id}>{t.label}</button>)}
+        </div>
+        <div class="frow" data-filter-group="persona">
+          <span class="flabel">Audience</span>
+          <button class="chip on" data-val="all">All</button>
+          {allPersonas.map((p) => <button class="chip" data-val={p}>{PERSONA_LABELS[p] ?? p}</button>)}
+        </div>
+        <div class="frow" data-filter-group="modality">
+          <span class="flabel">Type</span>
+          <button class="chip on" data-val="all">All</button>
+          {allModalities.map((m) => <button class="chip" data-val={m}>{MODALITY_LABELS[m] ?? m}</button>)}
+        </div>
+      </div>
+
+      <div class="meta">
+        <span id="count">{cards.length}</span> demos · <b>{readyCount} ready</b>, {cards.length - readyCount} coming soon
+        <button id="clear" class="clearbtn" hidden>clear filters ✕</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid">
+      {cards.map((c) => (
+        c.status === 'ready' ? (
+          <a class="card ready" href={c.href}
+             data-topic={c.topic} data-personas={c.personas.join(' ')} data-modality={c.modality}
+             data-text={`${c.title} ${c.blurb} ${topicLabel(c.topic)}`.toLowerCase()}>
+            <div class="card-top">
+              <span class="topic-tag">{topicLabel(c.topic)}</span>
+              <span class="status ready">ready</span>
+            </div>
+            <h3>{c.title}</h3>
+            <p>{c.blurb}</p>
+            <div class="card-foot">
+              <span class="modality">{MODALITY_LABELS[c.modality]}</span>
+              {c.durationMin && <span class="dur">≈{c.durationMin} min</span>}
+            </div>
+          </a>
+        ) : (
+          <div class="card soon"
+             data-topic={c.topic} data-personas={c.personas.join(' ')} data-modality={c.modality}
+             data-text={`${c.title} ${c.blurb} ${topicLabel(c.topic)}`.toLowerCase()}>
+            <div class="card-top">
+              <span class="topic-tag">{topicLabel(c.topic)}</span>
+              <span class="status soon">soon</span>
+            </div>
+            <h3>{c.title}</h3>
+            <p>{c.blurb}</p>
+            <div class="card-foot">
+              <span class="modality">{MODALITY_LABELS[c.modality]}</span>
+              {c.durationMin && <span class="dur">≈{c.durationMin} min</span>}
+            </div>
+          </div>
+        )
+      ))}
+    </div>
+    <div class="empty" id="empty" hidden>No demos match — <button id="emptyClear" class="linkbtn">clear filters</button>.</div>
+
+    <footer class="home-foot">
+      <span>Personal demo companion by Sush. Not official Microsoft documentation — product claims cite public Microsoft sources. No customer or tenant data.</span>
     </footer>
   </main>
 </Base>
 
 <style>
-  .catalog { min-height: 100vh; max-width: 1100px; margin: 0 auto; padding: clamp(40px,7vw,90px) clamp(22px,5vw,40px) 80px;
+  .home { min-height: 100vh; max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px,5vw,40px) 70px;
     background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size: 46px 46px; }
-  .cat-head { margin-bottom: 40px; }
-  .cat-head .lead { margin-top: 10px; }
-  .topic { margin-bottom: 40px; }
-  .topic-h { margin-bottom: 16px; text-transform: capitalize; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 0; }
+  .brand { display: flex; align-items: center; gap: 9px; }
+  .brand .logo { width: 30px; height: 30px; border-radius: 8px; background: var(--navy); color: var(--paper); display: grid; place-items: center; font-family: var(--ui-semi); font-weight: 800; font-size: 14px; }
+  .brand b { font-family: var(--ui-semi); font-size: 16px; }
+  .brand .by { font-family: var(--hand); color: var(--brass); font-size: 16px; }
+  .iconbtn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); cursor: pointer; font-size: 16px; }
+  .iconbtn:hover { border-color: var(--navy); color: var(--navy); }
+
+  .hero { padding: clamp(34px,6vw,68px) 0 26px; max-width: 60ch; }
+  .hero .lead { margin-top: 12px; }
+
+  .controls { position: sticky; top: 0; z-index: 10; padding: 14px 0; margin-bottom: 8px;
+    background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--hair); }
+  .searchwrap { position: relative; max-width: 460px; }
+  .searchwrap .sicon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--inklite); font-size: 18px; }
+  #search { width: 100%; padding: 12px 16px 12px 40px; border: 1px solid var(--hair); border-radius: 12px;
+    background: var(--card); color: var(--ink); font-family: var(--ui); font-size: 15px; outline: none; }
+  #search:focus { border-color: var(--navy); box-shadow: 0 0 0 3px var(--navy-soft); }
+
+  .filters { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .frow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .flabel { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.4px; color: var(--inklite); width: 64px; flex: none; }
+  .chip { border: 1px solid var(--hair); background: var(--card); color: var(--inklite); font-family: var(--ui);
+    font-weight: 700; font-size: 12.5px; padding: 6px 13px; border-radius: 999px; cursor: pointer; transition: all .15s; }
+  .chip:hover { border-color: var(--navy); color: var(--navy); }
+  .chip.on { background: var(--navy); border-color: var(--navy); color: var(--paper); }
+
+  .meta { margin-top: 12px; font-size: 12.5px; color: var(--inklite); display: flex; align-items: center; gap: 10px; }
+  .meta b { color: var(--navy); }
+  .clearbtn, .linkbtn { border: 0; background: none; color: var(--brass); font-family: var(--ui); font-weight: 700; font-size: 12.5px; cursor: pointer; text-decoration: underline; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 16px; margin-top: 20px; }
   .card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--hair); border-radius: 16px;
-    padding: 20px; text-decoration: none; color: var(--ink); box-shadow: 0 14px 30px -24px rgba(0,0,0,.5); transition: transform .18s, box-shadow .18s, border-color .18s; position: relative; }
-  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--navy); }
-  .card-num { font-family: var(--hand); color: var(--brass); font-size: 26px; line-height: 1; }
-  .card h3 { font-family: var(--ui-semi); font-size: 19px; margin: 4px 0 6px; }
-  .card p { font-size: 13.5px; color: var(--inklite); line-height: 1.45; flex: 1; }
-  .card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 11.5px; font-weight: 700; }
-  .card-foot .dur { color: var(--navy); background: var(--navy-soft); padding: 3px 8px; border-radius: 6px; }
-  .card-foot .personas { color: var(--inklite); text-transform: capitalize; }
-  .cat-foot { margin-top: 50px; padding-top: 20px; border-top: 1px dashed var(--hair); font-size: 12px; color: var(--inklite); line-height: 1.5; }
+    padding: 18px 20px; text-decoration: none; color: var(--ink); box-shadow: 0 14px 30px -24px rgba(0,0,0,.5);
+    transition: transform .18s, box-shadow .18s, border-color .18s; }
+  .card.ready { cursor: pointer; }
+  .card.ready:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--navy); }
+  .card.soon { opacity: .66; }
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .topic-tag { font-size: 10.5px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--navy); background: var(--navy-soft); padding: 3px 8px; border-radius: 6px; }
+  .status { font-family: var(--hand); font-size: 16px; line-height: 1; }
+  .status.ready { color: var(--green); }
+  .status.soon { color: var(--brass); }
+  .card h3 { font-family: var(--ui-semi); font-size: 18px; margin: 0 0 6px; }
+  .card p { font-size: 13px; color: var(--inklite); line-height: 1.45; flex: 1; }
+  .card-foot { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-size: 11px; font-weight: 700; }
+  .card-foot .modality { color: var(--brass); background: var(--brass-soft); padding: 3px 8px; border-radius: 6px; }
+  .card-foot .dur { color: var(--inklite); }
+  .card.hide { display: none; }
+
+  .empty { margin-top: 40px; text-align: center; color: var(--inklite); font-size: 14px; }
+  .home-foot { margin-top: 50px; padding-top: 18px; border-top: 1px dashed var(--hair); font-size: 12px; color: var(--inklite); line-height: 1.5; }
+
+  @media (max-width: 560px) { .flabel { width: 100%; } }
 </style>
+
+<script>
+  function initHome() {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    const cards = [...grid.querySelectorAll<HTMLElement>('.card')];
+    const search = document.getElementById('search') as HTMLInputElement;
+    const countEl = document.getElementById('count')!;
+    const empty = document.getElementById('empty') as HTMLElement;
+    const clearBtn = document.getElementById('clear') as HTMLElement;
+    const sel: Record<string, string> = { topic: 'all', persona: 'all', modality: 'all' };
+    let q = '';
+
+    function apply() {
+      let shown = 0;
+      for (const c of cards) {
+        const okT = sel.topic === 'all' || c.dataset.topic === sel.topic;
+        const okP = sel.persona === 'all' || (c.dataset.personas || '').split(' ').includes(sel.persona);
+        const okM = sel.modality === 'all' || c.dataset.modality === sel.modality;
+        const okQ = !q || (c.dataset.text || '').includes(q);
+        const show = okT && okP && okM && okQ;
+        c.classList.toggle('hide', !show);
+        if (show) shown++;
+      }
+      countEl.textContent = String(shown);
+      empty.hidden = shown !== 0;
+      const dirty = q !== '' || sel.topic !== 'all' || sel.persona !== 'all' || sel.modality !== 'all';
+      clearBtn.hidden = !dirty;
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+      const key = group.dataset.filterGroup!;
+      group.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          group.querySelectorAll('.chip').forEach((x) => x.classList.remove('on'));
+          chip.classList.add('on');
+          sel[key] = chip.dataset.val!;
+          apply();
+        });
+      });
+    });
+
+    search.addEventListener('input', () => { q = search.value.trim().toLowerCase(); apply(); });
+
+    function clearAll() {
+      q = ''; search.value = '';
+      sel.topic = sel.persona = sel.modality = 'all';
+      document.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+        group.querySelectorAll('.chip').forEach((x, i) => x.classList.toggle('on', i === 0));
+      });
+      apply();
+    }
+    clearBtn.addEventListener('click', clearAll);
+    document.getElementById('emptyClear')?.addEventListener('click', clearAll);
+
+    const root = document.documentElement;
+    document.getElementById('theme')?.addEventListener('click', () => {
+      const t = root.dataset.theme === 'day' ? 'night' : 'day';
+      root.dataset.theme = t; localStorage.setItem('demos-theme', t);
+    });
+
+    apply();
+  }
+  initHome();
+  document.addEventListener('astro:page-load', initHome);
+</script>

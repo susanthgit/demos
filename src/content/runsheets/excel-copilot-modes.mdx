@@ -1,0 +1,564 @@
+---
+title: "Copilot in Excel — the three modes"
+blurb: "One workbook, six demos. Chat only, Plan, Allow editing, skills, and filling a template from a Word doc."
+order: 1
+durationMin: 30
+topic: copilot-l100
+audience: "Finance, ops, anyone who lives in a monthly pack"
+note: "delivered live 16 Sep 2026 — went well"
+visibility: noindex
+
+files:
+  - name: "Harbourline Group - Monthly Finance Pack - Aug 2026.xlsx"
+    what: "11 sheets. Six are the finance pack, five are one per demo. Every figure synthetic."
+    where: "OneDrive · Documents · Microsoft Scout"
+  - name: "Capex proposal - Cold Chain Renewal.docx"
+    what: "Three-page business case. Section 6 only. Three extraction traps and a decoy."
+    where: "OneDrive · Documents · Microsoft Scout"
+  - name: "harbourline-variance-commentary"
+    what: "Skill used in section 4. Upload the day before."
+    where: "OneDrive · Documents · Copilot · Microsoft Excel · skills"
+  - name: "harbourline-board-format"
+    what: "Skill built LIVE in section 5. Keep this one on your device — do not upload it."
+    where: "stays local until you build it on stage"
+
+preflight:
+  - "Open the workbook once and let it calculate. Formulas are saved without cached values."
+  - "Sign in on the demo account, not the corporate or admin one."
+  - "Office display language must be English or custom skills will not load."
+  - "Upload harbourline-variance-commentary the DAY BEFORE. It took about ten minutes to appear."
+  - "Do NOT upload harbourline-board-format. Section 5 builds it live and that asymmetry is the demo."
+  - "Take a working copy. Sections 2, 3, 4, 5 and 6 all write into the workbook."
+  - "Check the mode control before you start. The Auto dropdown is the model picker, not the mode."
+
+gotchas:
+  - title: "Enter sends, so a pasted prompt gets cut at the first blank line"
+    body: "Paste a multi-paragraph prompt and only the opening sentence is submitted. You get a scope with no task and Copilot asks what you actually want. Happened live. Every prompt here copies as one unbroken block. Use Shift+Enter if you need a line break yourself, and check the sent bubble contains your last sentence before you talk over it."
+  - title: "Auto is the model picker, not the mode"
+    body: "The pane shows an Auto dropdown that chooses the model. The mode control is the separate pencil icon beside it. Confirm which one you are on before you claim a mode on stage."
+  - title: "A new skill takes about fifteen minutes to appear"
+    body: "Measured 16 Sep 2026. Uploaded, pressed Refresh repeatedly, nothing for ten minutes, then it appeared on its own. The file was correct the whole time. Do not start deleting and re-uploading while you wait — you will convince yourself something is broken when it is not."
+  - title: "Copilot silently skips a folder whose name does not match SKILL.md"
+    body: "No error, no warning. Microsoft documents this as the supported way to hide a skill without deleting it, which is exactly why it fails invisibly. If a skill will not load, check the folder name first, then check the file is SKILL.md and not SKILL.md.txt."
+  - title: "Uploaded skills arrive enabled"
+    body: "You do not need to switch them on. And the toggle only controls automatic selection — an explicit @mention still runs a disabled skill, so it is not a security control. Say that plainly if asked."
+  - title: "Do not use =COPILOT()"
+    body: "Microsoft retired the preview worksheet function on 14 September 2026. Use the pane."
+
+pivots:
+  - trigger: "They challenge whether it can really read accounts"
+    goto: "1"
+    why: "Ask for the mix-versus-rate split. A real analytical answer, not a summary."
+  - trigger: "They ask who is accountable when it gets something wrong"
+    goto: "1"
+    why: "The margin driver answer, where it refuses to name a cause it cannot evidence."
+  - trigger: "A planning or FP&A audience"
+    goto: "2"
+    why: "Plan mode stopping to ask two questions is the whole value proposition."
+  - trigger: "They say their data is a mess"
+    goto: "3"
+    why: "55 rows, 21 spellings of 6 departments, 4 date formats. Their reality."
+  - trigger: "They ask about consistency, audit or handover"
+    goto: "4"
+    why: "Same three sentences for the 2,600 variance as for the 445,000 one."
+  - trigger: "A developer or IT audience asks how it is built"
+    goto: "5"
+    why: "It is a text file. Open it on screen and the mystique evaporates."
+  - trigger: "Anyone says we retype things between systems"
+    goto: "6"
+    why: "Strongest close. The Proposal gaps table is the moment."
+  - trigger: "They worry about lock-in"
+    goto: "What a skill is"
+    why: "It is the open agentskills.io spec, not a Microsoft format."
+  - trigger: "Short on time, or a skill has not synced"
+    goto: "Fallback"
+    why: "Runs an existing skill from another project. Better talking point than the planned demo."
+
+recovery:
+  - when: "Copilot is slow"
+    then: "Talk through the inputs and the controls. Do not resend — that queues a second job."
+  - when: "The answer is wrong"
+    then: "Switch to Chat only and ask which cells it used. A recovered mistake is more convincing than a clean run."
+  - when: "A skill will not load"
+    then: "Use the Fallback section, or run section 4's prompt without the mention and call it a prompt workflow, not a skill. Do not pretend."
+  - when: "Someone asks whether it is safe"
+    then: "Copilot sees exactly what that user can already open, and a skill is a text file in your own OneDrive that nobody else inherits."
+  - when: "Down to fifteen minutes"
+    then: "Sections 1, 3 and 6 only. They stand alone and need no skills setup."
+
+ledger:
+  claims:
+    - "Excel has three Copilot modes: Chat only, Plan, Allow editing"
+    - "Excel is the only Office app with Plan mode"
+    - "Plan mode asks clarifying questions, then executes via its own Proceed button"
+    - "Custom skills are a SKILL.md file in a matching OneDrive folder, following the open Agent Skills spec"
+    - "Disabling a skill only stops automatic selection; an @mention still runs it"
+    - "The =COPILOT() worksheet function was retired on 14 September 2026"
+  sources:
+    - "https://support.microsoft.com/en-us/excel/copilot/copilot-in-excel-skills"
+    - "https://support.microsoft.com/en-us/excel/copilot/get-started-with-copilot-in-excel"
+    - "https://agentskills.io/specification"
+  capturedOn: "2026-09-16"
+  lastVerified: "2026-09-16"
+  staleAfter: "2026-12-16"
+  classification: public
+
+sections:
+  - n: "1"
+    title: "Read the numbers"
+    mode: "Chat only"
+    where: "Summary P&L"
+    minutes: 4
+    anchor: true
+    verifiedOn: "2026-09-16"
+    blocks:
+      - type: say
+        body: "This is a normal month-end pack. I am not asking Copilot to change anything. I want to know whether it can actually read a set of accounts."
+      - type: prompt
+        body: |-
+          Use only this workbook. Read the Summary P&L, Revenue, Cost detail, Headcount and Cash sheets.
+
+          Revenue is up 11 per cent on last year but EBITDA is down. Explain why, and be specific about which line items caused it.
+
+          Separate the margin effect from the cost effect. For every driver you name, tell me the sheet and the number it came from. If the workbook does not evidence a cause, say so rather than proposing one.
+      - type: callout
+        kind: verified
+        title: "What it produced, checked to the dollar"
+        body: "It built an EBITDA bridge unprompted and every figure was independently verified against the source data."
+      - type: table
+        caption: "The bridge it built on its own"
+        head: ["Effect", "EBITDA impact", "Its evidence"]
+        rows:
+          - ["Revenue growth at last year's margin", "+1,259k", "30.620m to 34.005m"]
+          - ["Lower gross margin", "-766k", "37.2% to 34.9%"]
+          - ["Higher operating costs", "-1,043k", "9.700m to 10.743m"]
+          - ["Net EBITDA change", "-550k", "1.691m to 1.141m, down 32.5%"]
+        numeric: [1]
+      - type: points
+        title: "Three things to point at on screen"
+        items:
+          - label: "The Reasoned in N steps chip"
+            body: "Click it. It shows the working, which is what a finance audience wants before they trust a number."
+          - label: "The cell references beside every figure"
+            body: "That is the tell me the sheet and the number instruction doing its job. Without it you get assertions. With it you get something auditable."
+          - label: "Where it refuses to name a cause"
+            body: "It says the workbook does not evidence whether the margin fall came from mix, pricing or supplier cost. Say out loud that this is the behaviour you want, because the alternative is a confident wrong answer."
+      - type: say
+        body: "It just told me it cannot separate the margin drivers. Let us test whether that is true, because I think the Revenue sheet has enough in it."
+      - type: prompt
+        label: "Copy the follow-up"
+        note: "The strongest two minutes in the demo. It refuses to guess, then goes deeper when you point it at the evidence."
+        body: |-
+          The Revenue sheet has net revenue and cost of goods sold by channel and by product line, with the budget alongside.
+
+          Use it to split the gross margin miss against budget into two parts: how much came from the channel mix changing, and how much came from margin falling within the channels themselves.
+
+          Show the actual and budget margin for each of the four channels, and each channel's share of revenue. State your method before the numbers.
+      - type: table
+        caption: "Controls — budget margin 36.14%, actual 34.95%, gap 1.19 points"
+        head: ["Channel", "Actual margin", "Budget margin", "Actual share", "Budget share"]
+        rows:
+          - ["Retail", "40.7%", "41.2%", "34.2%", "35.9%"]
+          - ["Wholesale", "22.4%", "23.6%", "32.1%", "28.4%"]
+          - ["Online", "47.8%", "47.8%", "20.8%", "21.7%"]
+          - ["Export", "30.2%", "30.5%", "12.9%", "14.0%"]
+        numeric: [1, 2, 3, 4]
+        foot: "Splits almost exactly in half: 0.59 points from mix, 0.60 points from rate."
+      - type: callout
+        kind: win
+        title: "The business point"
+        body: "Wholesale took 3.7 points more of the revenue mix than planned at roughly half the margin of Retail, and its own margin also slipped. Half the problem is what they sold, half is what they sold it for. Two different conversations with two different owners."
+
+  - n: "1b"
+    title: "Other follow-ups, in order of how well they land"
+    mode: "Chat only"
+    where: "stay where you are"
+    pivot: true
+    blocks:
+      - type: table
+        head: ["Ask", "Why it works"]
+        rows:
+          - ["Marketing is 18 per cent under budget. Is that good news?", "It has to reason past the sign of the variance. An underspend on programmes is a forward revenue risk, and it can see Marketing headcount fell from 8 to 7."]
+          - ["Cash is down 1.3 million but we are profitable. Where has it gone?", "Forces it off the P&L and onto debtor days moving from 38 to 51."]
+          - ["Something changed in Operations in May. What was it?", "Freight steps from about 135,000 a month to about 159,000 and keeps climbing. A clean step change it can find without being told where."]
+          - ["Which customer should I ring this afternoon?", "Tasman Retail Group is over its credit limit. Nobody expects it to check a limit against a balance."]
+          - ["If the last three months continue, where do we land at year end?", "Run-rate extrapolation with a stated assumption. Ask it to show the assumption."]
+      - type: callout
+        kind: note
+        body: "The two that make a finance room go quiet are the Marketing underspend and the credit limit. Keep them even if you cut everything else."
+
+  - n: "2"
+    title: "Plan the next budget"
+    mode: "Plan"
+    where: "Plan - FY27 budget"
+    minutes: 5
+    anchor: true
+    verifiedOn: "2026-09-16"
+    blocks:
+      - type: say
+        body: "Now a harder job. Seventeen assumptions, six constraints that all have to hold at once, and an empty grid. I want the method before I want the numbers."
+      - type: prompt
+        body: |-
+          Use only this workbook. Plan how you would build the FY27 operating cost budget in the empty grid on this sheet.
+
+          Read every row of tblAssumptions and tblConstraints on this sheet, and the FY26 actuals in tblCosts. The FY26 annualised column is already calculated for you.
+
+          Set out the order you would work in, which assumption drives which department and cost category, and how you would prove that all six constraints hold at the same time.
+
+          Two assumptions interact: Technology headcount rises by three while contractor spend goes to zero. Say how you would handle that so the cost is not double counted.
+
+          Tell me which constraints you believe cannot all be met together, and what you would need me to decide. Do not write anything into the grid yet.
+      - type: callout
+        kind: warn
+        title: "It does not answer. It stops and asks you two questions."
+        body: "This is the part worth rehearsing. Both were verified live. Answer them deliberately and narrate why."
+      - type: points
+        title: "Question 1 — when do the FY27 headcount changes take effect?"
+        items:
+          - label: "Answer: All from April"
+            body: "It matches the salary inflation assumption on the sheet, which already says effective 1 April 2027. It saves 152,960 against a January start. And January consumes 95 per cent of the entire 4 per cent cost headroom where April consumes 72 per cent."
+      - type: say
+        body: "Watch what just happened. I gave it seventeen assumptions and it found the one I had not thought about. Nobody wrote down when these people start. That single choice is worth a hundred and fifty thousand dollars, and in Allow editing it would have picked one silently and never told me."
+      - type: points
+        title: "Question 2 — how should it handle the closing cash constraint?"
+        items:
+          - label: "Answer: Flag as not provable"
+            body: "The other two options are traps. Treat EBITDA as cash proxy is disproved by your own section 1: this company made 1.1m of EBITDA while cash fell from 2.845m to 1.536m. Use FY26 run-rate cash would project forward a burn caused by the collections problem."
+      - type: say
+        body: "Look at option three. Treat EBITDA as a cash proxy. Ten minutes ago this same workbook showed us a company making a profit and running out of cash. If it picked that option it would produce a confident, tidy, wrong budget. Not provable is the honest answer, and it is the one I want."
+      - type: callout
+        kind: note
+        body: "Worth knowing: closing cash at 31 August is 1,536,000 against a covenant of 2,000,000 by December 2027. They are already below it. This is not a hypothetical gap, it is the constraint most likely to fail."
+      - type: table
+        caption: "The plan it produced — every figure independently checked"
+        head: ["What it concluded", "Figure", "Checked"]
+        rows:
+          - ["FY27 operating cost as modelled", "17,885,000", "11.0% growth on 16,115,100"]
+          - ["EBITDA margin that produces", "2.47%", "against a 6.0% floor"]
+          - ["Cut required to satisfy the constraints", "1,882,000", "1,881,324 exactly"]
+          - ["Technology non-people cost", "1,331,000", "1,329,360"]
+          - ["Of which breaches the no-growth rule", "111,000", "108,960"]
+        numeric: [1]
+      - type: points
+        title: "Two things it worked out that nobody told it"
+        items:
+          - label: "The 10 per cent cloud cut is not enough"
+            body: "It still breaches the no-growth constraint, because 10 per cent off an August exit rate of 116,200 is more than the FY26 average. Cloud cost climbed every month from 78,400 in January. A cut that sounds decisive is not."
+          - label: "The binding constraint is not the obvious one"
+            body: "Most people assume the 4 per cent cost cap bites first. It does not. The 6 per cent EBITDA floor caps operating cost at 16,003,676 while the 4 per cent rule allows 16,759,704. The covenant is 756,000 tighter."
+      - type: callout
+        kind: win
+        title: "Then click Proceed"
+        body: "Proceed executes the plan and writes into the grid. It does NOT need you to switch modes. Say: this is the same work Allow editing would have done, but I have already seen the method, corrected two assumptions and been told which constraint is impossible. The argument happened before the work, where it was cheap."
+
+  - n: "2b"
+    title: "So what is Plan mode actually for"
+    pivot: true
+    blocks:
+      - type: table
+        caption: "The three modes are not a scale from cautious to brave. Two of them write and one does not."
+        head: ["", "Chat only", "Plan", "Allow editing"]
+        rows:
+          - ["Changes the workbook", "Never", "Yes, after you approve", "Yes, straight away"]
+          - ["You see the method first", "No", "Yes", "No"]
+          - ["Stops to ask about missing inputs", "No", "Yes", "Rarely"]
+          - ["A wrong answer costs you", "Nothing, you ignore it", "Nothing, you reject the plan", "An undo, or worse, you do not notice"]
+          - ["Use it when", "You want to understand", "The job has assumptions worth arguing about", "The job is obvious"]
+      - type: points
+        items:
+          - label: "Chat only against Allow editing"
+            body: "Read against write."
+          - label: "Plan against Allow editing"
+            body: "The same write, with a checkpoint in front of it."
+      - type: callout
+        kind: win
+        title: "The line that lands"
+        body: "Plan mode is not slower. It is the same work with the argument moved to the front, where it is cheap. Everything you just watched it ask me would otherwise have been a silent assumption inside a finished budget."
+      - type: say
+        body: "Do not sell Plan as the careful option. Sell it on cost. Cleaning an expense sheet has no assumptions worth debating, so use Allow editing and save the step. Building a budget has seventeen, and the cheapest place to catch a wrong one is before the work."
+
+  - n: "3"
+    title: "Clean a mess"
+    mode: "Allow editing"
+    where: "Edit - Expense cleanup"
+    minutes: 6
+    anchor: true
+    blocks:
+      - type: say
+        body: "This is a raw export. It is not a table, the dates are in four formats, the amounts are text and somebody has spelled Technology six different ways. This is the job most finance people actually do."
+      - type: prompt
+        body: |-
+          Clean the expense export on this sheet. Work on this sheet only and do not touch any other sheet.
+
+          1. Standardise every date to a real Excel date, not text. There are four different formats in the column.
+          2. Standardise the department names. There are twenty-one different spellings and they collapse to six real departments.
+          3. Convert the amount column to numbers. Values in brackets are credit notes and must stay negative.
+          4. Remove duplicate transactions. The TXN REF is the unique key.
+          5. Flag any transaction over 5,000 that has no approver.
+          6. Flag any transaction with no supplier.
+          7. Flag anything that looks like a keying error.
+
+          Then build a summary of spend by department below the data, and tell me the row count before and after you removed duplicates.
+
+          Show me the rules you applied. Do not delete anything you cannot explain.
+      - type: say
+        body: "Pick one date and show it right-aligns now. Pick one department cell and show the mapping. Then scroll to the flagged rows."
+      - type: table
+        caption: "Controls — 55 rows in, 3 duplicates removed, 52 out. Total 361,624.68."
+        head: ["Department", "Clean total"]
+        rows:
+          - ["Technology", "134,124.98"]
+          - ["Operations", "60,213.81"]
+          - ["Marketing", "50,986.23"]
+          - ["Sales", "46,362.06"]
+          - ["People & Culture", "37,160.50"]
+          - ["Finance", "32,777.10"]
+        numeric: [1]
+      - type: points
+        title: "The seeded defects"
+        items:
+          - label: "Duplicates"
+            body: "EXP-26021, EXP-26133, EXP-26280."
+          - label: "Over 5,000 with no approver"
+            body: "EXP-26028 at 6,400.00, EXP-26077 at 10,002.94, EXP-26133 at 6,400.00, EXP-26231 at 15,772.36, EXP-26308 at 10,339.49."
+          - label: "Blank suppliers"
+            body: "EXP-26035, EXP-26154, EXP-26266, EXP-26329."
+          - label: "Credit notes that must stay negative"
+            body: "EXP-26063 at -1,789.34 and EXP-26189 at -823.20."
+          - label: "Keying error"
+            body: "EXP-26084, Deloitte, 97,533.00 — ten times what it should be, and it already carries the note check coding."
+      - type: callout
+        kind: warn
+        title: "If it deletes the credit notes instead of keeping them negative"
+        body: "Do not hide it. Say that is wrong, and here is why it matters, then ask it to restore them. A recovered mistake is more convincing than a clean run."
+
+  - n: "4"
+    title: "Use a skill you already have"
+    mode: "Allow editing"
+    where: "Skill - Commentary"
+    minutes: 4
+    blocks:
+      - type: say
+        body: "Every month somebody writes the commentary, and every month it reads differently depending on who wrote it. The method now lives in a skill, so it reads the same way every time."
+      - type: prompt
+        note: "Attach harbourline-variance-commentary from the @ picker FIRST, then paste this. Typing the name as plain text does not attach it."
+        body: |-
+          Write the Commentary column for every row in tblCommentary on this sheet. The numbers are live from Summary P&L, so do not change a single value or formula.
+
+          Apply the house style rules on this sheet exactly. Use the owner table for the named owner in the third sentence.
+
+          Where the workbook does not evidence a driver, say so rather than proposing one.
+      - type: say
+        body: "Exactly three sentences per row, every row, no exceptions. A number in sentence one, a named driver in sentence two, an owner in sentence three. It ends with Variance commentary v1.0 applied."
+      - type: callout
+        kind: win
+        title: "The point to make out loud"
+        body: "The Finance row is only 2,600 under budget. A human writes three paragraphs about Technology and one word about Finance. The skill writes the same three sentences for both, which is what an auditor wants."
+      - type: callout
+        kind: note
+        body: "Leave this sheet as it is. Section 5 builds a second, different skill and runs it on this same sheet, which is the payoff."
+
+  - n: "5"
+    title: "Build a second skill from scratch"
+    mode: "Author the file, then Allow editing"
+    where: "Skill build - Board format, then run on Skill - Commentary"
+    minutes: 6
+    blocks:
+      - type: say
+        body: "That first skill was already installed. Let us build a different one, live, in about two minutes. A skill is two things. A description that says when to use it, and instructions that say how to do the job. That is the whole idea."
+      - type: say
+        body: "Read the bad output on the sheet aloud and ask the room which of the three faults they would actually notice in a board pack. Most people say none of them. That is the argument for writing the rules down once."
+      - type: steps
+        title: "Build it"
+        items:
+          - "Copilot pane, Settings (...) then Manage skills then Custom skills."
+          - "Follow Skills OneDrive folder. A new user picks Create skills folder first, then Open skills folder."
+          - "Create a subfolder named exactly harbourline-board-format."
+          - "In Notepad, paste the file below. Save as SKILL.md with Save as type All files and UTF-8. Check it did not become SKILL.md.txt."
+          - "Upload it into the subfolder. The folder name and the frontmatter name must match exactly."
+          - "Back in Excel, Refresh custom skills."
+          - "Go to Skill - Commentary, type @, select the new skill and run the prompt below."
+      - type: prompt
+        label: "Copy the whole SKILL.md"
+        note: "This one keeps its line breaks. It is a file, not a prompt."
+        oneBlock: false
+        body: |-
+          ---
+          name: harbourline-board-format
+          description: Use when I ask to format a finance sheet for the board pack.
+          ---
+
+          # Format a finance sheet for the board
+
+          Method version: 1.0.
+
+          1. Work only on the worksheet and table I name. Never change a value, a formula or the row order. Ask if the target table is unclear.
+          2. Do not assume the table starts at row 1. Find the actual header row first.
+          3. Bold the header row, fill it navy and set the header text white.
+          4. Format NZD columns with thousands separators, no decimal places, and negatives in red parentheses. Keep the cells numeric, never text.
+          5. Format percentage columns as 0.0%. Never apply a percentage format to a currency column.
+          6. Wrap the header text, widen columns so no cell shows hashes, and freeze the header row.
+          7. Right align number columns and left align text columns.
+          8. Add no totals, no charts, no commentary and no new worksheets.
+          9. Report what you changed, confirm that no value moved, and finish with "Board format v1.0 applied."
+      - type: prompt
+        label: "Copy the run prompt"
+        note: "Attach the new skill from the @ picker first."
+        body: |-
+          Format tblCommentary on the Skill - Commentary sheet for the board pack.
+
+          Preserve every value and formula exactly as they are. Apply your formatting instructions and tell me what changed.
+      - type: points
+        title: "The two traps built into the steps"
+        items:
+          - label: "Step 2, do not assume row 1"
+            body: "That sheet has rules and an owner table above the data. A skill that assumes row 1 formats the wrong thing."
+          - label: "Step 5, never percent-format a currency column"
+            body: "Get it wrong and 11,883,900 renders as 1188390000.0%."
+      - type: callout
+        kind: win
+        title: "Why two skills is the better demo"
+        body: "Two skills, one workflow. The first one wrote the words. The second one made it presentable. Neither touched a number, and neither knows the other exists. Next month I run both and month end is a thirty second job."
+      - type: say
+        body: "That is also the honest answer to how far does this go. Skills are small and single purpose on purpose. You do not build one enormous skill that does month end. You build several that each do one job properly and compose."
+
+  - n: "6"
+    title: "Fill a form from a document"
+    mode: "Allow editing"
+    where: "Template - Capex, plus the Word proposal"
+    minutes: 5
+    anchor: true
+    verifiedOn: "2026-09-16"
+    blocks:
+      - type: say
+        body: "Somebody has written a three page business case in Word. Somebody else has to get it into the capex template. That retyping is where the errors come from."
+      - type: prompt
+        note: "Attach the Word document to the chat first, or reference it by name if your tenant grounds on OneDrive."
+        body: |-
+          Fill the capex template on this sheet from the Word document "Capex proposal - Cold Chain Renewal".
+
+          Every shaded cell is an input. Put each figure in the right field and in the right year. The proposal states some amounts in words rather than digits, so read carefully.
+
+          Calculate the totals and the payback period. Leave the formulas in the total cells alone.
+
+          Do not guess. List separately every field the proposal does not state, and every number I should go back and ask for.
+      - type: table
+        caption: "What it produced — every line matched the controls exactly"
+        head: ["Cost line", "FY27", "FY28", "FY29", "Total"]
+        rows:
+          - ["Hardware", "1,840,000", "0", "0", "1,840,000"]
+          - ["Software licences", "126,000", "138,000", "138,000", "402,000"]
+          - ["Installation and commissioning", "340,000", "0", "0", "340,000"]
+          - ["Training", "48,000", "16,000", "0", "64,000"]
+          - ["Project management", "118,000", "54,000", "0", "172,000"]
+          - ["Contingency", "218,000", "0", "0", "218,000"]
+          - ["Total", "2,690,000", "208,000", "138,000", "3,036,000"]
+        numeric: [1, 2, 3, 4]
+        foot: "Benefit 1,721,000 over three years. Payback 4.3 years. The 41,300 pallet movements decoy was ignored."
+      - type: callout
+        kind: win
+        title: "The moment to stop and point at"
+        body: "It builds a Proposal gaps and follow-up table beside the form that nobody asked for. Six rows, each naming the missing item and quoting what the proposal actually says: date received, benefit type, base insurance premium reduction, net present value, the EUR/NZD rate assumption, the completion penalty and the forward cover terms."
+      - type: say
+        body: "Look at the table on the right. I did not ask for that. I told it not to guess, and instead of leaving blanks it told me what it does not know and why. That list is my follow-up email to the Operations Director."
+      - type: points
+        title: "Then point at the two traps"
+        items:
+          - label: "Installation, 340,000"
+            body: "The proposal writes it out in words: three hundred and forty thousand dollars."
+          - label: "Contingency, 218,000"
+            body: "Appears nowhere in the document. It is ten per cent of hardware plus installation, and had to be calculated."
+      - type: callout
+        kind: warn
+        title: "Know this before someone asks"
+        body: "The 4.3 year payback is against the steady state benefit. FY27 benefit is only half a year because the programme completes in June, so the calendar payback from day one is longer. If a finance person challenges the number, that is the honest answer, and having it ready is better than discovering it live."
+      - type: say
+        body: "This is the point where you turn the template plus these instructions into a skill, and next month is a thirty second job. That closes the loop back to section 5 without needing another demo."
+
+  - n: "What a skill is"
+    title: "The explainer you read before the call"
+    pivot: true
+    blocks:
+      - type: points
+        title: "A skill is a plain text file with two parts"
+        items:
+          - label: "A description"
+            body: "Says WHEN to use it. This is the trigger."
+          - label: "Instructions"
+            body: "Say HOW to do the job. Free form, no required structure."
+      - type: callout
+        kind: win
+        title: "The line that lands with a business audience"
+        body: "It is the difference between telling a new analyst what to do every month, and giving them the desk procedure once."
+      - type: table
+        caption: "What a skill is not"
+        head: ["People assume", "Actually"]
+        rows:
+          - ["It is a Copilot Studio agent", "Different product. An agent has connectors, triggers, publishing and a lifecycle. A skill is a text file in your OneDrive."]
+          - ["Turning it off blocks it", "The toggle only stops Copilot selecting it automatically. An @mention still runs a disabled skill. It is not a security control."]
+          - ["Sharing the workbook shares the skill", "It does not. Skills are personal to your OneDrive. A recipient needs their own."]
+          - ["It is Microsoft proprietary", "It follows the open Agent Skills specification at agentskills.io. The same format is used by other AI tools. Worth saying to anyone worried about lock-in."]
+          - ["It only works on the file it was written for", "No. See the Fallback section — a skill written for a construction cost workbook ran correctly against this finance pack."]
+      - type: table
+        caption: "Can Copilot build the skill for you"
+        head: ["", "Can Copilot do it?"]
+        rows:
+          - ["Write the SKILL.md content", "Yes. Ask any Copilot to draft it. It is just text, and it is good at this."]
+          - ["Save the file to your skills folder", "No. You save it and upload it yourself."]
+          - ["Turn a chat you liked into a skill automatically", "No. There is no save this as a skill button in Excel today."]
+          - ["Excel Copilot writing into OneDrive", "No. Excel Copilot works inside the workbook."]
+      - type: say
+        body: "So the honest answer is: Copilot writes the words, you place the file. That is two minutes of work, and drafting is the part that takes the thinking."
+      - type: prompt
+        label: "Copy the meta prompt"
+        note: "Run this in Copilot Chat, Word, or the Excel pane. Using Copilot to build the thing that makes Copilot better."
+        body: |-
+          Write me a SKILL.md file for Copilot in Excel.
+
+          The job: every month I paste a raw expense export into a sheet, and I need it cleaned the same way every time. Standardise dates, standardise department names, convert amounts to real numbers, keep credit notes negative, remove duplicates on the reference column, and flag anything over 5,000 with no approver.
+
+          Use the Agent Skills format: three dashes, then name and description, then three dashes, then numbered instructions. The name must be lowercase with hyphens. The description must say when to use the skill, written the way I would actually ask for it.
+
+          Include a rule that stops it inventing data it cannot find, and end the instructions with a version marker so I can tell which version ran. Give me the file only, no commentary.
+
+  - n: "Fallback"
+    title: "When a skill has not synced — run someone else's"
+    mode: "Allow editing"
+    where: "Cost detail"
+    pivot: true
+    verifiedOn: "2026-09-16"
+    blocks:
+      - type: callout
+        kind: verified
+        title: "Proven live, 16 September 2026"
+        body: "When the new skill had not synced in time, running a pre-existing skill from a completely different project against this workbook worked — and produced a better talking point than the planned demo."
+      - type: prompt
+        note: "Select the existing skill from the @ picker, then paste this. Thresholds are supplied inline because this workbook has no rules table for that skill to read."
+        body: |-
+          Review the operating costs in tblCosts on this sheet for the year to date. Treat Department as the review grouping and Cost category as the line detail.
+
+          Use a materiality threshold of 100,000 NZD and 10 per cent, both of which must be met for a row to be material.
+
+          Report the material unfavourable variances, name the department and category for each, and reconcile your totals back to the source table. Do not invent a cause for any variance.
+      - type: table
+        caption: "What it returned — every figure independently verified"
+        head: ["Department", "Cost category", "Variance", "Variance %"]
+        rows:
+          - ["Technology", "Software & cloud", "173,900", "29.4%"]
+          - ["Operations", "Freight & logistics", "148,500", "14.1%"]
+          - ["Technology", "Salaries & wages", "136,000", "12.3%"]
+          - ["Technology", "Contractors", "135,300", "60.4%"]
+          - ["Total material", "", "593,700", ""]
+        numeric: [2, 3]
+        foot: "All 192 rows reviewed. 10,743,400 actual less 10,228,000 budget equals 515,400 unfavourable, reconciled with a 78,300 favourable offset."
+      - type: callout
+        kind: win
+        title: "The best sentence available to you in this whole demo"
+        body: "It reported: No causes were supplied in tblCosts; none were inferred. A skill built for a different workbook, refusing to invent the data it could not find."
+      - type: say
+        body: "This skill was written for a completely different workbook, in a different industry. Watch what happens when I point it at this one. The method travels. The data assumptions do not. That is exactly why you keep skills small and single purpose."
+---
+
+Delivered live on 16 September 2026 and it went well. Every control figure in this runsheet was
+calculated independently from the source workbook, not copied from what Copilot said — so when you
+quote a number on stage you are quoting the workbook, not the assistant.

@@ -1,0 +1,76 @@
+---
+/* One runsheet block. Discriminated on `type`, exactly like scenes —
+   add block types forever without breaking an existing runsheet. */
+interface Props { block: any }
+const { block: b } = Astro.props;
+---
+{b.type === 'say' && (
+  <div class="b b-say">
+    <span class="q" aria-hidden="true">&ldquo;</span>
+    <p>{b.body}{b.attrib && <em> — {b.attrib}</em>}</p>
+  </div>
+)}
+
+{b.type === 'prompt' && (
+  <div class="b b-prompt">
+    <div class="ph">
+      <span class="pl">{b.label}</span>
+      <span class="warn1">
+        {b.oneBlock ? 'copies as one block' : 'keeps its line breaks'}
+      </span>
+    </div>
+    <pre data-prompt data-oneblock={b.oneBlock ? '1' : '0'}>{b.body}</pre>
+    {b.note && <div class="pn">{b.note}</div>}
+  </div>
+)}
+
+{b.type === 'steps' && (
+  <div class="b b-steps">
+    {b.title && <div class="b-title">{b.title}</div>}
+    {b.ordered
+      ? <ol>{b.items.map((i: string) => <li>{i}</li>)}</ol>
+      : <ul>{b.items.map((i: string) => <li>{i}</li>)}</ul>}
+  </div>
+)}
+
+{b.type === 'table' && (
+  <div class="b">
+    {b.caption && <div class="b-cap">{b.caption}</div>}
+    <div class="b-table">
+      <table>
+        <thead>
+          <tr>{b.head.map((h: string, i: number) => (
+            <th class={b.numeric.includes(i) ? 'n' : undefined}>{h}</th>
+          ))}</tr>
+        </thead>
+        <tbody>
+          {b.rows.map((r: string[]) => (
+            <tr>{r.map((c: string, i: number) => (
+              <td class={b.numeric.includes(i) ? 'n' : undefined}>{c}</td>
+            ))}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {b.foot && <div class="b-foot">{b.foot}</div>}
+  </div>
+)}
+
+{b.type === 'points' && (
+  <div class="b b-points">
+    {b.title && <div class="b-title">{b.title}</div>}
+    {b.items.map((p: any) => (
+      <div class="pt">
+        <span class="dot" aria-hidden="true"></span>
+        <div><span class="lb">{p.label}</span><span class="bd">{p.body}</span></div>
+      </div>
+    ))}
+  </div>
+)}
+
+{b.type === 'callout' && (
+  <div class={`b b-call ${b.kind}`}>
+    {b.title && <div class="ct">{b.title}</div>}
+    <p>{b.body}</p>
+  </div>
+)}

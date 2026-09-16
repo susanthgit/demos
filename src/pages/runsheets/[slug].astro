@@ -1,0 +1,219 @@
+---
+import Base from '../../layouts/Base.astro';
+import Block from '../../components/runsheet/Block.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/runsheet.css';
+
+export async function getStaticPaths() {
+  const sheets = await getCollection('runsheets', (r) => r.data.visibility !== 'private');
+  return sheets.map((sheet) => ({ params: { slug: sheet.id }, props: { sheet } }));
+}
+
+const { sheet } = Astro.props;
+const d = sheet.data;
+const noindex = d.visibility !== 'indexed';
+
+// anchor ids from the free-text section number ("What a skill is" → "s-what-a-skill-is")
+const secId = (n: string) => 's-' + n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const anchors = d.sections.filter((s: any) => s.anchor);
+const totalMin = d.sections.reduce((a: number, s: any) => a + (s.minutes ?? 0), 0);
+---
+<Base title={`${d.title} — Runsheet · Demos`} description={d.blurb} noindex={noindex}>
+  <main class="rs" id="rs">
+
+    <div class="rs-top">
+      <a class="rs-back" href="/">← Demos</a>
+      <div class="rs-tools">
+        <button class="rs-btn" id="anchorsOnly" aria-pressed="false" title="Hide the optional pivot sections">Anchors only</button>
+        <button class="rs-btn" id="printBtn" title="Print or save as PDF">Print</button>
+        <button class="rs-btn" id="themeBtn" title="Day / night">◐</button>
+      </div>
+    </div>
+
+    <header class="rs-head">
+      <div class="rs-eye">Runsheet · presenter reference</div>
+      <h1 class="rs-h1">{d.title}</h1>
+      <p class="rs-blurb">{d.blurb}</p>
+      <div class="rs-facts">
+        {d.durationMin && <span class="rs-fact"><b>≈{d.durationMin} min</b> planned</span>}
+        {totalMin > 0 && <span class="rs-fact"><b>{totalMin} min</b> of core sections</span>}
+        <span class="rs-fact"><b>{d.sections.length}</b> sections</span>
+        <span class="rs-fact"><b>{anchors.length}</b> anchors</span>
+        {d.audience && <span class="rs-fact">{d.audience}</span>}
+        <span class="rs-fact">verified <b>{d.ledger.lastVerified}</b></span>
+      </div>
+      {d.note && <div class="rs-note-hand">{d.note}</div>}
+    </header>
+
+    {d.pivots.length > 0 && (
+      <section class="rs-card rs-pivot">
+        <h2><span class="n">&#8623;</span>Pivot map — read the room, not the script</h2>
+        {d.pivots.map((p: any) => (
+          <div class="row">
+            <div>
+              <div class="trig">{p.trigger}</div>
+              {p.why && <div class="rs-why">{p.why}</div>}
+            </div>
+            <a class="goto" href={`#${secId(p.goto)}`}>{p.goto} →</a>
+          </div>
+        ))}
+      </section>
+    )}
+
+    {d.files.length > 0 && (
+      <section class="rs-card">
+        <h2><span class="n">A</span>What you need open</h2>
+        <div class="rs-files">
+          {d.files.map((f: any, i: number) => (
+            <div class="rs-file">
+              <span class="mk">{i + 1}</span>
+              <div>
+                <div class="nm">{f.name}</div>
+                <div class="wt">{f.what}</div>
+                {f.where && <div class="wh">{f.where}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {d.preflight.length > 0 && (
+      <section class="rs-card">
+        <h2><span class="n">B</span>Pre-flight</h2>
+        <ul class="rs-check">
+          {d.preflight.map((p: string) => (
+            <li><input type="checkbox" /><span>{p}</span></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {d.gotchas.length > 0 && (
+      <section class="rs-card">
+        <h2><span class="n">!</span>Things that will bite you</h2>
+        <div class="rs-gotcha">
+          {d.gotchas.map((g: any) => (
+            <div class="g">
+              <div class="gt">{g.title}</div>
+              <div class="gb">{g.body}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {d.sections.map((s: any) => (
+      <section class="rs-sec" id={secId(s.n)} data-pivot={s.pivot ? 'true' : 'false'}>
+        <div class="rs-sec-h">
+          <span class="rs-sec-n">{s.n}</span>
+          <span class="rs-sec-t">{s.title}</span>
+          <span class="rs-sec-meta">
+            {s.anchor && <span class="tag anchor">anchor</span>}
+            {s.pivot && <span class="tag pivot">optional</span>}
+            {s.mode && <span class="tag mode">{s.mode}</span>}
+            {s.where && <span class="tag where">{s.where}</span>}
+            {s.minutes && <span class="tag">≈{s.minutes}m</span>}
+            {s.verifiedOn && <span class="tag ver">proven {s.verifiedOn}</span>}
+          </span>
+        </div>
+        {s.blocks.map((b: any) => <Block block={b} />)}
+      </section>
+    ))}
+
+    {d.recovery.length > 0 && (
+      <section class="rs-card">
+        <h2><span class="n">R</span>If something goes wrong</h2>
+        <div class="rs-rec">
+          {d.recovery.map((r: any) => (
+            <div class="r"><div class="w">{r.when}</div><div class="t">{r.then}</div></div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="rs-card rs-led">
+      <h2><span class="n">&#10003;</span>Truth ledger</h2>
+      <ul>{d.ledger.claims.map((c: string) => <li>{c}</li>)}</ul>
+      {d.ledger.sources.length > 0 && (
+        <>
+          <div style="margin-top:10px;font-weight:650;color:var(--ink)">Public sources</div>
+          <ul>{d.ledger.sources.map((u: string) => (
+            <li><a href={u} target="_blank" rel="noopener noreferrer">{u}</a></li>
+          ))}</ul>
+        </>
+      )}
+      <div style="margin-top:10px">
+        Last verified {d.ledger.lastVerified}
+        {d.ledger.staleAfter && <> · re-check by {d.ledger.staleAfter}</>}
+        {' '}· {d.ledger.owner}
+      </div>
+    </section>
+
+    <footer class="rs-foot">
+      Presenter runsheet by Sush. Not official Microsoft documentation — product claims cite public
+      Microsoft sources. All figures are synthetic; no customer or tenant data.
+    </footer>
+
+    <div id="rs-toast" role="status" aria-live="polite"></div>
+  </main>
+</Base>
+
+<script>
+  const root = document.documentElement;
+  const rs = document.getElementById('rs');
+  const toastEl = document.getElementById('rs-toast');
+  let toastTimer: number | undefined;
+
+  const toast = (msg: string) => {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toastEl.classList.remove('on'), 2600);
+  };
+
+  // Click any prompt to copy it. When oneBlock is set we flatten the blank
+  // lines out, because hosts that submit on Enter truncate a pasted prompt
+  // at the first break — that failure cost a live demo once.
+  document.querySelectorAll<HTMLElement>('pre[data-prompt]').forEach((pre) => {
+    pre.style.cursor = 'copy';
+    pre.title = 'Click to copy';
+    pre.addEventListener('click', async () => {
+      const raw = pre.textContent ?? '';
+      const one = pre.dataset.oneblock === '1';
+      // Flatten EVERY newline, not just blank-line paragraph breaks. A numbered
+      // list has no blank lines between items, so paragraph-only flattening
+      // would still leave breaks for the host to truncate at.
+      const text = one ? raw.replace(/\s*\n\s*/g, ' ').trim() : raw;
+      try {
+        if (!navigator.clipboard) throw new Error('no clipboard');
+        await navigator.clipboard.writeText(text);
+        toast(one ? 'Copied as one block — safe to paste.' : 'Copied with line breaks.');
+      } catch {
+        const r = document.createRange();
+        r.selectNodeContents(pre);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(r);
+        toast('Copy blocked — text selected, press Ctrl+C.');
+      }
+    });
+  });
+
+  document.getElementById('anchorsOnly')?.addEventListener('click', (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    const on = rs?.classList.toggle('anchors-only');
+    b.setAttribute('aria-pressed', String(!!on));
+    toast(on ? 'Optional sections hidden.' : 'All sections shown.');
+  });
+
+  document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+
+  document.getElementById('themeBtn')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'day' ? 'night' : 'day';
+    root.dataset.theme = next;
+    localStorage.setItem('demos-theme', next);
+  });
+</script>

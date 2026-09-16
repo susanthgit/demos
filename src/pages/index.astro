@@ -42,6 +42,10 @@ const soonCards = cards.filter((c) => c.status === 'soon');
 const gridCards = cards.filter((c) => c !== featured);
 // topics that actually have cards
 const usedTopics = TOPICS.filter((t) => cards.some((c) => c.topic === t.id));
+
+// ---- runsheets: what I read while presenting, not what the room sees ----
+const sheets = (await getCollection('runsheets', (r) => r.data.visibility !== 'private'))
+  .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 ---
 <Base title="Demos — A Guide to Cloud" description="Interactive demo decks for live customer sessions — pick one and present." noindex={true}>
   <main class="home">
@@ -118,6 +122,40 @@ const usedTopics = TOPICS.filter((t) => cards.some((c) => c.topic === t.id));
       })}
     </div>
     <div class="empty" id="empty" hidden>Nothing on the shelf matches — <button id="emptyClear" class="linkbtn">clear</button>.</div>
+
+    <!-- runsheets: the presenter side of the shelf -->
+    {sheets.length > 0 && (
+      <div class="rsshelf">
+        <div class="sh">
+          <span class="h">runsheets</span>
+          <span class="s">what I read while presenting — prompts, verified numbers, pivot map</span>
+        </div>
+        <div class="rsgrid">
+          {sheets.map((s) => {
+            const d = s.data;
+            const anchors = d.sections.filter((x: any) => x.anchor).length;
+            return (
+              <a class="rscard" href={`/runsheets/${s.id}`}>
+                <div class="rsct">
+                  <span class="rsk">runsheet</span>
+                  <span class="rsv">verified {d.ledger.lastVerified}</span>
+                </div>
+                <h4>{d.title}</h4>
+                <div class="bl">{d.blurb}</div>
+                {d.note && <div class="marg">“{d.note}”</div>}
+                <div class="rscf">
+                  {d.topic && <span class="topictag">{topicLabel(d.topic)}</span>}
+                  <span class="mod">{d.sections.length} sections</span>
+                  <span class="mod">{anchors} anchors</span>
+                  {d.durationMin && <span class="dur">≈{d.durationMin}m</span>}
+                </div>
+                <span class="rsopen">Open runsheet →</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
 
     <!-- roadmap shelf -->
     {soonCards.length > 0 && (
@@ -214,6 +252,28 @@ const usedTopics = TOPICS.filter((t) => cards.some((c) => c.topic === t.id));
   .shelf .sh { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   .shelf .sh .h { font-family: var(--hand); color: var(--brass); font-size: 26px; }
   .shelf .sh .s { font-size: 13px; color: var(--inklite); }
+
+  /* runsheets — the presenter side. Brass-led so it reads as a different
+     kind of thing from the demo cards without leaving the notebook. */
+  .rsshelf { margin-top: 46px; padding-top: 24px; border-top: 2px solid var(--brass); }
+  .rsshelf .sh { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .rsshelf .sh .h { font-family: var(--hand); color: var(--brass); font-size: 26px; }
+  .rsshelf .sh .s { font-size: 13px; color: var(--inklite); }
+  .rsgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-top: 16px; }
+  .rscard { background: var(--card); border: 1px solid var(--brass); border-left-width: 6px; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); box-shadow: 0 14px 30px -24px rgba(0,0,0,.5); transition: transform .18s, box-shadow .18s; }
+  .rscard:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .rsct { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .rsk { font-family: var(--hand); color: var(--brass); font-size: 19px; line-height: 1; }
+  .rsv { font-size: 10.5px; font-weight: 700; color: var(--green); }
+  .rscard h4 { font-family: var(--ui-semi); font-size: 18px; margin: 0 0 5px; }
+  .rscard .bl { font-size: 12.5px; color: var(--inklite); line-height: 1.45; flex: 1; }
+  .rscard .marg { font-family: var(--hand); color: var(--brass); font-size: 15px; margin-top: 10px; opacity: .92; }
+  .rscf { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: 11px; font-weight: 700; flex-wrap: wrap; }
+  .rscf .topictag { color: var(--navy); background: var(--navy-soft); padding: 3px 8px; border-radius: 6px; }
+  .rscf .mod { color: var(--brass); background: var(--brass-soft); padding: 3px 8px; border-radius: 6px; }
+  .rscf .dur { color: var(--inklite); }
+  .rsopen { margin-top: 12px; font-weight: 700; font-size: 13px; color: var(--navy); }
+
   .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
   .tile { border: 1px dashed var(--hair); border-radius: 12px; padding: 14px; opacity: .85; }
   .tile .mk { font-family: var(--hand); color: var(--brass); font-size: 20px; line-height: 1; }

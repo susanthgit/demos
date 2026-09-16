@@ -1,0 +1,166 @@
+---
+// Estimator scene (slide 10) — interactive "plan your spend".
+// Users × prompts/user/month × credits-per-prompt(profile) → monthly credits + $.
+// Big readout, two sliders, a profile toggle. Visual-first; numbers labelled illustrative.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const cfg = JSON.stringify({ users: scene.users, prompts: scene.prompts, profiles: scene.profiles });
+---
+<section class="screen est-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id} data-cfg={cfg}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:58ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+
+    {scene.presets && scene.presets.length > 0 && (
+      <div class="est-presets">
+        <span class="ep-lab">jump to →</span>
+        {scene.presets.map((p: any, i: number) => (
+          <button class="ep-btn" data-eppreset={i} data-epusers={p.users}>{p.label}</button>
+        ))}
+      </div>
+    )}
+
+    <div class="est-grid">
+      <div class="est-controls">
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-lab">People using Cowork</span><b class="ctrl-val" data-val="users">0</b></div>
+          <input type="range" data-range="users" min={scene.users.min} max={scene.users.max} step={scene.users.step} value={scene.users.default} />
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="ctrl-lab">Tasks per person / month</span><b class="ctrl-val" data-val="prompts">0</b></div>
+          <input type="range" data-range="prompts" min={scene.prompts.min} max={scene.prompts.max} step={scene.prompts.step} value={scene.prompts.default} />
+        </div>
+        <div class="ctrl">
+          <span class="ctrl-lab">Typical task weight</span>
+          <div class="profseg" role="group" aria-label="Task weight">
+            {scene.profiles.map((p: any, i: number) => (
+              <button data-prof={i} class={i === 0 ? 'on' : ''} style={`--c:${p.color}`}>{p.label}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="est-readout">
+        <div class="ro-lab">estimated monthly cost</div>
+        <div class="ro-dollar">$<b data-out="dollars">0</b></div>
+        <div class="ro-sub"><b data-out="credits">0</b> Copilot Credits / month</div>
+        <div class="ro-peruser">≈ $<b data-out="peruser">0</b> per person / month</div>
+        <div class="est-disc">{scene.disclaimer}</div>
+      </div>
+    </div>
+    {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .est-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(20px,3vw,40px); margin-top: 20px; align-items: stretch; }
+  @media (max-width: 860px) { .est-grid { grid-template-columns: 1fr; } }
+
+  .est-presets { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .ep-lab { font-family: var(--ui); font-weight: 700; font-style: italic; color: var(--inklite); font-size: clamp(12px,1.3vw,14px); }
+  .ep-btn { border: 1px solid var(--hair); background: var(--card); color: var(--ink); font-family: var(--ui); font-weight: 700; font-size: 12.5px; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all .15s; box-shadow: 0 6px 16px -12px rgba(0,0,0,.4); }
+  .ep-btn:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-1px); }
+  .ep-btn.on { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+
+  .est-controls { display: flex; flex-direction: column; gap: 18px; justify-content: center; }
+  .ctrl { background: var(--card); border: 1px solid var(--hair); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .ctrl-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .ctrl-lab { font-family: var(--ui-semi); font-size: clamp(13px,1.5vw,16px); color: var(--ink); }
+  .ctrl-val { font-family: var(--ui-semi); font-size: clamp(20px,2.6vw,28px); color: var(--navy); }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 999px; margin-top: 14px; background: var(--navy-soft); cursor: pointer; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--brass); border: 3px solid var(--card); box-shadow: 0 3px 10px -3px rgba(0,0,0,.5); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--brass); border: 3px solid var(--card); box-shadow: 0 3px 10px -3px rgba(0,0,0,.5); cursor: pointer; }
+
+  .profseg { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .profseg button { flex: 1; min-width: 90px; border: 1px solid var(--hair); background: var(--paper); color: var(--inklite); font-family: var(--ui); font-weight: 700; font-size: 12.5px; padding: 10px 8px; border-radius: 10px; cursor: pointer; transition: all .15s; }
+  .profseg button.on { background: var(--c); color: #fff; border-color: var(--c); }
+
+  .est-readout { background: var(--card); border: 1px solid var(--hair); border-top: 6px solid var(--brass); border-radius: 18px; padding: clamp(22px,3vw,34px); box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: center; text-align: center; }
+  .ro-lab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--brass); font-size: clamp(12px,1.4vw,14px); line-height: 1; }
+  .ro-dollar { font-family: var(--ui-semi); font-size: clamp(46px,8vw,90px); color: var(--navy); line-height: 1; letter-spacing: -2px; margin: 8px 0 4px; }
+  .ro-dollar b { font-weight: 700; }
+  .ro-sub { font-size: clamp(14px,1.7vw,19px); color: var(--ink); font-weight: 600; }
+  .ro-sub b { color: var(--brass); }
+  .ro-peruser { margin-top: 8px; font-size: clamp(13px,1.5vw,16px); color: var(--inklite); font-weight: 600; }
+  .est-disc { font-size: 11px; color: var(--inklite); line-height: 1.4; margin-top: 16px; border-top: 1px dashed var(--hair); padding-top: 12px; }
+</style>
+
+<script>
+  function initEst() {
+    document.querySelectorAll<HTMLElement>('.est-scene').forEach((scene) => {
+      if ((scene as any)._estInit) return;
+      (scene as any)._estInit = true;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const cfg = JSON.parse(scene.dataset.cfg || '{}');
+      const state = { users: cfg.users.default, prompts: cfg.prompts.default, prof: 0 };
+
+      const out = (k: string) => scene.querySelector<HTMLElement>(`[data-out="${k}"]`);
+      const val = (k: string) => scene.querySelector<HTMLElement>(`[data-val="${k}"]`);
+
+      function animNum(el: HTMLElement | null, to: number, decimals = 0) {
+        if (!el) return;
+        if (reduce) { el.textContent = to.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }); return; }
+        const from = parseFloat(el.dataset.v || '0'), t0 = performance.now(), dur = 420;
+        const tick = (now: number) => {
+          const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = from + (to - from) * e;
+          el.textContent = v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+          if (p < 1) requestAnimationFrame(tick); else { el.dataset.v = String(to); el.textContent = to.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }); }
+        };
+        requestAnimationFrame(tick);
+      }
+
+      function render() {
+        const cpp = cfg.profiles[state.prof].creditsPerPrompt;
+        const credits = state.users * state.prompts * cpp;
+        const dollars = credits * 0.01;
+        const peruser = state.prompts * cpp * 0.01;
+        if (val('users')) val('users')!.textContent = state.users.toLocaleString();
+        if (val('prompts')) val('prompts')!.textContent = String(state.prompts);
+        animNum(out('credits'), credits, 0);
+        animNum(out('dollars'), Math.round(dollars), 0);
+        animNum(out('peruser'), peruser, 2);
+      }
+
+      scene.querySelectorAll<HTMLInputElement>('input[type="range"]').forEach((r) => {
+        r.addEventListener('input', () => {
+          (state as any)[r.dataset.range!] = +r.value;
+          if (r.dataset.range === 'users') scene.querySelectorAll('[data-eppreset]').forEach((x) => x.classList.remove('on'));
+          render();
+        });
+      });
+      scene.querySelectorAll<HTMLButtonElement>('[data-prof]').forEach((b) => {
+        b.addEventListener('click', () => {
+          scene.querySelectorAll('[data-prof]').forEach((x) => x.classList.remove('on'));
+          b.classList.add('on');
+          state.prof = +b.dataset.prof!;
+          render();
+        });
+      });
+      // size presets — set the users slider + readout
+      scene.querySelectorAll<HTMLButtonElement>('[data-eppreset]').forEach((b) => {
+        b.addEventListener('click', () => {
+          const u = +b.dataset.epusers!;
+          state.users = u;
+          const slider = scene.querySelector<HTMLInputElement>('input[data-range="users"]');
+          if (slider) slider.value = String(u);
+          scene.querySelectorAll('[data-eppreset]').forEach((x) => x.classList.remove('on'));
+          b.classList.add('on');
+          render();
+        });
+      });
+      render();
+    });
+  }
+  initEst();
+  document.addEventListener('astro:page-load', initEst);
+</script>

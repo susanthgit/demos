@@ -1,0 +1,244 @@
+---
+topic: cowork
+title: "Meet Cowork"
+blurb: "What Cowork is and why — the product story, built up slowly. From answers to action."
+order: 1
+durationMin: 9
+modality: explainer
+note: "start here — what & why"
+personas: [exec, end-user, technical, security]
+visibility: noindex
+presenterChecklist:
+  - "Go slow — one idea per scene. Let the big lines land; don't read them out"
+  - "Hero (How it works): hit 'Delegate it' and let the run play — sources in, steps tick, pack out"
+  - "See it work: walk the chat top-to-bottom; stop on the approval checkpoint — that's the trust moment"
+  - "Where it fits: land on 'Coordinate — you are here' — Cowork is the rung where ROI compounds"
+  - "Close on Delegate / Stay in control / Governed, then bridge to the cost demo"
+ledger:
+  claims:
+    - "Cowork is an agentic system that plans, executes, and delivers multi-step work across Microsoft 365"
+    - "You delegate an outcome; Cowork plans, reasons across tools and files, and produces finished deliverables"
+    - "Cowork runs in a protected, sandboxed cloud environment; tasks keep running across devices, even with the laptop off"
+    - "It is grounded in Work IQ — the user's emails, meetings, files, people and organizational context"
+    - "Human checkpoints: it previews actions and can be guided, paused or stopped"
+    - "It operates within Microsoft 365 security, identity, compliance and governance boundaries"
+    - "Multi-model design picks the right model per task (Opus 4.8, Sonnet 4.6, GPT-5.5; Cowork 1 coming)"
+    - "Generally available 16 June 2026; requires a Microsoft 365 Copilot seat; usage billed in Copilot Credits"
+    - "More than half of the Fortune 500 used Cowork during the Frontier preview"
+  sources:
+    - "https://www.microsoft.com/en-us/microsoft-365/blog/2026/06/16/copilot-cowork-is-now-generally-available/"
+    - "https://www.microsoft.com/en-us/microsoft-365/blog/2026/03/09/copilot-cowork-a-new-way-of-getting-work-done/"
+    - "https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/"
+    - "https://learn.microsoft.com/en-us/microsoft-365/copilot/cowork/get-started"
+    - "https://www.aguidetocloud.com/blog/microsoft-copilot-cowork-complete-guide/"
+  lastVerified: "2026-06-27"
+  staleAfter: "2026-09-27"
+  classification: public
+scenes:
+  # ---------- open ----------
+  - type: cover
+    eyebrow: "Microsoft 365 · Cowork"
+    kicker: "from answers to action"
+    headline: "Meet *Cowork* — Copilot that does the _work_."
+    lead: "Not another chatbot. You delegate a real, multi-step job — and Cowork plans it, runs it across your tools, and hands back finished work. Let's build up what it is, slowly."
+    why:
+      label: "why it matters"
+      body: "Two years of Copilot gave you *answers*. Cowork is the step that turns intent into *action* — the work your team usually loses a day to, done in one session."
+    signature: "— let's meet it."
+    notes: "Set the frame: this demo EXPLAINS what Cowork is and why, slowly. One promise: by the end, anyone in the room can say what Cowork is in a sentence. Companion demo covers the cost."
+
+  # ---------- the shift ----------
+  - type: statement
+    eyebrow: "01 · the shift"
+    title: "From assistant to doer"
+    kicker: "what changed"
+    text: "Copilot used to *answer*. Now it does the _work_."
+    sub: "Same Copilot you know — with a new gear. Like going from a vending machine to a teammate you can hand a job to."
+    notes: "Slide 1. The whole story sits on this shift: chat helps you take an action yourself; Cowork takes the action for you. Let it land. Don't rush."
+
+  # ---------- what is it (3 pillars) ----------
+  - type: differentiators
+    eyebrow: "02 · what it is"
+    kicker: "in one line"
+    headline: "An agentic system that *plans, executes & delivers* real work."
+    points:
+      - { title: "Delegate complex work", icon: cloud, color: "#2f6fb0", body: "Hand off a long-running, multi-step job. Add guidance any time; it keeps working while you're away — with checkpoints that keep you in control.", example: "Kick off a board-pack build, close your laptop — it keeps going in the cloud and checks in when it needs you." }
+      - { title: "Built for real work", icon: iq, color: "#2f8f4e", body: "Grounded in your work context, powered by the right model for the task, connected to the apps and systems you use every day.", example: "It already knows the people, files and history behind the task — no re-explaining." }
+      - { title: "Work with confidence", icon: shield, color: "#5b6b7c", body: "Secure, compliant and observable by design — applied to every task, every time. Built for cost control.", example: "Every action is observable and runs inside your existing security and compliance." }
+    callout: "it hands back a *decision pack* — not just an answer."
+    notes: "Slide 2. The crispest 'what is it': three pillars from Microsoft's own framing — delegate / built for real work / confidence. The red line is the crystalliser: a decision pack, not just an answer. That's the difference from chat."
+
+  # ---------- the hero: how it works ----------
+  - type: agentLoop
+    eyebrow: "03 · how it works"
+    kicker: "delegate → done"
+    headline: "Point it at the *mess*. Get back a _decision pack_."
+    inbox:
+      label: "messy sources in"
+      items: ["Meeting notes", "PDFs", "Excel models", "Teams threads", "Emails", "Images"]
+    steps:
+      - { label: "Plans", desc: "Breaks your request into steps you can inspect." }
+      - { label: "Reconciles", desc: "Lines up conflicting numbers and dates across sources; calls out assumptions." }
+      - { label: "Executes", desc: "Works across your apps to build the deliverables — every claim cited to its source." }
+    outbox:
+      label: "a decision pack out"
+      items: ["Memo", "Excel model", "Deck", "Dashboard", "Emails"]
+    moves:
+      - { tag: "Bring the folder", text: "Point Cowork at where the work already lives." }
+      - { tag: "Set the guardrails", text: "“Recommend X or Y.” “Cap at Z.” Your rules, out loud." }
+      - { tag: "Take the pack", text: "Review, edit, then send. Every claim links to its source." }
+    boundary: "…all inside your Microsoft 365 tenant."
+    runLabel: "Delegate it"
+    analogy: "like handing a project to a capable colleague — you set the outcome, they run it, they check in."
+    disclaimer: "Illustrative — your sources, steps and deliverables will differ."
+    notes: "Slides 3, our hero. Hit 'Delegate it' and let the run play: source files arrive, the three steps tick (plan → reconcile → execute), then the deliverables pop out. The three moves below are the human's whole job. The boundary line keeps it in-tenant. Replay it for a second room."
+
+  # ---------- see it work ----------
+  - type: coworkChat
+    eyebrow: "04 · see it work"
+    kicker: "a real task"
+    headline: "Watch *one task* run."
+    appName: "Microsoft 365 Copilot"
+    thread:
+      - who: user
+        text: "Prep the Adatum QBR — pull our emails, the account notes and last quarter's numbers, then draft a brief, a deck and a follow-up email."
+      - who: agent
+        text: "On it. Here's my plan —"
+        steps:
+          - "Gather the emails, notes & Q3 workbook"
+          - "Reconcile the numbers across sources"
+          - "Draft the brief, deck & follow-up email"
+      - who: agent
+        text: "Done — here's the pack:"
+        chips: ["Briefing doc", "Client deck", "Q3 summary · Excel", "Follow-up email"]
+        checkpoint:
+          label: "Ready to send the follow-up to the team?"
+          sub: "Nothing leaves without your OK."
+    note: "Illustrative recreation of the Cowork experience — not a screenshot. “Adatum” is a standard fictional demo name."
+    notes: "The trust-builder. Walk it top to bottom: a real request, a visible plan, finished deliverables, then it STOPS at the checkpoint and waits for you. That pause is the whole 'you're in control' story, shown not told."
+
+  # ---------- how it's wired ----------
+  - type: architecture
+    eyebrow: "05 · how it's wired"
+    kicker: "under the hood"
+    headline: "One engine, *grounded* in your work."
+    lead: "Drawn out: a runtime that plans and routes, a sealed sandbox per task, the right model per job — all reading and writing your Microsoft 365."
+    ui: { label: "Copilot Cowork", sub: "Tasks · Actions · Files" }
+    runtime:
+      label: "Cowork agent runtime"
+      items: ["Orchestration", "Skill & tool routing", "Task planning", "Context management"]
+    sandbox:
+      label: "Secure execution sandbox"
+      items: ["Isolated container per task", "Zero-trust execution"]
+    security: "Microsoft Entra ID · Purview DLP & compliance"
+    models:
+      label: "best model per task"
+      items: ["Opus 4.8", "Sonnet 4.6", "GPT-5.5", "Cowork 1 · soon"]
+    context:
+      label: "Work IQ"
+      items: ["People & org intelligence", "Org graph · context"]
+    services: ["Outlook", "Teams", "SharePoint", "OneDrive", "Fabric", "Dynamics 365"]
+    plugins: ["Federated connectors · MCP", "Partner plugins", "Custom skills"]
+    boundary: "inside your Microsoft 365 tenant"
+    analogy: "like a workshop inside your own building — its own tools and a sealed bench, but it works on your files, in your house."
+    notes: "Slide 5, for the technical room. The left stack is the engine (UI → runtime → sealed sandbox), powered by a choice of models. The right side is grounding (Work IQ) plus your apps and plugins. The dashed box is the point: it all runs inside the customer's tenant. Skip or skim for an exec audience."
+
+  # ---------- you're in control ----------
+  - type: concept
+    eyebrow: "06 · you're in control"
+    kicker: "you hold the wheel"
+    headline: "It drives. You can grab the *wheel* anytime."
+    body: "Cowork plans against your guardrails *out loud* before it acts. It previews anything before it sends, posts or creates — and you can steer, pause or stop at any point. Sensitive steps are flagged."
+    tip: "like a *driver's seat* — it does the driving, you can take over instantly."
+    terminal:
+      prompt: "Cowork → send the follow-up email to the team?"
+      reply: "paused — waiting for your OK"
+    notes: "Slide 6. The control story, made concrete: it pauses before anything leaves the building. Security and risk-averse rooms relax here — nothing happens without a human OK, and every step is auditable."
+
+  # ---------- grounded in Work IQ ----------
+  - type: statement
+    eyebrow: "07 · the secret ingredient"
+    title: "Grounded in Work IQ"
+    kicker: "why its work fits"
+    text: "It already knows *your* work."
+    sub: "Emails, meetings, files, people, history — context a generic chatbot never has. Like a teammate who's been here for years, not a temp on day one."
+    notes: "Slide 7. Why Cowork's output actually fits your world: Work IQ grounds it in your real context, so you don't re-explain who's who and what's what. This is the moat — a generic model can't see your org."
+
+  # ---------- skills + plugins ----------
+  - type: skillsGrid
+    eyebrow: "08 · what it can touch"
+    kicker: "out of the box, and beyond"
+    headline: "A *toolbelt* that snaps onto your stack."
+    lead: "Built-in skills for everyday work, plugins into the systems your team runs on, and room for your own."
+    groups:
+      - { label: "Built-in skills", icon: builtin, color: "#2f6fb0", chips: ["Word", "Excel", "PowerPoint", "PDF", "Email", "Calendar", "Meetings", "Daily briefing", "Enterprise search", "Research"] }
+      - { label: "Plugins & connectors", icon: plug, color: "#7c4dd6", chips: ["Dynamics 365", "Microsoft Fabric", "Partner connectors", "Federated · MCP"] }
+      - { label: "Your own", icon: custom, color: "#c08a2e", chips: ["Custom skills", "Org-deployed skills"] }
+    note: "Some plugins and capabilities arrive on a rolling basis — always check what's enabled in your tenant."
+    analogy: "like a toolbelt — the everyday tools built in, plus ones you snap on."
+    notes: "Slide 8. Breadth without bloat: it can already do the everyday Office work, reach into your line-of-business systems through plugins, and run skills your org writes. Name the two or three plugins that matter to THIS customer."
+
+  # ---------- enterprise-ready ----------
+  - type: differentiators
+    eyebrow: "09 · why Cowork"
+    kicker: "enterprise-ready by design"
+    headline: "Built to run where your work *already lives*."
+    points:
+      - { title: "Cloud-native", icon: cloud, color: "#2f6fb0", body: "Runs in the cloud — nothing to install or manage. Tasks keep going across devices, even with your laptop shut. No VMs or containers to stand up.", example: "Point it at a SharePoint or OneDrive folder — nothing to migrate, the files stay where they are." }
+      - { title: "Governed & observable", icon: shield, color: "#5b6b7c", body: "Runs inside your Microsoft 365 boundary — identity, permissions, DLP, Purview and sensitivity labels apply as-is. Every action is auditable.", example: "Stays in your tenant; your data isn't used to train foundation models." }
+      - { title: "Multi-model", icon: models, color: "#7c4dd6", body: "Picks the right model for each task — quality, cost and speed. Better, cheaper models arrive automatically.", pills: ["Opus 4.8", "Sonnet 4.6", "GPT-5.5", "Cowork 1 · soon"], example: "Nothing changes on your end as the model frontier moves." }
+    callout: "judge it on the *work it does* and the *trust it keeps* — not a unit price."
+    note: "Cloud-native, governed and multi-model are the enterprise-ready trio. Work IQ and cost each get their own scene — keep this one about fit and trust."
+    notes: "Slide 9. The 'why us, why now' for IT and security. Cloud-native = nothing to deploy. Governed = your existing controls apply, no new posture. Multi-model = never locked to one vendor's roadmap. The red line reframes the buying lens away from unit price."
+
+  # ---------- where it fits ----------
+  - type: valueCurve
+    eyebrow: "10 · where it fits"
+    kicker: "the leap that compounds"
+    headline: "From personal help to *team-grade* work."
+    lead: "Each rung unlocks bigger outcomes for a bit more setup. Cowork is the step from helping one person to running a whole workflow."
+    xLabel: "effort to deploy →"
+    yLabel: "business impact →"
+    stages:
+      - { name: "Assist", sub: "Copilot Chat", roi: "personal time saved" }
+      - { name: "Advise", sub: "Researcher & Analyst", roi: "smarter decisions" }
+      - { name: "Coordinate", sub: "Copilot _Cowork_", roi: "a team workflow, done", here: true }
+      - { name: "Operate", sub: "Custom agents", roi: "always-on processes" }
+    footer: "Cowork is the rung where ROI *starts compounding*."
+    analogy: "Chat = ask a colleague · Cowork = hand them a project · agents = a process that never logs off."
+    notes: "Slide 10. The positioning answer to 'where does this sit?' Chat assists, Researcher/Analyst advise, Cowork coordinates a whole workflow, custom agents operate continuously. Cowork is 'you are here' — the leap from personal time-savings to team-grade ROI."
+
+  # ---------- it's here ----------
+  - type: concept
+    eyebrow: "11 · it's here"
+    kicker: "ready for real work"
+    headline: "*Generally available* — and already at work."
+    stat:
+      value: "½"
+      label: "of the Fortune 500 used it in preview"
+    body: "Generally available since June 2026. It runs in your Microsoft 365 tenant and needs a Microsoft 365 Copilot seat — admins switch it on and set the guardrails."
+    tip: "usage is billed in *Copilot Credits* — the money story is its own demo."
+    notes: "Slide 11. Proof it's real and ready: GA in June 2026, more than half the Fortune 500 used it in preview, runs in your tenant on your existing Copilot seat. The red tip bridges to the cost demo."
+
+  # ---------- bridge ----------
+  - type: closing
+    eyebrow: "12 · where next"
+    kicker: "you've met it"
+    headline: "You've *met* Cowork. Next: what it _costs_."
+    lead: "You delegate the work, stay in control, and it runs where your data already lives. The natural next question is the bill."
+    pillars:
+      - { name: "Delegate", body: "Hand off the multi-step job — not another prompt." }
+      - { name: "Stay in control", body: "Plans out loud, previews before it acts, stops on your word." }
+      - { name: "Governed", body: "Runs inside your M365 tenant; every claim cited." }
+    crossLinks:
+      - { label: "What does Cowork cost? →", url: "/cowork/cost-and-control" }
+      - { label: "The complete Cowork guide →", url: "https://www.aguidetocloud.com/blog/microsoft-copilot-cowork-complete-guide/" }
+    notes: "Slide 12. The bridge: you understand what Cowork is and how you stay in control; the obvious next question is cost — hand them the cost demo. Close on the three words: delegate, control, governed."
+---
+
+Speaker reference: an original, public-safe retelling of Microsoft's public Copilot Cowork product
+story, in Microsoft's own build-up order (the shift from assistant to doer → what it is → how it works
+→ a real task → how it's wired → control → Work IQ grounding → skills & plugins → enterprise fit →
+where it fits → GA proof → bridge to cost). Figures and example tasks are illustrative; no internal-only
+content, no competitor comparison, no reproduced slides. This demo explains the product; the companion
+cost demo explains the bill.

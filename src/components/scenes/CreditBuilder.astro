@@ -1,0 +1,245 @@
+---
+// CreditBuilder — THE interactive hero. A task's credits built from 4 inputs
+// (Models/Context/Tools/Runtime); flip each Low/Mid/High and watch credits move.
+// "Real task" mode shows a prompt with fragments colour-mapped to each input.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const inputsJson = JSON.stringify(scene.inputs);
+const presetsJson = JSON.stringify(scene.presets || []);
+---
+<section class="screen cb-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id} data-inputs={inputsJson} data-presets={presetsJson}>
+  <div class="wrap">
+    <div class="s-head">
+    <div class="cbhead">
+      <div>
+        {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+        {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+        <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      </div>
+    </div>
+    </div>
+
+    <div class="s-body">
+    <!-- BUILD mode -->
+    <div data-panel="build">
+      {scene.presets && scene.presets.length > 0 && (
+        <div class="presets">
+          <span class="pre-lab">start from a real task →</span>
+          {scene.presets.map((p: any, i: number) => (
+            <button class="pre-btn" data-preset={i}>{p.label}</button>
+          ))}
+        </div>
+      )}
+      <div class="cb-seclab"><span class="cb-num">1</span> Build a task — flip the dials</div>
+      <div class="cbgrid">
+      <div class="inputs">
+        {scene.inputs.map((inp: any) => (
+          <div class="inrow" style={`--c:${inp.color}`} data-input={inp.id}>
+            <div class="inhead">
+              <span class="indot"></span>
+              <div>
+                <div class="inlabel">{inp.label}</div>
+                <div class="indesc">{inp.desc}</div>
+              </div>
+            </div>
+            <div class="seg" role="group" aria-label={inp.label}>
+              <button data-lv="0">Low</button>
+              <button class="on" data-lv="1">Mid</button>
+              <button data-lv="2">High</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="readout">
+        <div class="rlab">this one task ≈</div>
+        <div class="rcredits"><b data-credits>0</b><span>Copilot Credits</span></div>
+        <div class="rdollars" data-dollars>≈ $0.00</div>
+        <div class="stackbar" data-stack></div>
+        <div class="rsize" data-size>—</div>
+        {scene.analogyNote && <div class="cb-analogy">{scene.analogyNote}</div>}
+        <div class="cbdisc">{scene.disclaimer}</div>
+      </div>
+      </div>
+    </div>
+
+    <!-- REAL TASK -->
+    {scene.task && (
+      <div class="realstrip">
+        <div class="cb-seclab"><span class="cb-num">2</span> See it in a real task — same four, real words</div>
+        <p class="ptext">
+          {scene.task.intro}{' '}
+          {scene.task.fragments.map((f: any) => (
+            f.input
+              ? <span class="frag" data-frag={f.input}>{f.text}</span>
+              : <span>{f.text}</span>
+          ))}
+        </p>
+        <div class="phint">tap a coloured phrase — it lights up the input it drives ↑</div>
+      </div>
+    )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cbhead { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+  .modes { display: inline-flex; background: var(--card); border: 1px solid var(--hair); border-radius: 999px; padding: 3px; gap: 2px; }
+  .modes button { border: 0; background: transparent; color: var(--inklite); font-family: var(--ui); font-weight: 700; font-size: 12.5px; padding: 8px 15px; border-radius: 999px; cursor: pointer; transition: all .18s; }
+  .modes button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
+
+  .cbgrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(20px,3vw,40px); margin-top: 14px; align-items: start; }
+  .cbgrid[hidden] { display: none; }   /* hidden attr must beat .cbgrid's display:grid */
+  @media (max-width: 860px) { .cbgrid { grid-template-columns: 1fr; } }
+
+  .presets { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .pre-lab { font-family: var(--ui); font-weight: 700; font-style: italic; color: var(--inklite); font-size: clamp(12px,1.3vw,14px); margin-right: 2px; }
+  .pre-btn { border: 1px solid var(--hair); background: var(--card); color: var(--ink); font-family: var(--ui); font-weight: 700; font-size: 12.5px; padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all .15s; box-shadow: 0 6px 16px -12px rgba(0,0,0,.4); }
+  .pre-btn:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-1px); }
+  .pre-btn.on { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+
+  .inputs { display: flex; flex-direction: column; gap: 10px; }
+  .inrow { background: var(--card); border: 1px solid var(--hair); border-radius: 12px; padding: 13px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .inhead { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+  .indot { width: 12px; height: 12px; border-radius: 4px; background: var(--c); flex: none; margin-top: 3px; }
+  .inlabel { font-family: var(--ui-semi); font-size: 15.5px; color: var(--c); }
+  .indesc { font-size: 11.5px; color: var(--inklite); line-height: 1.35; margin-top: 2px; max-width: 38ch; }
+  .seg { display: inline-flex; background: var(--paper); border: 1px solid var(--hair); border-radius: 999px; padding: 3px; gap: 2px; flex: none; }
+  .seg button { border: 0; background: transparent; color: var(--inklite); font-family: var(--ui); font-weight: 700; font-size: 12px; padding: 6px 13px; border-radius: 999px; cursor: pointer; transition: all .15s; }
+  .seg button.on { background: var(--c); color: #fff; }
+
+  .readout { background: var(--card); border: 1.5px solid var(--hair); border-top: 5px solid var(--brass); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .rlab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--brass); font-size: 12px; line-height: 1; }
+  .rcredits { display: flex; align-items: baseline; gap: 8px; margin: 6px 0 2px; }
+  .rcredits b { font-family: var(--ui-semi); font-size: clamp(36px,5vw,54px); color: var(--navy); line-height: 1; }
+  .rcredits span { font-size: 13px; color: var(--inklite); font-weight: 600; }
+  .rdollars { font-size: 15px; font-weight: 700; color: var(--brass); }
+  .stackbar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; margin: 14px 0 10px; background: var(--navy-soft); }
+  .stackbar i { height: 100%; transition: width .5s cubic-bezier(.2,.7,.2,1); }
+  @media (prefers-reduced-motion: reduce) { .stackbar i { transition: none; } }
+  .rsize { font-family: var(--ui-semi); font-size: 14px; color: var(--ink); }
+  .rsize b { color: var(--brass); }
+  .cb-analogy { margin-top: 12px; font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(15px,1.7vw,19px); line-height: 1.25; }
+  .cbdisc { font-size: 11px; color: var(--inklite); line-height: 1.4; margin-top: 14px; border-top: 1px dashed var(--hair); padding-top: 10px; }
+
+  /* section labels (1 build · 2 real) */
+  .cb-seclab { display: flex; align-items: center; gap: 10px; font-family: var(--ui-semi); font-size: clamp(14px,1.6vw,17px); color: var(--ink); margin: 16px 0 10px; }
+  .cb-num { width: 24px; height: 24px; border-radius: 50%; background: var(--navy); color: var(--paper); display: grid; place-items: center; font-size: 13px; font-weight: 800; flex: none; }
+
+  /* real task strip (always shown, below the build grid) */
+  .realstrip { background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--brass); border-radius: 14px; padding: 16px 22px; box-shadow: var(--shadow); }
+  .realstrip .cb-seclab { margin-top: 0; }
+  .ptext { font-size: clamp(15px,1.7vw,19px); line-height: 1.7; color: var(--ink); }
+  .frag { border-radius: 5px; padding: 1px 5px; cursor: pointer; background: color-mix(in srgb, var(--fc) 16%, transparent); box-shadow: inset 0 -2px 0 var(--fc); transition: background .15s; }
+  .frag:hover, .frag.lit { background: color-mix(in srgb, var(--fc) 34%, transparent); }
+  .frag[data-frag="models"] { --fc: #7c4dd6; } .frag[data-frag="context"] { --fc: #2f8f4e; }
+  .frag[data-frag="tools"] { --fc: #c0398f; } .frag[data-frag="runtime"] { --fc: #c08a2e; }
+  .phint { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(15px,1.7vw,18px); margin-top: 12px; }
+  .inrow.lit { box-shadow: 0 0 0 2px var(--c), var(--shadow); transform: translateY(-1px); }
+</style>
+
+<script>
+  function initCB() {
+    document.querySelectorAll<HTMLElement>('.cb-scene').forEach((scene) => {
+      if ((scene as any)._cbInit) return;
+      (scene as any)._cbInit = true;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const inputs: any[] = JSON.parse(scene.dataset.inputs || '[]');
+      const level: Record<string, number> = {};
+      inputs.forEach((i) => (level[i.id] = 1));
+
+      const creditsEl = scene.querySelector<HTMLElement>('[data-credits]');
+      const dollarsEl = scene.querySelector<HTMLElement>('[data-dollars]');
+      const stack = scene.querySelector<HTMLElement>('[data-stack]');
+      const sizeEl = scene.querySelector<HTMLElement>('[data-size]');
+
+      function total() { return inputs.reduce((s, i) => s + i.levels[level[i.id]], 0); }
+      function maxTotal() { return inputs.reduce((s, i) => s + i.levels[2], 0); }
+
+      function animNum(el: HTMLElement | null, to: number) {
+        if (!el) return;
+        if (reduce) { el.textContent = String(Math.round(to)); return; }
+        const from = parseFloat(el.dataset.v || '0'), t0 = performance.now(), dur = 420;
+        const tick = (now: number) => {
+          const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = from + (to - from) * e;
+          el.textContent = Math.round(v).toLocaleString();
+          if (p < 1) requestAnimationFrame(tick); else el.dataset.v = String(to);
+        };
+        requestAnimationFrame(tick);
+      }
+
+      function render() {
+        const t = total();
+        animNum(creditsEl, t);
+        if (dollarsEl) dollarsEl.textContent = '≈ $' + (t * 0.01).toFixed(2);
+        if (stack) {
+          const mx = maxTotal();
+          stack.innerHTML = '';
+          inputs.forEach((i) => {
+            const seg = document.createElement('i');
+            seg.style.width = (i.levels[level[i.id]] / mx * 100) + '%';
+            seg.style.background = i.color;
+            stack!.appendChild(seg);
+          });
+        }
+        if (sizeEl) {
+          const label = t < 300 ? 'Light' : t < 700 ? 'Medium' : 'Heavy';
+          sizeEl.innerHTML = `feels like a <b>${label}</b> task`;
+        }
+      }
+
+      scene.querySelectorAll<HTMLElement>('.inrow').forEach((row) => {
+        const id = row.dataset.input!;
+        row.querySelectorAll<HTMLButtonElement>('.seg button').forEach((b) => {
+          b.addEventListener('click', () => {
+            row.querySelectorAll('.seg button').forEach((x) => x.classList.remove('on'));
+            b.classList.add('on');
+            level[id] = +b.dataset.lv!;
+            scene.querySelectorAll('[data-preset]').forEach((x) => x.classList.remove('on'));
+            render();
+          });
+        });
+      });
+
+      // use-case presets — set all four toggles at once
+      const presets: any[] = JSON.parse(scene.dataset.presets || '[]');
+      const setSeg = (id: string, lv: number) => {
+        const row = scene.querySelector(`.inrow[data-input="${id}"]`);
+        if (row) row.querySelectorAll<HTMLButtonElement>('.seg button').forEach((x) => x.classList.toggle('on', +x.dataset.lv! === lv));
+      };
+      scene.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) => {
+        b.addEventListener('click', () => {
+          const p = presets[+b.dataset.preset!];
+          if (!p) return;
+          inputs.forEach((inp, k) => { level[inp.id] = p.levels[k]; setSeg(inp.id, p.levels[k]); });
+          scene.querySelectorAll('[data-preset]').forEach((x) => x.classList.remove('on'));
+          b.classList.add('on');
+          render();
+        });
+      });
+
+      // (mode toggle removed — both Build and the real task are shown together now)
+
+      // real-task fragment ↔ light up the matching input row above
+      scene.querySelectorAll<HTMLElement>('.frag').forEach((fr) => {
+        const id = fr.dataset.frag!;
+        const lit = (on: boolean) => {
+          scene.querySelectorAll(`.frag[data-frag="${id}"]`).forEach((x) => x.classList.toggle('lit', on));
+          const row = scene.querySelector(`.inrow[data-input="${id}"]`);
+          if (row) row.classList.toggle('lit', on);
+        };
+        fr.addEventListener('click', () => lit(!fr.classList.contains('lit')));
+        fr.addEventListener('mouseenter', () => lit(true));
+        fr.addEventListener('mouseleave', () => { if (!fr.classList.contains('lit')) lit(false); });
+      });
+
+      render();
+    });
+  }
+  initCB();
+  document.addEventListener('astro:page-load', initCB);
+</script>

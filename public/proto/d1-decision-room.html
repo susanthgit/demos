@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cowork — Decision Room (direction A)</title>
+<style>
+  :root{
+    --bg:#f1eee7; --surface:#ffffff; --surface-2:#faf8f3;
+    --ink:#1c2230; --muted:#69707e; --faint:#9aa0ac; --line:#e7e3d8;
+    --navy:#2a3f63; --indigo:#4b53c7; --indigo-soft:#eceaff;
+    --amber:#c2892b; --amber-soft:#f6edda; --green:#2f8f5e; --green-soft:#e4f3ea;
+    --rail:#171c28; --rail-2:#1f2636; --rail-ink:#eef0f4; --rail-muted:#9aa3b6;
+    --shadow:0 18px 40px -22px rgba(20,24,38,.45);
+    --shadow-lg:0 30px 70px -30px rgba(20,24,38,.55);
+    --ui:"Segoe UI",system-ui,-apple-system,sans-serif;
+    --semi:"Segoe UI Semibold","Segoe UI",system-ui,sans-serif;
+    --mono:"Cascadia Code","Consolas",monospace;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--ui);color:var(--ink);background:var(--bg);overflow:hidden}
+
+  .app{position:fixed;inset:0;display:grid;grid-template-columns:1fr 380px}
+  @media(max-width:980px){.app{grid-template-columns:1fr}}
+
+  /* ============ STAGE (the living decision room) ============ */
+  .stage{position:relative;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 18% 0%, #fbfaf6 0%, var(--bg) 55%),
+      var(--bg);}
+  .stage::before{content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(42,63,99,.05) 1px,transparent 1px);
+    background-size:30px 30px;opacity:.6;mask-image:linear-gradient(180deg,#000,transparent 80%)}
+
+  .ask{position:absolute;left:clamp(24px,4vw,56px);top:clamp(22px,4vh,40px);right:clamp(24px,4vw,56px);z-index:6;
+    display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(-8px);transition:.5s var(--ease)}
+  .app[data-beat]:not([data-beat="-1"]) .ask{opacity:1;transform:none}
+  .ask .who{width:30px;height:30px;border-radius:9px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:var(--semi);font-weight:800;font-size:13px;flex:none}
+  .ask .bubble{background:var(--surface);border:1px solid var(--line);border-radius:13px;border-top-left-radius:4px;padding:11px 16px;box-shadow:var(--shadow);font-size:clamp(14px,1.5vw,17px);font-weight:600;color:var(--ink)}
+  .ask .bubble b{color:var(--indigo)}
+
+  .zones{position:absolute;inset:clamp(78px,12vh,108px) clamp(24px,4vw,56px) clamp(96px,14vh,120px);
+    display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:clamp(10px,1.6vw,22px);align-items:stretch}
+  .zone{position:relative;display:flex;flex-direction:column;min-height:0}
+  .zlab{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:1.6px;font-size:11px;color:var(--faint);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .zlab .dot{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+  .zone.inputs .zlab .dot{background:var(--amber)} .zone.cowork .zlab .dot{background:var(--indigo)} .zone.outputs .zlab .dot{background:var(--green)}
+
+  /* artifact cards (real business nouns, no paragraphs) */
+  .stack{display:flex;flex-direction:column;gap:9px;position:relative}
+  .art{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 13px;box-shadow:var(--shadow);transition:.55s var(--ease)}
+  .art .ic{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
+  .art .ic svg{width:17px;height:17px}
+  .art .t{font-family:var(--semi);font-weight:600;font-size:13.5px;color:var(--ink);line-height:1.15}
+  .art .t small{display:block;font-family:var(--ui);font-weight:600;color:var(--faint);font-size:11px;margin-top:1px}
+  /* messy inputs: slight rotation + offset */
+  .inputs .art:nth-child(odd){transform:rotate(-1.1deg)} .inputs .art:nth-child(even){transform:rotate(.9deg) translateX(6px)}
+  .inputs .art{opacity:0;animation:none}
+  .app[data-beat] .inputs .art{opacity:1;transition:opacity .5s var(--ease),transform .55s var(--ease);transition-delay:calc(var(--i)*60ms)}
+  .app.dim-inputs .inputs .art{opacity:.4;transform:none;filter:saturate(.7)}
+  .inputs .art.fed{border-color:var(--amber);box-shadow:0 0 0 2px var(--amber-soft),var(--shadow)}
+
+  /* COWORK core + plan */
+  .cowork{align-items:stretch}
+  .core{align-self:center;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 16px 8px 9px;box-shadow:var(--shadow);margin-bottom:14px}
+  .core .orb{width:30px;height:30px;border-radius:50%;flex:none;position:relative;
+    background:radial-gradient(circle at 35% 30%,#7b83ee,var(--indigo) 70%);box-shadow:0 0 0 0 var(--indigo-soft)}
+  .core.live .orb{animation:pulse 2.4s var(--ease) infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(75,83,199,.35)}70%{box-shadow:0 0 0 14px rgba(75,83,199,0)}100%{box-shadow:0 0 0 0 rgba(75,83,199,0)}}
+  .core b{font-family:var(--semi);font-weight:800;font-size:14px;color:var(--ink)}
+  .core .st{font-size:11px;color:var(--muted);font-weight:600;margin-left:2px}
+
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:13px 15px;flex:1;min-height:0;display:flex;flex-direction:column;gap:9px;opacity:0;transform:translateY(10px);transition:.5s var(--ease)}
+  .app[data-beat="1"] .plan,.app[data-beat="2"] .plan,.app[data-beat="3"] .plan,.app[data-beat="4"] .plan{opacity:1;transform:none}
+  .plan .ptitle{font-family:var(--semi);font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--faint)}
+  .pstep{display:flex;align-items:flex-start;gap:10px;opacity:.45;transition:opacity .45s var(--ease)}
+  .pstep .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:transparent;font-size:12px;font-weight:800;transition:.4s var(--ease)}
+  .pstep .pt{font-size:13px;font-weight:600;color:var(--ink);line-height:1.25}
+  .pstep.show{opacity:.9}
+  .pstep.done{opacity:1}
+  .pstep.done .box{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .app[data-beat="1"] .pstep{opacity:.9;animation:rise .5s var(--ease) both;animation-delay:calc(var(--i)*120ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:.9;transform:none}}
+
+  /* OUTPUTS (decision pack) */
+  .outputs .stack .art{opacity:0;transform:translateY(12px) scale(.96)}
+  .app.built .outputs .stack .art{opacity:1;transform:none;transition:.5s var(--ease);transition-delay:calc(var(--i)*90ms)}
+  .outputs .art{border-left:4px solid var(--green)}
+  .pack-seal{margin-top:11px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--green-soft);color:var(--green);border:1px solid color-mix(in srgb,var(--green) 30%,transparent);border-radius:999px;padding:6px 14px;font-family:var(--semi);font-weight:800;font-size:12.5px;opacity:0;transform:translateY(6px);transition:.5s var(--ease)}
+  .app[data-beat="3"] .pack-seal,.app[data-beat="4"] .pack-seal{opacity:1;transform:none}
+
+  /* APPROVAL gate (bottom, human checkpoint) */
+  .approval{position:absolute;left:clamp(24px,4vw,56px);right:clamp(24px,4vw,56px);bottom:clamp(24px,4vh,36px);z-index:7;
+    display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--amber);
+    border-radius:14px;padding:13px 18px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(20px);pointer-events:none;transition:.55s var(--ease)}
+  .app[data-beat="4"] .approval{opacity:1;transform:none;pointer-events:auto}
+  .approval .pause{width:34px;height:34px;border-radius:9px;background:var(--amber-soft);color:var(--amber);display:grid;place-items:center;font-size:16px;flex:none}
+  .approval .q{flex:1}
+  .approval .q b{font-family:var(--semi);font-weight:800;font-size:15px;color:var(--ink);display:block}
+  .approval .q span{font-size:12.5px;color:var(--muted)}
+  .approval .btns{display:flex;gap:9px}
+  .approval button{font-family:var(--semi);font-weight:700;font-size:13.5px;border-radius:10px;padding:10px 16px;cursor:pointer;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);transition:.18s}
+  .approval button.ok{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .approval button.ok:hover{filter:brightness(1.1)}
+  .app.approved .approval{border-left-color:var(--green)}
+  .app.approved .approval .pause{background:var(--green-soft);color:var(--green)}
+  .app.approved .approval .btns{display:none}
+  .approval .sent{display:none;align-items:center;gap:8px;color:var(--green);font-family:var(--semi);font-weight:800;font-size:14px}
+  .app.approved .approval .sent{display:flex}
+
+  /* pulse dots travelling input -> core */
+  .pulse{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--amber);z-index:5;pointer-events:none;
+    box-shadow:0 0 10px 2px rgba(194,137,43,.5);transition:transform 1s var(--ease),opacity 1s var(--ease)}
+
+  /* ============ NARRATION RAIL ============ */
+  .rail{position:relative;background:linear-gradient(180deg,var(--rail),var(--rail-2));color:var(--rail-ink);
+    padding:clamp(28px,4vh,44px) clamp(26px,2.4vw,40px);display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--semi);font-weight:700;font-size:14px;letter-spacing:.2px;color:#fff}
+  .brand .m{width:26px;height:26px;border-radius:7px;background:radial-gradient(circle at 35% 30%,#7b83ee,var(--indigo) 70%)}
+  .brand small{color:var(--rail-muted);font-weight:600;font-style:italic;margin-left:auto}
+
+  .rail-body{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .beatno{font-family:var(--mono);font-size:13px;letter-spacing:2px;color:var(--rail-muted)}
+  .beatno b{color:#fff}
+  .line{font-family:var(--semi);font-weight:800;font-size:clamp(26px,2.9vw,40px);line-height:1.08;letter-spacing:-.5px;margin:14px 0 16px;
+    transition:.45s var(--ease)}
+  .line em{font-style:normal;color:#aeb6ff}
+  .prompt{font-size:clamp(14px,1.5vw,17px);line-height:1.5;color:var(--rail-muted);max-width:30ch}
+  .prompt::before{content:"“"} .prompt::after{content:"”"}
+  .rail-body.swap .line,.rail-body.swap .prompt,.rail-body.swap .beatno{opacity:0;transform:translateY(8px)}
+  .rail-body .line,.rail-body .prompt,.rail-body .beatno{transition:opacity .35s var(--ease),transform .35s var(--ease)}
+
+  .act{margin-top:22px;align-self:flex-start;display:none;align-items:center;gap:9px;background:#fff;color:var(--rail);
+    border:0;border-radius:11px;padding:12px 20px;font-family:var(--semi);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 14px 30px -16px rgba(0,0,0,.6);transition:.18s}
+  .act:hover{transform:translateY(-1px)}
+  .act.show{display:inline-flex}
+
+  .rail-foot{display:flex;align-items:center;gap:14px;margin-top:26px}
+  .dots{display:flex;gap:7px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);transition:.25s;cursor:pointer}
+  .dots i.on{background:#fff;width:22px;border-radius:99px}
+  .hint{font-size:12px;color:var(--rail-muted);margin-left:auto}
+  .hint kbd{font-family:var(--mono);background:rgba(255,255,255,.1);border-radius:5px;padding:1px 7px;font-size:11px}
+
+  .note{position:absolute;left:clamp(24px,4vw,56px);bottom:6px;font-size:10.5px;color:var(--faint)}
+</style>
+</head>
+<body>
+<div class="app" data-beat="0">
+
+  <!-- ============ STAGE ============ -->
+  <div class="stage" id="stage">
+    <div class="ask">
+      <span class="who">SM</span>
+      <div class="bubble">“Prep me for tomorrow's <b>Contoso renewal</b> — pull everything and build the pack.”</div>
+    </div>
+
+    <div class="zones">
+      <!-- INPUTS -->
+      <section class="zone inputs">
+        <div class="zlab"><span class="dot"></span>the mess · your sources</div>
+        <div class="stack" id="inStack"></div>
+      </section>
+
+      <!-- COWORK -->
+      <section class="zone cowork">
+        <div class="core" id="core">
+          <span class="orb"></span><b>Cowork</b><span class="st" id="coreSt">ready</span>
+        </div>
+        <div class="plan">
+          <div class="ptitle">the plan · inspect before it runs</div>
+          <div id="planList"></div>
+        </div>
+      </section>
+
+      <!-- OUTPUTS -->
+      <section class="zone outputs">
+        <div class="zlab"><span class="dot"></span>the decision pack</div>
+        <div class="stack" id="outStack"></div>
+        <span class="pack-seal">✓ pack ready — a day's prep, one session</span>
+      </section>
+    </div>
+
+    <!-- APPROVAL -->
+    <div class="approval">
+      <span class="pause">⏸</span>
+      <div class="q"><b>Send the renewal brief &amp; follow-up to the Contoso team?</b><span>Nothing leaves without your OK — every claim traces to its source.</span></div>
+      <div class="btns"><button>Hold</button><button class="ok" id="approveBtn">Approve &amp; send</button></div>
+      <div class="sent">✓ sent · logged &amp; auditable</div>
+    </div>
+
+    <div class="note">Illustrative recreation — fictional “Contoso” data. Direction A · “Decision Room”.</div>
+  </div>
+
+  <!-- ============ RAIL ============ -->
+  <aside class="rail">
+    <div class="brand"><span class="m"></span> Cowork <small>the story</small></div>
+    <div class="rail-body" id="railBody">
+      <div class="beatno"><b>01</b> / 05</div>
+      <h1 class="line" id="line">One messy ask.</h1>
+      <p class="prompt" id="prompt">everything you'd chase before a renewal — in one place</p>
+      <button class="act" id="actBtn">▶ Delegate it</button>
+    </div>
+    <div class="rail-foot">
+      <div class="dots" id="dots"></div>
+      <span class="hint"><kbd>→</kbd> next</span>
+    </div>
+  </aside>
+</div>
+
+<script>
+const inputs = [
+  {t:"Renewal email", s:"Outlook thread", ic:"mail"},
+  {t:"Contoso account", s:"CRM · Dynamics", ic:"crm"},
+  {t:"Q3 usage & spend", s:"Excel", ic:"xls"},
+  {t:"Current contract", s:"PDF", ic:"pdf"},
+  {t:"Renewal room", s:"Teams thread", ic:"teams"},
+  {t:"Open tickets", s:"Support", ic:"ticket"},
+];
+const steps = [
+  "Gather the account context",
+  "Reconcile usage & spend",
+  "Draft the brief & exec deck",
+  "Flag risks & the renewal ask",
+  "Write the follow-up email",
+];
+const outputs = [
+  {t:"Account brief", s:"Word", ic:"doc"},
+  {t:"Renewal model", s:"Excel", ic:"xls"},
+  {t:"Exec deck", s:"PowerPoint", ic:"ppt"},
+  {t:"Risk dashboard", s:"Pages", ic:"dash"},
+  {t:"Follow-up email", s:"Outlook · draft", ic:"mail"},
+];
+const beats = [
+  {no:"01", line:"One messy ask.", prompt:"everything you'd chase before a renewal — in one place", act:null},
+  {no:"02", line:"It <em>plans</em> before it works.", prompt:"inspect every step before a single action runs", act:null},
+  {no:"03", line:"It works across your <em>apps</em>.", prompt:"grounded in your files — every claim traces to a source", act:"▶ Delegate it"},
+  {no:"04", line:"A decision <em>pack</em> — not an answer.", prompt:"memo, model, deck, dashboard, email — a day's prep in one session", act:null},
+  {no:"05", line:"It stops for <em>your</em> call.", prompt:"nothing leaves the building without your OK", act:"✓ Approve & send"},
+];
+
+const ICONS = {
+  mail:'<path d="M3 6h14v10H3z" fill="none" stroke="#2a3f63" stroke-width="1.6"/><path d="M3 6l7 5 7-5" fill="none" stroke="#2a3f63" stroke-width="1.6"/>',
+  crm:'<circle cx="10" cy="7" r="3" fill="none" stroke="#7c4dd6" stroke-width="1.6"/><path d="M4 16c0-3 3-4 6-4s6 1 6 4" fill="none" stroke="#7c4dd6" stroke-width="1.6"/>',
+  xls:'<rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="#2f8f5e" stroke-width="1.6"/><path d="M7 7l6 6M13 7l-6 6" stroke="#2f8f5e" stroke-width="1.6"/>',
+  pdf:'<path d="M5 3h7l4 4v10H5z" fill="none" stroke="#c0392b" stroke-width="1.6"/><path d="M12 3v4h4" fill="none" stroke="#c0392b" stroke-width="1.6"/>',
+  teams:'<rect x="3" y="5" width="14" height="10" rx="2" fill="none" stroke="#5b5fc7" stroke-width="1.6"/><circle cx="8" cy="10" r="1.4" fill="#5b5fc7"/><circle cx="12" cy="10" r="1.4" fill="#5b5fc7"/>',
+  ticket:'<rect x="3" y="6" width="14" height="8" rx="2" fill="none" stroke="#c2892b" stroke-width="1.6"/><path d="M7 6v8" stroke="#c2892b" stroke-width="1.6" stroke-dasharray="2 2"/>',
+  doc:'<path d="M5 3h7l4 4v10H5z" fill="none" stroke="#2a3f63" stroke-width="1.6"/><path d="M7 9h6M7 12h6" stroke="#2a3f63" stroke-width="1.6"/>',
+  ppt:'<rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="#c2892b" stroke-width="1.6"/><circle cx="10" cy="10" r="3" fill="none" stroke="#c2892b" stroke-width="1.6"/>',
+  dash:'<rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="#4b53c7" stroke-width="1.6"/><path d="M6 13v-3M10 13V7M14 13v-5" stroke="#4b53c7" stroke-width="1.6"/>',
+};
+function artHTML(a){return `<div class="art" style="--i:${a._i}"><span class="ic"><svg viewBox="0 0 20 20">${ICONS[a.ic]||''}</svg></span><span class="t">${a.t}<small>${a.s}</small></span></div>`}
+
+const app=document.querySelector('.app'), stage=document.getElementById('stage');
+const inStack=document.getElementById('inStack'), outStack=document.getElementById('outStack'), planList=document.getElementById('planList');
+inStack.innerHTML=inputs.map((a,i)=>artHTML({...a,_i:i})).join('');
+outStack.innerHTML=outputs.map((a,i)=>artHTML({...a,_i:i})).join('');
+planList.innerHTML=steps.map((s,i)=>`<div class="pstep" style="--i:${i}"><span class="box">✓</span><span class="pt">${s}</span></div>`).join('');
+
+const core=document.getElementById('core'), coreSt=document.getElementById('coreSt');
+const railBody=document.getElementById('railBody'), lineEl=document.getElementById('line'), promptEl=document.getElementById('prompt'), beatnoEl=railBody.querySelector('.beatno'), actBtn=document.getElementById('actBtn');
+const dotsEl=document.getElementById('dots');
+beats.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsEl.appendChild(d)});
+
+let beat=0, ran=false;
+function renderRail(){
+  railBody.classList.add('swap');
+  setTimeout(()=>{
+    const b=beats[beat];
+    beatnoEl.innerHTML=`<b>${b.no}</b> / 05`;
+    lineEl.innerHTML=b.line; promptEl.textContent=b.prompt;
+    if(b.act){actBtn.textContent=b.act;actBtn.classList.add('show')}else actBtn.classList.remove('show');
+    [...dotsEl.children].forEach((d,i)=>d.classList.toggle('on',i===beat));
+    railBody.classList.remove('swap');
+  },200);
+}
+function setBeat(){
+  app.dataset.beat=beat;
+  app.classList.toggle('dim-inputs', beat>=3);
+  if(beat>=1) core.classList.add('live'); else core.classList.remove('live');
+  coreSt.textContent = beat===0?'ready':beat===1?'planning':beat===2?'working…':'done';
+  renderRail();
+  if(beat===2){ if(!ran) runTask(); }
+  if(beat>=3){ app.classList.add('built'); markAllDone(); }
+}
+function go(i){ beat=Math.max(0,Math.min(beats.length-1,i)); setBeat(); }
+function next(){ if(beat<beats.length-1) go(beat+1); }
+function prev(){ if(beat>0) go(beat-1); }
+
+function markAllDone(){ planList.querySelectorAll('.pstep').forEach(p=>p.classList.add('done')); }
+
+function runTask(){
+  ran=true; coreSt.textContent='working…';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const arts=[...inStack.children];
+  const sRect=stage.getBoundingClientRect();
+  const cRect=core.getBoundingClientRect();
+  const cx=cRect.left+cRect.width/2-sRect.left, cy=cRect.top+cRect.height/2-sRect.top;
+  arts.forEach((a,i)=>setTimeout(()=>{
+    a.classList.add('fed');
+    if(!reduce){
+      const r=a.getBoundingClientRect();
+      const sx=r.right-sRect.left, sy=r.top+r.height/2-sRect.top;
+      const dot=document.createElement('div');dot.className='pulse';
+      dot.style.left=sx+'px';dot.style.top=sy+'px';stage.appendChild(dot);
+      requestAnimationFrame(()=>{dot.style.transform=`translate(${cx-sx}px,${cy-sy}px) scale(.3)`;dot.style.opacity='0'});
+      setTimeout(()=>dot.remove(),1100);
+    }
+  }, i*170));
+  const steps=planList.querySelectorAll('.pstep');
+  steps.forEach((p,i)=>setTimeout(()=>{p.classList.add('show'); setTimeout(()=>p.classList.add('done'),420)}, 500+i*430));
+  setTimeout(()=>{ app.classList.add('built'); coreSt.textContent='done'; }, 700+arts.length*170);
+}
+
+document.getElementById('approveBtn').onclick=()=>app.classList.add('approved');
+actBtn.onclick=()=>{ if(beat===4){app.classList.add('approved')} else { app.classList.remove('built'); planList.querySelectorAll('.pstep').forEach(p=>p.classList.remove('show','done')); ran=false; runTask(); } };
+
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){e.preventDefault();prev()}
+});
+setBeat();
+</script>
+</body>
+</html>

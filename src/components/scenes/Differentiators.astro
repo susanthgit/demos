@@ -1,0 +1,109 @@
+---
+// Differentiators scene (slide 6) — a vertical, colour-coded build-up. Each row: a hand-drawn
+// icon in its own colour + title + plain body + a concrete "for example" line. Rows stagger in.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const DEFAULT_COLORS = ['#2f6fb0', '#2f8f4e', '#5b6b7c', '#7c4dd6', '#c08a2e'];
+---
+<section class="screen diff-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" set:html={fmt(scene.lead)} style="max-width:64ch" />}
+    </div>
+    <div class="s-body">
+    <div class="diff-list">
+      {scene.points.map((p: any, i: number) => {
+        const c = p.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length];
+        const icon = p.icon || ['cloud', 'iq', 'shield', 'models', 'cost'][i % 5];
+        return (
+          <div class="diff-card" style={`--c:${c}; --i:${i}`}>
+            <div class="dc-ico">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                {icon === 'cloud' && <path d="M15 34 a9 9 0 0 1 1.5-17.8 A12 12 0 0 1 39 19.5 a8 8 0 0 1 -1 14.5 Z" fill="none" stroke-width="2.6" stroke-linejoin="round" />}
+                {icon === 'iq' && <g fill="none" stroke-width="2.6"><circle cx="24" cy="24" r="5" /><circle cx="11" cy="13" r="3.2" /><circle cx="38" cy="14" r="3.2" /><circle cx="13" cy="37" r="3.2" /><circle cx="37" cy="36" r="3.2" /><line x1="20" y1="20" x2="14" y2="15" /><line x1="28" y1="20" x2="35" y2="16" /><line x1="20" y1="28" x2="15" y2="34" /><line x1="28" y1="28" x2="34" y2="34" /></g>}
+                {icon === 'shield' && <path d="M24 5 L40 10 V24 C40 33 33 39 24 43 C15 39 8 33 8 24 V10 Z" fill="none" stroke-width="2.6" stroke-linejoin="round" />}
+                {icon === 'models' && <g fill="none" stroke-width="2.6" stroke-linejoin="round"><rect x="9" y="9" width="22" height="22" rx="4" /><rect x="18" y="18" width="22" height="22" rx="4" /></g>}
+                {icon === 'cost' && <g fill="none" stroke-width="2.6"><circle cx="24" cy="20" r="13" /><path d="M24 14 v12 M20 23 l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" /></g>}
+              </svg>
+            </div>
+            <div class="dc-body">
+              <div class="dc-top"><span class="dc-num">{String(i + 1).padStart(2, '0')}</span><span class="dc-title">{p.title}</span></div>
+              <p class="dc-text" set:html={fmt(p.body)} />
+              {p.pills && p.pills.length > 0 && (
+                <div class="dc-pills">{p.pills.map((pill: string) => <span class="dc-pill" set:html={fmt(pill)} />)}</div>
+              )}
+              {p.example && <div class="dc-eg"><span class="dc-eg-tag">for example</span><span set:html={fmt(p.example)} /></div>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    {scene.callout && (
+      <div class="diff-callout"><span class="dco-mark">↳</span><span set:html={fmt(scene.callout)} /></div>
+    )}
+    {scene.note && <div class="diff-note" set:html={fmt(scene.note)} />}
+    </div>
+  </div>
+</section>
+
+<style>
+  .diff-list { display: flex; flex-direction: column; gap: clamp(6px,0.9vw,9px); }
+  .diff-scene .scene-h1 { font-size: clamp(28px,4.3vw,52px); }
+  .diff-card { display: flex; gap: clamp(13px,1.8vw,18px); align-items: center;
+    background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--c); border-radius: 13px;
+    padding: clamp(8px,1vw,11px) clamp(15px,1.9vw,22px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .diff-scene.play .diff-card { animation: dcIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 100ms + 90ms); }
+  @keyframes dcIn { to { opacity: 1; transform: none; } }
+
+  .dc-ico { width: clamp(38px,4.4vw,46px); height: clamp(38px,4.4vw,46px); flex: none; display: grid; place-items: center;
+    border-radius: 12px; background: color-mix(in srgb, var(--c) 13%, transparent); }
+  .dc-ico svg { width: 64%; height: 64%; stroke: var(--c); }
+  .dc-top { display: flex; align-items: baseline; gap: 10px; }
+  .dc-num { font-family: var(--ui-semi); font-weight: 800; color: var(--c); font-size: clamp(14px,1.5vw,17px); line-height: 1; letter-spacing: .5px; }
+  .dc-title { font-family: var(--ui-semi); font-size: clamp(16px,1.9vw,21px); color: var(--ink); line-height: 1.1; }
+  .dc-text { font-size: clamp(12.5px,1.45vw,15px); color: var(--inklite); line-height: 1.3; margin-top: 1px; }
+  .dc-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .dc-pill { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(11px,1.2vw,13px); color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c) 32%, transparent); padding: 3px 11px; border-radius: 999px; white-space: nowrap; }
+  .dc-eg { margin-top: 4px; display: flex; align-items: baseline; gap: 9px; font-size: clamp(12.5px,1.4vw,14.5px); color: var(--ink); line-height: 1.3; }
+  .dc-eg-tag { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(14px,1.5vw,17px); flex: none; }
+  .dc-eg .accent { color: var(--c); font-style: normal; font-weight: 700; }
+
+  .diff-callout { display: flex; align-items: flex-start; gap: 10px; margin-top: clamp(8px,1.2vw,13px); }
+  .dco-mark { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(19px,2vw,26px); line-height: 1; }
+  .diff-callout span:last-child { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(16px,1.9vw,22px); line-height: 1.25; }
+  .diff-callout .uline { box-shadow: inset 0 -.42em 0 var(--red-soft); }
+
+  .diff-note { margin-top: 12px; font-size: 12px; color: var(--inklite); line-height: 1.45; max-width: 70ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .diff-card { opacity: 1; transform: none; }
+    .diff-scene.play .diff-card { animation: none; }
+  }
+</style>
+
+<script>
+  function initDiff() {
+    document.querySelectorAll<HTMLElement>('.diff-scene').forEach((scene) => {
+      if ((scene as any)._diffInit) return;
+      (scene as any)._diffInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initDiff();
+  document.addEventListener('astro:page-load', initDiff);
+</script>

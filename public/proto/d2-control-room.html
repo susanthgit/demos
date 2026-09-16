@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cowork — Control Room (direction B)</title>
+<style>
+  :root{
+    --bg:#0a0c12; --band:#0e1119; --panel:#161a26; --line:#262c3c;
+    --ink:#eceef5; --muted:#8b93a8; --faint:#5d6479;
+    --indigo:#6b74e8; --indigo-2:#9aa1ff; --amber:#e0a64a; --green:#4cc38a;
+    --semi:"Segoe UI Semibold","Segoe UI",system-ui,sans-serif;
+    --ui:"Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:"Cascadia Code","Consolas",monospace;
+    --e:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--ui);background:radial-gradient(120% 90% at 50% -10%,#11151f,var(--bg) 62%);color:var(--ink);overflow:hidden}
+  .app{position:fixed;inset:0;display:grid;grid-template-rows:1fr clamp(124px,17vh,164px)}
+
+  .stagewrap{position:relative;overflow:hidden}
+  .stagewrap::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(120,130,170,.07) 1px,transparent 1px);background-size:32px 32px;mask-image:radial-gradient(78% 80% at 50% 42%,#000,transparent)}
+  svg.stage{position:absolute;inset:0;width:100%;height:100%}
+
+  .brand{position:absolute;top:22px;left:28px;display:flex;align-items:center;gap:10px;font-family:var(--semi);font-weight:700;font-size:14px;color:#fff;z-index:3}
+  .brand .m{width:24px;height:24px;border-radius:7px;background:radial-gradient(circle at 35% 30%,#9aa1ff,var(--indigo) 70%)}
+  .brand small{color:var(--faint);font-style:italic;font-weight:600}
+  .note{position:absolute;top:26px;right:28px;font-size:10.5px;color:var(--faint);z-index:3}
+
+  /* nodes */
+  .n-card{fill:var(--panel);stroke:var(--line);stroke-width:2.5}
+  .n-title{fill:var(--ink);font-family:var(--semi);font-weight:700}
+  .n-sub{fill:var(--muted);font-family:var(--ui)}
+  .app-node{opacity:.34;transition:opacity .55s var(--e)}
+  .app.work .app-node.lit,.app.pack .app-node.lit,.app.pause .app-node.lit{opacity:1}
+  .app-node .n-card{transition:stroke .5s var(--e),filter .5s var(--e)}
+  .app.work .app-node.lit .n-card{stroke:var(--amber);filter:drop-shadow(0 0 9px rgba(224,166,74,.4))}
+
+  .you .n-card{stroke:#3a405c}
+  .agent-core{fill:url(#ag);stroke:var(--indigo);stroke-width:2.5}
+  .agent-ring{fill:none;stroke:var(--indigo);stroke-width:2.5;opacity:0}
+  .app.live .agent-ring{opacity:.6;animation:ring 2.6s var(--e) infinite}
+  @keyframes ring{0%{r:42;opacity:.5}70%{r:64;opacity:0}100%{opacity:0}}
+  .agent-label{fill:#fff;font-family:var(--semi);font-weight:800;font-size:18px}
+  .agent-st{fill:var(--indigo-2);font-family:var(--ui);font-size:12px;font-weight:600}
+
+  .wire{fill:none;stroke:#2a3045;stroke-width:2;opacity:0;transition:opacity .5s var(--e)}
+  .app.delegate .wire.w-you,.app.work .wire,.app.pack .wire,.app.pause .wire{opacity:.42}
+  .wire.flash{stroke:var(--amber);opacity:.9;transition:opacity .25s}
+
+  /* plan */
+  .plan-g{opacity:0;transition:opacity .5s var(--e)}
+  .app.plan .plan-g,.app.work .plan-g,.app.pack .plan-g,.app.pause .plan-g{opacity:1}
+  .plan-cap{fill:var(--faint);font-family:var(--semi);font-weight:700;font-size:11px;letter-spacing:1px}
+  .plan-step{opacity:0;transform:translateY(5px)}
+  .app.plan .plan-step,.app.work .plan-step,.app.pack .plan-step,.app.pause .plan-step{animation:pin .5s var(--e) forwards;animation-delay:calc(var(--i)*100ms)}
+  @keyframes pin{to{opacity:1;transform:none}}
+  .plan-box{fill:none;stroke:var(--indigo);stroke-width:2}
+  .plan-tick{stroke:#fff;stroke-width:2.4;opacity:0}
+  .plan-step.done .plan-box{fill:var(--indigo)}
+  .plan-step.done .plan-tick{opacity:1}
+  .plan-txt{fill:var(--muted);font-family:var(--ui);font-size:13px}
+  .plan-step.done .plan-txt{fill:var(--ink)}
+
+  /* pack */
+  .pack-g{opacity:0;transform:scale(.62);transform-origin:center;transform-box:fill-box;transition:opacity .6s var(--e),transform .6s var(--e)}
+  .app.pack .pack-g,.app.pause .pack-g{opacity:1;transform:scale(1)}
+  .pack-card{fill:#0f131c;stroke:var(--green);stroke-width:2.5;filter:drop-shadow(0 0 18px rgba(76,195,138,.22))}
+  .pack-title{fill:#fff;font-family:var(--semi);font-weight:800;font-size:15px}
+  .pack-chip{fill:rgba(76,195,138,.10);stroke:rgba(76,195,138,.42);stroke-width:1.5}
+  .pack-chip-t{fill:var(--green);font-family:var(--semi);font-weight:600;font-size:12px}
+  /* gate footer inside pack */
+  .gate{opacity:0;transition:opacity .5s var(--e)}
+  .app.pause .gate{opacity:1}
+  .gate-line{stroke:var(--line);stroke-width:1.5}
+  .gate-q{fill:#fff;font-family:var(--semi);font-weight:700;font-size:13px}
+  .gate-btn{fill:#2a3f63;cursor:pointer;transition:fill .2s}
+  .gate-btn:hover{fill:#34507e}
+  .gate-bt{fill:#fff;font-family:var(--semi);font-weight:700;font-size:13px;pointer-events:none}
+  .app.approved .pack-card{stroke:var(--green)}
+  .app.approved .gate .gate-btn{fill:var(--green)}
+
+  .spark{fill:var(--amber);filter:drop-shadow(0 0 6px rgba(224,166,74,.85))}
+
+  /* ===== narration band (bottom) ===== */
+  .tell{background:linear-gradient(180deg,var(--band),#0a0c12);border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:24px;padding:0 clamp(28px,4vw,56px)}
+  .tell .left{flex:1;min-width:0}
+  .bno{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--faint)}
+  .bno b{color:var(--indigo-2)}
+  .bline{font-family:var(--semi);font-weight:800;font-size:clamp(24px,3.1vw,40px);line-height:1.04;letter-spacing:-.5px;margin:5px 0 5px;color:var(--ink)}
+  .bline em{font-style:normal;color:var(--indigo-2)}
+  .bcap{font-size:clamp(13px,1.5vw,17px);color:var(--muted);line-height:1.4}
+  .tell.swap .left>*{opacity:0;transform:translateY(7px)}
+  .tell .left>*{transition:opacity .38s var(--e),transform .38s var(--e)}
+  .right{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+  .act{display:none;align-items:center;gap:8px;background:#fff;color:#0a0c12;border:0;border-radius:10px;padding:10px 18px;font-family:var(--semi);font-weight:800;font-size:14.5px;cursor:pointer;box-shadow:0 12px 30px -16px rgba(0,0,0,.8);transition:.16s}
+  .act:hover{transform:translateY(-1px)} .act.show{display:inline-flex}
+  .nav{display:flex;align-items:center;gap:13px}
+  .dots{display:flex;gap:6px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:.25s;cursor:pointer}
+  .dots i.on{background:var(--indigo-2);width:22px;border-radius:99px}
+  .khint{font-size:11.5px;color:var(--faint)}
+</style>
+</head>
+<body>
+<div class="app" data-beat="0">
+  <div class="stagewrap">
+    <div class="brand"><span class="m"></span> Cowork <small>· control room</small></div>
+    <div class="note">Illustrative — fictional “Contoso”. Direction B · “Control Room”.</div>
+    <svg class="stage" id="svg" viewBox="0 0 1000 470" preserveAspectRatio="xMidYMid meet">
+      <defs><radialGradient id="ag" cx="35%" cy="30%"><stop offset="0%" stop-color="#9aa1ff"/><stop offset="100%" stop-color="#4b53c7"/></radialGradient></defs>
+      <g id="wires"></g>
+      <g class="plan-g" id="planG"><text class="plan-cap" x="230" y="48">THE PLAN · INSPECT BEFORE IT RUNS</text></g>
+      <g id="apps"></g>
+
+      <g class="you">
+        <rect class="n-card" x="58" y="206" width="104" height="56" rx="13"/>
+        <text class="n-title" x="110" y="231" text-anchor="middle" font-size="16">You</text>
+        <text class="n-sub" x="110" y="249" text-anchor="middle" font-size="11.5">the ask</text>
+      </g>
+      <g id="agentNode">
+        <circle class="agent-ring" cx="320" cy="234" r="42"/>
+        <circle class="agent-core" cx="320" cy="234" r="40"/>
+        <text class="agent-label" x="320" y="230" text-anchor="middle">Cowork</text>
+        <text class="agent-st" id="agentSt" x="320" y="247" text-anchor="middle">ready</text>
+      </g>
+
+      <g class="pack-g" id="packG">
+        <rect class="pack-card" x="772" y="120" width="206" height="252" rx="16"/>
+        <text class="pack-title" x="792" y="150">Decision pack</text>
+        <g id="packChips"></g>
+        <g class="gate">
+          <line class="gate-line" x1="792" y1="306" x2="958" y2="306"/>
+          <text class="gate-q" x="792" y="328">Send to Contoso team?</text>
+          <g class="gate-btn" id="approveG"><rect x="792" y="338" width="166" height="28" rx="8"/></g>
+          <text class="gate-bt" id="approveT" x="875" y="356" text-anchor="middle">Approve &amp; send</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="tell" id="tell">
+    <div class="left">
+      <div class="bno"><b>01</b> / 06</div>
+      <div class="bline" id="bline">Tomorrow's <em>Contoso</em> renewal.</div>
+      <div class="bcap" id="bcap">everything scattered across your apps — the usual scramble</div>
+    </div>
+    <div class="right">
+      <button class="act" id="actBtn">▶ Delegate it</button>
+      <div class="nav"><div class="dots" id="dots"></div><span class="khint">→ advance</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const apps=[
+  {id:"mail",t:"Outlook",s:"renewal thread",x:600,y:70,c:"#4a72d6"},
+  {id:"crm",t:"Dynamics",s:"Contoso account",x:600,y:150,c:"#9a6ae0"},
+  {id:"xls",t:"Excel",s:"Q3 usage & spend",x:600,y:230,c:"#3fae6e"},
+  {id:"teams",t:"Teams",s:"renewal room",x:600,y:310,c:"#6b6fd6"},
+  {id:"pdf",t:"Contract",s:"current PDF",x:600,y:390,c:"#d06a5a"},
+];
+const steps=["Gather context","Reconcile spend","Draft brief & deck","Flag risks","Write follow-up"];
+const chips=["Account brief","Renewal model","Exec deck","Risk dashboard","Follow-up email"];
+const beats=[
+  {no:"01",line:"Tomorrow's <em>Contoso</em> renewal.",cap:"everything scattered across your apps — the usual scramble",act:null,cls:""},
+  {no:"02",line:"You <em>delegate</em> it.",cap:"one ask — not a dozen tabs",act:null,cls:"delegate live"},
+  {no:"03",line:"It <em>plans</em> before it works.",cap:"every step visible before a single action runs",act:null,cls:"delegate live plan"},
+  {no:"04",line:"It works across your <em>apps</em>.",cap:"grounded in your files — every claim traces to a source",act:"▶ Delegate it",cls:"delegate live plan work"},
+  {no:"05",line:"A decision <em>pack</em> — not an answer.",cap:"brief · model · deck · dashboard · email — one session",act:null,cls:"delegate live plan work pack"},
+  {no:"06",line:"It stops for <em>your</em> call.",cap:"nothing leaves the building without your OK",act:"✓ Approve & send",cls:"delegate live plan work pack pause"},
+];
+
+// app nodes
+const appsG=document.getElementById('apps');
+apps.forEach((a,i)=>{
+  const g=document.createElementNS(NS,'g');g.setAttribute('class','app-node');g.dataset.app=a.id;
+  g.innerHTML=`<rect class="n-card" x="${a.x-66}" y="${a.y-27}" width="132" height="54" rx="12"/>
+    <circle cx="${a.x-44}" cy="${a.y}" r="8" fill="${a.c}"/>
+    <text class="n-title" x="${a.x-28}" y="${a.y-3}" font-size="14">${a.t}</text>
+    <text class="n-sub" x="${a.x-28}" y="${a.y+14}" font-size="11">${a.s}</text>`;
+  appsG.appendChild(g);
+});
+// wires
+const wiresG=document.getElementById('wires');
+function wire(id,cls,x1,y1,x2,y2,bend){const mx=(x1+x2)/2,my=(y1+y2)/2-(bend||0);
+  const p=document.createElementNS(NS,'path');p.setAttribute('class','wire '+cls);p.setAttribute('id',id);
+  p.setAttribute('d',`M${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`);wiresG.appendChild(p);return p;}
+wire('wire-you','w-you',162,234,278,234,0);
+apps.forEach(a=>wire('wire-'+a.id,'w-app',360,234,a.x-68,a.y,(a.y<234?28:-24)));
+// plan
+const planG=document.getElementById('planG');
+steps.forEach((s,i)=>{const y=72+i*30,x=230;
+  const g=document.createElementNS(NS,'g');g.setAttribute('class','plan-step');g.style.setProperty('--i',i);
+  g.innerHTML=`<rect class="plan-box" x="${x}" y="${y-12}" width="16" height="16" rx="4"/>
+    <path class="plan-tick" d="M${x+3.5} ${y-4} l3 4 6.5-7.5"/>
+    <text class="plan-txt" x="${x+26}" y="${y+0.5}">${s}</text>`;planG.appendChild(g);});
+// pack chips
+const packChips=document.getElementById('packChips');
+chips.forEach((c,i)=>{const y=170+i*26;
+  const g=document.createElementNS(NS,'g');
+  g.innerHTML=`<rect class="pack-chip" x="792" y="${y}" width="166" height="20" rx="10"/><text class="pack-chip-t" x="803" y="${y+14}">${c}</text>`;
+  packChips.appendChild(g);});
+
+const app=document.querySelector('.app'),svg=document.getElementById('svg');
+const tell=document.getElementById('tell'),bno=tell.querySelector('.bno'),bline=document.getElementById('bline'),bcap=document.getElementById('bcap'),actBtn=document.getElementById('actBtn'),agentSt=document.getElementById('agentSt');
+const dotsEl=document.getElementById('dots');
+beats.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsEl.appendChild(d)});
+
+let beat=0,workedOnce=false;
+function setClasses(){['delegate','live','plan','work','pack','pause'].forEach(c=>app.classList.remove(c));(beats[beat].cls||'').split(' ').filter(Boolean).forEach(c=>app.classList.add(c));}
+function renderTell(){tell.classList.add('swap');setTimeout(()=>{const b=beats[beat];
+  bno.innerHTML=`<b>${b.no}</b> / 06`;bline.innerHTML=b.line;bcap.textContent=b.cap;
+  if(b.act){actBtn.textContent=b.act;actBtn.classList.add('show')}else actBtn.classList.remove('show');
+  [...dotsEl.children].forEach((d,i)=>d.classList.toggle('on',i===beat));tell.classList.remove('swap');},190);}
+function setBeat(){app.dataset.beat=beat;setClasses();renderTell();
+  agentSt.textContent=['ready','received','planning','working…','done','awaiting you'][beat]||'';
+  if(beat===3){lightApps();if(!workedOnce)runWork();}
+  if(beat>=4){lightApps();planAllDone();}}
+function go(i){beat=Math.max(0,Math.min(beats.length-1,i));setBeat();}
+function next(){if(beat<beats.length-1)go(beat+1)} function prev(){if(beat>0)go(beat-1)}
+function lightApps(){document.querySelectorAll('.app-node').forEach(n=>n.classList.add('lit'))}
+function planAllDone(){planG.querySelectorAll('.plan-step').forEach(p=>p.classList.add('done'))}
+
+function spark(path,dur,reverse,onEnd){
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){onEnd&&onEnd();return}
+  const len=path.getTotalLength();
+  const dot=document.createElementNS(NS,'circle');dot.setAttribute('r','5');dot.setAttribute('class','spark');svg.appendChild(dot);
+  const t0=performance.now();
+  (function f(now){let t=Math.min((now-t0)/dur,1),e=1-Math.pow(1-t,3);
+    const pt=path.getPointAtLength((reverse?1-e:e)*len);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);
+    if(t<1)requestAnimationFrame(f);else{dot.remove();onEnd&&onEnd()}})(performance.now());
+}
+function runWork(){workedOnce=true;agentSt.textContent='working…';
+  apps.forEach((a,i)=>setTimeout(()=>{const w=document.getElementById('wire-'+a.id);w.classList.add('flash');setTimeout(()=>w.classList.remove('flash'),480);
+    spark(w,820,false,()=>document.querySelector(`.app-node[data-app="${a.id}"]`).classList.add('lit'));},i*150));
+  const ps=planG.querySelectorAll('.plan-step');ps.forEach((p,i)=>setTimeout(()=>p.classList.add('done'),500+i*320));
+  setTimeout(()=>apps.forEach((a,i)=>setTimeout(()=>spark(document.getElementById('wire-'+a.id),760,true),i*110)),950);
+  setTimeout(()=>agentSt.textContent='done',950+apps.length*150);
+}
+function approve(){app.classList.add('approved');document.getElementById('approveT').textContent='✓ sent · auditable';}
+document.getElementById('approveG').addEventListener('click',approve);
+actBtn.onclick=()=>{if(beat===5){approve()}else{planG.querySelectorAll('.plan-step').forEach(p=>p.classList.remove('done'));workedOnce=false;runWork()}};
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}});
+setBeat();
+</script>
+</body>
+</html>

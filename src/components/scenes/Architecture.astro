@@ -1,0 +1,151 @@
+---
+// Architecture scene — an ORIGINAL notebook diagram of how Cowork is wired: a UI -> Agent Runtime ->
+// Secure Sandbox stack (powered by foundation models), grounded in Work IQ + your Microsoft apps +
+// plugins, all inside the M365 tenant boundary. Rebuilt (not copied) from the public architecture slide.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen arch-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:64ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+      <div class="arch">
+        {scene.boundary && <span class="arch-bound">{scene.boundary}</span>}
+        <div class="arch-grid">
+          <!-- LEFT: the Cowork engine -->
+          <div class="arch-col">
+            <div class="ab ab-ui" style="--d:0">
+              <b>{scene.ui.label}</b>
+              {scene.ui.sub && <span>{scene.ui.sub}</span>}
+            </div>
+            <div class="arch-down">↓</div>
+            <div class="ab ab-rt" style="--d:1">
+              <b>{scene.runtime.label}</b>
+              {scene.runtime.items.length > 0 && <div class="ab-items">{scene.runtime.items.map((it: string) => <span>{it}</span>)}</div>}
+              {scene.models.items.length > 0 && (
+                <div class="ab-models"><span class="abm-lab">{scene.models.label}</span>
+                  <span class="abm-chips">{scene.models.items.map((m: string) => <i set:html={fmt(m)} />)}</span>
+                </div>
+              )}
+            </div>
+            <div class="arch-down">↓</div>
+            <div class="ab ab-sb" style="--d:2">
+              <b>{scene.sandbox.label}</b>
+              {scene.sandbox.items.length > 0 && <div class="ab-items">{scene.sandbox.items.map((it: string) => <span>{it}</span>)}</div>}
+            </div>
+            {scene.security && <div class="ab-sec" style="--d:3"><span class="abs-lock">⛉</span>{scene.security}</div>}
+          </div>
+
+          <!-- middle connector -->
+          <div class="arch-mid"><span class="arch-rw">reads &amp; writes</span><span class="arch-harrow">⇄</span></div>
+
+          <!-- RIGHT: grounding + your apps + plugins -->
+          <div class="arch-col">
+            <div class="ab ab-iq" style="--d:1">
+              <b>{scene.context.label}</b>
+              {scene.context.items.length > 0 && <div class="ab-items">{scene.context.items.map((it: string) => <span>{it}</span>)}</div>}
+            </div>
+            {scene.services.length > 0 && (
+              <div class="ab ab-svc" style="--d:2">
+                <span class="abv-lab">your Microsoft 365</span>
+                <div class="abv-grid">{scene.services.map((s: string) => <span class="abv-chip" set:html={fmt(s)} />)}</div>
+              </div>
+            )}
+            {scene.plugins.length > 0 && (
+              <div class="ab ab-plg" style="--d:3">
+                <span class="abv-lab">plugins &amp; connectors</span>
+                <div class="abv-grid">{scene.plugins.map((p: string) => <span class="abv-chip plug" set:html={fmt(p)} />)}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .arch { position: relative; border: 2px dashed color-mix(in srgb, var(--navy) 42%, transparent); border-radius: 18px;
+    padding: clamp(16px,2vw,22px) clamp(16px,2vw,24px) clamp(14px,1.7vw,18px); }
+  .arch-bound { position: absolute; top: -11px; right: 18px; background: var(--paper); padding: 0 10px;
+    font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1.6px; font-size: clamp(9.5px,1.05vw,12px); color: var(--navy); }
+  .arch-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(8px,1.4vw,18px); align-items: start; }
+  .arch-col { display: flex; flex-direction: column; gap: 6px; }
+
+  .ab { background: var(--card); border: 1.5px solid var(--hair); border-radius: 13px; padding: clamp(8px,1.1vw,12px) clamp(12px,1.5vw,16px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(10px); }
+  .arch-scene.play .ab, .arch-scene.play .ab-sec { animation: abIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--d) * 130ms + 100ms); }
+  @keyframes abIn { to { opacity: 1; transform: none; } }
+  .ab b { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(14px,1.7vw,19px); color: var(--ink); display: block; }
+  .ab > span { font-size: clamp(12px,1.3vw,14px); color: var(--inklite); display: block; margin-top: 2px; }
+  .ab-items { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 7px; }
+  .ab-items span { font-size: clamp(11px,1.2vw,13px); color: var(--inklite); position: relative; padding-left: 11px; }
+  .ab-items span::before { content: "·"; position: absolute; left: 3px; color: var(--brass); font-weight: 800; }
+  .ab-ui { border-top: 5px solid var(--navy); }
+  .ab-ui b { color: var(--navy); }
+  .ab-rt { border-left: 5px solid var(--brass); }
+  .ab-sb { border-left: 5px solid var(--navy); }
+  .ab-iq { border-top: 5px solid var(--green); }
+  .ab-iq b { color: var(--green); }
+
+  .ab-models { margin-top: 9px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding-top: 8px; border-top: 1px dashed var(--hair); }
+  .abm-lab { font-family: var(--ui); font-weight: 700; font-style: italic; color: var(--brass); font-size: clamp(11px,1.2vw,13px); }
+  .abm-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .abm-chips i { font-style: normal; font-family: var(--ui-semi); font-weight: 600; font-size: clamp(10.5px,1.15vw,12.5px); color: var(--brass);
+    background: var(--brass-soft); border-radius: 999px; padding: 2px 9px; }
+
+  .ab-sec { display: flex; align-items: center; gap: 8px; background: var(--navy-soft); border: 1.5px solid color-mix(in srgb, var(--navy) 30%, transparent); border-radius: 11px;
+    padding: 9px 14px; font-family: var(--ui-semi); font-weight: 700; font-size: clamp(11.5px,1.3vw,14px); color: var(--navy); opacity: 0; transform: translateY(10px); }
+  .abs-lock { font-size: 1.1em; }
+
+  .arch-mid { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 30px; }
+  .arch-rw { font-family: var(--hand); font-weight: 700; color: var(--brass); font-size: clamp(12px,1.3vw,15px); white-space: nowrap; }
+  .arch-harrow { font-size: clamp(20px,2.4vw,30px); color: var(--brass); line-height: 1; }
+  .arch-down { text-align: center; color: var(--brass); font-size: 17px; line-height: .7; }
+
+  .abv-lab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: clamp(9.5px,1.05vw,11.5px); color: var(--inklite); display: block; margin-bottom: 7px; }
+  .abv-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .abv-chip { font-family: var(--ui-semi); font-weight: 600; font-size: clamp(11px,1.2vw,13.5px); color: var(--ink); background: var(--paper); border: 1.5px solid var(--hair); border-radius: 8px; padding: 5px 11px; }
+  .abv-chip.plug { border-style: dashed; color: var(--inklite); }
+  .ab-svc { border-left: 5px solid #2f6fb0; }
+  .ab-plg { border-left: 5px solid #7c4dd6; }
+
+  @media (max-width: 800px) {
+    .arch-grid { grid-template-columns: 1fr; }
+    .arch-mid { flex-direction: row; padding: 4px 0; }
+    .arch-harrow { transform: rotate(90deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ab, .ab-sec { opacity: 1; transform: none; }
+    .arch-scene.play .ab, .arch-scene.play .ab-sec { animation: none; }
+  }
+</style>
+
+<script>
+  function initArch() {
+    document.querySelectorAll<HTMLElement>('.arch-scene').forEach((scene) => {
+      if ((scene as any)._arInit) return;
+      (scene as any)._arInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initArch();
+  document.addEventListener('astro:page-load', initArch);
+</script>

@@ -1,0 +1,99 @@
+---
+// SkillsGrid scene — what Cowork can touch: grouped chips (built-in skills | plugins & connectors |
+// your own custom skills). Chips stagger in on land (transition-guarded replay).
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const DEFAULT_COLORS = ['#2f6fb0', '#7c4dd6', '#c08a2e'];
+let chipIdx = 0;
+---
+<section class="screen skills-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:62ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+      <div class="sk-groups">
+        {scene.groups.map((g: any, gi: number) => {
+          const c = g.color || DEFAULT_COLORS[gi % DEFAULT_COLORS.length];
+          const icon = g.icon || ['builtin', 'plug', 'custom'][gi % 3];
+          return (
+            <div class="sk-group" style={`--c:${c}; --gi:${gi}`}>
+              <div class="sk-glab">
+                <span class="sk-ico">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    {icon === 'builtin' && <g fill="none" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>}
+                    {icon === 'plug' && <g fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5"/><path d="M6 7h12v4a6 6 0 0 1-12 0Z"/><path d="M12 17v5"/></g>}
+                    {icon === 'custom' && <g fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8Z"/></g>}
+                  </svg>
+                </span>
+                <span class="sk-gname" set:html={fmt(g.label)} />
+              </div>
+              <div class="sk-chips">
+                {g.chips.map((ch: string) => {
+                  const d = chipIdx++;
+                  return <span class="sk-chip" style={`--d:${d}`} set:html={fmt(ch)} />;
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {scene.note && <div class="sk-note" set:html={fmt(scene.note)} />}
+      {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .sk-groups { display: flex; flex-direction: column; gap: clamp(9px,1.4vw,14px); }
+  .sk-group { background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--c); border-radius: 14px;
+    padding: clamp(9px,1.2vw,13px) clamp(15px,1.9vw,20px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .skills-scene.play .sk-group { animation: skgIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--gi) * 140ms + 80ms); }
+  @keyframes skgIn { to { opacity: 1; transform: none; } }
+  .sk-glab { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .sk-ico { width: clamp(28px,3.2vw,34px); height: clamp(28px,3.2vw,34px); flex: none; display: grid; place-items: center;
+    border-radius: 9px; background: color-mix(in srgb, var(--c) 13%, transparent); }
+  .sk-ico svg { width: 62%; height: 62%; stroke: var(--c); }
+  .sk-gname { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(15px,1.8vw,20px); color: var(--ink); }
+  .sk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sk-chip { font-family: var(--ui-semi); font-weight: 600; font-size: clamp(12.5px,1.4vw,15px); color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--hair); border-radius: 999px; padding: 6px 14px; white-space: nowrap;
+    opacity: 0; transform: translateY(6px) scale(.96); }
+  .skills-scene.play .sk-chip { animation: skcIn .4s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--d) * 45ms + 320ms); }
+  .sk-chip .accent { color: var(--c); font-style: normal; font-weight: 700; }
+  @keyframes skcIn { to { opacity: 1; transform: none; } }
+  .sk-note { margin-top: 14px; font-size: 12.5px; color: var(--inklite); line-height: 1.5; max-width: 72ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-group, .sk-chip { opacity: 1; transform: none; }
+    .skills-scene.play .sk-group, .skills-scene.play .sk-chip { animation: none; }
+  }
+</style>
+
+<script>
+  function initSkills() {
+    document.querySelectorAll<HTMLElement>('.skills-scene').forEach((scene) => {
+      if ((scene as any)._skInit) return;
+      (scene as any)._skInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      // Only replay on false->true. Never react to play()'s own class mutation (peg-guard).
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initSkills();
+  document.addEventListener('astro:page-load', initSkills);
+</script>

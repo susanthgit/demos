@@ -1,55 +1,302 @@
 ---
 topic: cowork
-title: "Cost & Control"
-blurb: "Usage-based billing, live spend controls, in-tenant. The exec proving ground."
+title: "Cowork Cost, explained"
+blurb: "What Cowork actually costs — built up slowly, the way Microsoft tells it. Big ideas, one at a time."
 order: 3
-durationMin: 5
+durationMin: 8
 modality: explainer
-note: "good exec opener"
+note: "start here for cost"
 personas: [exec, cost, security]
 visibility: noindex
 presenterChecklist:
-  - "Drag THEIR team size first — anchor to their reality before any number"
-  - "Flip to 'Analyst hours' for the ROI moment"
-  - "Open /cowork-cost-calculator for real math if they push on figures"
+  - "Go slow — each scene is one idea. Let the big statements breathe; don't read them out, let them land"
+  - "The spectrum (why usage-based) frames everything — pause on it"
+  - "Four-inputs hero: flip the toggles live, then hit 'See a real task'"
+  - "Estimator: plug in the customer's own numbers — that's the hook"
+  - "Close on Control / Visibility / Efficiency — the bridge to the setup demo"
 ledger:
   claims:
-    - "Cowork bills on usage, not flat seats"
-    - "Admins set spend caps per team"
-    - "Runs stay inside the tenant"
-  sources: []
+    - "The industry is shifting to usage-based pricing because AI tasks vary widely in the work they do"
+    - "Cowork needs a Microsoft 365 Copilot seat; Cowork usage is billed in Copilot Credits"
+    - "A task's credits come from four inputs: models, context, tools, runtime"
+    - "1 Copilot Credit = $0.01 on pay-as-you-go"
+    - "Pay-as-you-go and prepaid (Pre-Purchase Plan / P3) are the two ways to buy credits"
+    - "Microsoft frames cost management around Control, Visibility and Efficiency"
+  sources:
+    - "https://learn.microsoft.com/en-us/microsoft-365/copilot/usage-based-billing-overview-copilot-credits"
+    - "https://learn.microsoft.com/en-us/azure/cost-management-billing/reservations/agent-pre-purchase"
+    - "https://www.aguidetocloud.com/blog/microsoft-copilot-cowork-pricing-cost-management/"
   lastVerified: "2026-06-26"
   staleAfter: "2026-09-26"
   classification: public
 scenes:
+  # ---------- open ----------
   - type: cover
     eyebrow: "Microsoft 365 · Cowork"
-    kicker: "no surprises"
-    headline: "You pay for *work done*, not _seats parked_."
-    lead: "Cowork bills on usage. The people who never open it cost you nothing — and every run stays in your tenant."
-    signature: "— the control story that decides the deal."
-    why:
-      label: "why it matters"
-      body: "No blanket licence for the whole org. You fund the *work*, not the chairs."
-    notes: "Open on control. Cost is what turns a pilot into a yes. Don't rush to numbers — set the frame first."
-  - type: costMeter
-    kicker: "make it their pilot"
-    headline: "Shape the numbers to _their_ world."
-    model: cowork-cost-illustrative
+    kicker: "let's make this make sense"
+    headline: "What does Cowork *actually* cost?"
+    lead: "Not one scary number. We'll build it up slowly — one idea at a time."
+    signature: "— here we go."
+    notes: "Set the frame: this demo EXPLAINS cost, slowly. The companion demo walks the admin setup. Promise clarity."
+
+  # ---------- slide 3 ----------
+  - type: statement
+    eyebrow: "01 · the shift"
+    title: "Usage-based pricing"
+    kicker: "where things are heading"
+    text: "The industry is moving to *usage-based* pricing."
+    sub: "You pay only for the work that's actually done."
+    aside: meter
+    asideCaption: "like a taxi or your power bill"
+    notes: "Slide 3. PPT title 'Usage-based pricing' pinned at top; the meter is the anchor analogy (a taxi/power bill — you pay for what you use). Don't rush. This is the shift the whole story sits on."
+
+  - type: whyUsage
+    eyebrow: "02 · task size"
+    kicker: "here's why"
+    headline: "AI work isn't all the *same size*."
+    spectrum:
+      lowLabel: "a quick ask · seconds"
+      highLabel: "a big, multi-step job · minutes to hours"
+      steps:
+        - { label: "Reply to an email", weight: 1 }
+        - { label: "Summarize a thread", weight: 3 }
+        - { label: "Prep a meeting brief", weight: 6 }
+        - { label: "Analyze 6 months of data", weight: 10 }
+    footer: "Bigger job → more work → *more credits*. That's why you pay for usage."
+    notes: "Like a meal: a coffee and a catered lunch are both 'food' but don't cost the same. The bars grow; the red footer makes the size→cost link explicit. That link is the whole 'why'."
+
+  # ---------- slide 4 ----------
+  - type: philosophies
+    eyebrow: "03 · how you meter"
+    kicker: "two ways to do it"
+    headline: "But *how* you meter matters."
+    options:
+      - tag: "one way"
+        name: "Meter everything"
+        line: "Everyday chat, in-app help, the heavy jobs — all on the meter."
+        rows:
+          - { label: "Everyday chat", metered: true }
+          - { label: "Help in your Office apps", metered: true }
+          - { label: "Heavy, multi-step jobs", metered: true }
+        takeaway: "→ the bill moves with every keystroke."
+        tone: watch
+      - tag: "the other way"
+        name: "Seat + targeted usage"
+        line: "A flat seat covers the everyday; usage only for the heavy jobs."
+        rows:
+          - { label: "Everyday chat", metered: false }
+          - { label: "Help in your Office apps", metered: false }
+          - { label: "Heavy, multi-step jobs", metered: true }
+        takeaway: "→ predictable, with a meter only where work is heavy."
+        tone: good
+    notes: "Slide 4. NEUTRAL — name no one. The contrast is the teaching point. Microsoft takes the second path; that's the next scene."
+    analogy: "like two receipts — one itemizes *every keystroke*; the other is one *predictable bill*."
+
+  # ---------- slide 5 ----------
+  - type: twoPart
+    eyebrow: "04 · the model"
+    kicker: "Microsoft's model"
+    headline: "So it splits in *two*."
+    parts:
+      - tag: "part 1 · the seat"
+        label: "Microsoft 365 Copilot"
+        sub: "Flat, predictable. Everything everyday, included."
+        price: "$30 /user /mo"
+        kind: fixed
+        items:
+          - "Chat + Copilot in your Office apps"
+          - "Agents like Researcher & Analyst"
+          - "Work IQ · multi-model · and more"
+      - tag: "part 2 · the usage"
+        label: "Cowork"
+        sub: "Variable. Only the big, multi-step jobs."
+        kind: variable
+        items:
+          - "Paid in Copilot Credits"
+          - "Pay for what a task actually does"
+          - "Light work barely registers"
+    analogy:
+      tag: "like a hotel —"
+      seat: "*room key* — gets you in (the seat)"
+      usage: "*room service* — only what you order (Cowork)"
+    notes: "Slide 5. THE core mental model. The hotel analogy lands it for anyone: the room key (seat) gets you in; room service (Cowork) is only what you actually order. Seat = everything everyday, predictable. Cowork = the metered layer on top."
+
+  # ---------- slide 6 ----------
+  - type: differentiators
+    eyebrow: "05 · what's different"
+    kicker: "why it's worth it"
+    headline: "What makes Cowork *different*."
+    points:
+      - { title: "Cloud-native", icon: cloud, color: "#2f6fb0", body: "Runs entirely in the cloud — nothing to install or manage. Your work continues across devices, even in the background.", example: "Sandboxed inside your M365 tenant — no extra VMs or infrastructure to stand up." }
+      - { title: "Work IQ", icon: iq, color: "#2f8f4e", body: "An intelligence layer that personalizes Copilot to you and your organization.", example: "Blends your M365 signals + line-of-business data to understand the real work in context." }
+      - { title: "Enterprise security & compliance", icon: shield, color: "#5b6b7c", body: "Runs inside M365's security, compliance and governance — identity, permissions and policies enforced by default.", example: "Every action is observable and auditable — no trading control for innovation." }
+      - { title: "Multi-model design", icon: models, color: "#7c4dd6", body: "Picks the right model for each task to optimize quality and cost.", pills: ["Opus 4.8", "Sonnet 4.6", "GPT-5.5", "Cowork DS 1 · soon"], example: "Better, cheaper models arrive automatically — nothing changes on your end." }
+      - { title: "Lower cost", icon: cost, color: "#c08a2e", body: "Optimizes each task end-to-end — right model, minimal compute — with tools to predict and manage spend.", example: "A planning model + */cost* to forecast and track every credit." }
+    callout: "judge Cowork on the *work it does* and the *value* — not the unit price."
+    notes: "Slide 6. Each differentiator: icon + colour + a concrete example; multi-model shows the actual model pills. The red callout carries the key reframe — enterprise agentic workloads can't be reduced to token-by-token price; evaluate on workload and business value. Keep competitor framing neutral."
+
+  # ---------- the credit (lead-in to buying) ----------
+  - type: concept
+    eyebrow: "06 · the unit"
+    kicker: "the unit"
+    headline: "It runs on *Copilot Credits*."
+    stat:
+      value: "$0.01"
+      label: "per credit · pay-as-you-go"
+    body: "Pooled across your tenant. The unit every task spends."
+    tip: "like *kilowatt-hours* for electricity — credits are just the unit you spend (always in USD)."
+    notes: "Introduce the unit with a big number. One line of body, no more. The red tip: credits are always in USD — a common worldwide unit. Sets up 'how do you buy them'."
+
+  # ---------- slide 7a: two ways to buy (reimagined as 2 cards) ----------
+  - type: buyOptions
+    eyebrow: "07 · buying credits"
+    kicker: "two ways to buy"
+    headline: "Pay as you go, _or_ prepay."
+    options:
+      - tag: "flexible"
+        name: "Pay-as-you-go"
+        icon: meter
+        price: "$0.01 / credit"
+        bestFor: "starting out or scaling up and down"
+        tone: flex
+        points:
+          - "No commitment"
+          - "Billed monthly, for what you used"
+          - "Turn it up or down anytime"
+      - tag: "predictable"
+        name: "Prepaid"
+        icon: bundle
+        price: "lowest / credit"
+        bestFor: "steady, predictable usage"
+        tone: save
+        points:
+          - "Annual reservation (an Azure commit)"
+          - "Volume discount — lock a lower rate"
+          - "MACC-eligible"
+    analogy:
+      tag: "like a phone plan —"
+      text: "pay-as-you-go, or a cheaper *annual bundle*."
+    notes: "Slide 7a. PAYG = flexible, no commitment. Prepaid = cheaper if usage is predictable. The phone-plan analogy lands it. Next slide: which prepaid plan actually funds Cowork."
+
+  # ---------- slide 7b: which prepaid plan funds Cowork (the P3 nuance, full table) ----------
+  - type: planTable
+    eyebrow: "07 · buying credits"
+    kicker: "the fine print, made simple"
+    headline: "Which plan funds _Cowork_?"
+    lead: "“Prepaid” is really four plans. Only some cover Cowork — here's the map."
+    rows:
+      - { plan: "Microsoft Agent Pre-Purchase", covers: "Foundry · Copilot Studio · Fabric · GitHub · Copilot (incl. Cowork)", cowork: both, note: "the bridge — one commitment for Cowork *and* GitHub", highlight: true }
+      - { plan: "Copilot Credit Pre-Purchase", covers: "Copilot Credit usage — Studio, Dynamics, Copilot (incl. Cowork)", cowork: yes, note: "the straightforward Cowork choice" }
+      - { plan: "GitHub Pre-Purchase", covers: "GitHub usage, incl. GitHub Copilot", cowork: no }
+      - { plan: "GitHub AI Credit Pre-Purchase", covers: "GitHub AI Credits", cowork: no }
+    gotcha: "your GitHub Copilot credits can't fund Cowork — different product, meter and admin."
+    note: "Hold more than one? Credits draw down in order: capacity packs → prepaid → pay-as-you-go."
+    notes: "Slide 7b. The key teach: 'P3' = four plans. For Cowork, use the Copilot Credit Pre-Purchase, OR the Microsoft Agent Pre-Purchase if you want ONE commitment covering Cowork + GitHub. GitHub Copilot credits do NOT fund Cowork. Only open this depth if a customer asks about prepaid."
+
+  # ---------- slide 8 + 9 (the hero) ----------
+  - type: statement
+    eyebrow: "08 · what drives cost"
+    title: "What drives the cost"
+    kicker: "now the interesting part"
+    text: "What makes one task cost _more_ than another?"
+    notes: "Divider into the hero. PPT title at top; the question sits below on a near-empty canvas. Let them wonder, then move."
+
+  - type: creditBuilder
+    eyebrow: "09 · four inputs"
+    kicker: "four inputs"
+    headline: "*Four* things drive the cost."
     inputs:
-      - { id: users, label: "People who'd actually use it", hint: "Usage-based — non-users cost nothing.", min: 5, max: 500, step: 5, default: 25 }
-      - { id: packs, label: "Decision packs / person / month", hint: "Each pack used to take an analyst days.", min: 1, max: 20, step: 1, default: 4 }
-    baselines: [flatSeat, analystHours]
-    notes: "Drag THEIR team size first. Then flip to 'Analyst hours' for the gut-punch. Say the numbers are illustrative."
+      - { id: models, label: "Models", color: "#7c4dd6", desc: "Better / faster models cost more.", levels: [20, 120, 400] }
+      - { id: context, label: "Context", color: "#2f8f4e", desc: "The people, files and history behind the work.", levels: [15, 150, 520] }
+      - { id: tools, label: "Tools", color: "#c0398f", desc: "Actions taken — mail, scheduling, docs.", levels: [10, 90, 320] }
+      - { id: runtime, label: "Runtime", color: "#c08a2e", desc: "Keeping agents running across the job.", levels: [25, 140, 360] }
+    task:
+      intro: "For my meeting with Adatum —"
+      fragments:
+        - { text: "read my emails, notes and CRM history", input: context }
+        - { text: " to find deal status and risks." }
+        - { text: " Pick the right model per step,", input: models }
+        - { text: " draft a brief and a deck,", input: tools }
+        - { text: " then email Moana and Tim.", input: tools }
+        - { text: " Keep agents running across the job.", input: runtime }
+    presets:
+      - { label: "Email reply", levels: [0, 0, 0, 0] }
+      - { label: "Meeting prep", levels: [1, 2, 1, 1] }
+      - { label: "Deep analysis", levels: [2, 2, 2, 2] }
+    analogyNote: "like a recipe — 4 ingredients make the bill."
+    disclaimer: "Illustrative — real credits vary by model, context, tools and runtime."
+    notes: "Slides 8 + 9, our hero. Best move: hit a PRESET (Email reply / Meeting prep / Deep analysis) to map the customer's real use-cases live — watch the credits + size jump. Then flip individual toggles, or 'See a real task' and tap phrases. The recipe line ties it together: 4 ingredients make the bill. Adatum/Moana/Tim are standard fictional demo names."
+
+  - type: coworkChat
+    eyebrow: "10 · the exact number"
+    kicker: "no guessing"
+    headline: "Want the *exact* number?"
+    appName: "Microsoft 365 Copilot"
+    thread:
+      - who: user
+        text: "For my meeting with Adatum — pull my emails, notes and CRM, then draft a brief and a client-ready deck."
+      - who: agent
+        text: "Done. Here's what I built for you:"
+        chips: ["Briefing doc", "Sales Excel", "Client deck", "Summary email"]
+      - who: user
+        text: "`/cost`"
+      - who: agent
+        cost:
+          credits: "379.6"
+          note: "≈ $3.80 — about the price of a coffee."
+    note: "Illustrative recreation of the Cowork experience — run a task, type /cost, see the real credits it used."
+    notes: "The trust-builder. Show it like a real chat: a task runs, you type /cost, Cowork returns the actual credits — and the coffee analogy makes $3.80 feel concrete. Estimate becomes fact."
+
+  # ---------- slide 10 ----------
+  - type: estimator
+    eyebrow: "11 · plan your spend"
+    kicker: "plan ahead"
+    headline: "*Plan* your spend."
+    lead: "Drag in your own numbers — see a monthly estimate."
+    users: { default: 50, min: 10, max: 5000, step: 10 }
+    prompts: { default: 5, min: 1, max: 200, step: 1 }
+    profiles:
+      - { id: light, label: "Mostly light", color: "#2f8f4e", creditsPerPrompt: 150 }
+      - { id: balanced, label: "Balanced", color: "#7c4dd6", creditsPerPrompt: 450 }
+      - { id: heavy, label: "Heavy", color: "#c08a2e", creditsPerPrompt: 900 }
+    presets:
+      - { label: "Pilot · 50", users: 50 }
+      - { label: "Department · 500", users: 500 }
+      - { label: "Enterprise · 5,000", users: 5000 }
+    disclaimer: "Illustrative — your real mix and models will differ. Not a quote."
+    notes: "Slide 10. The hook: hit a PRESET (Pilot / Department / Enterprise) or drag the customer's own numbers live. Flip the weight. Big monthly number moves. Forecast, then refine with real usage. Always say: planning range, not a quote."
+    analogy: "like a monthly *budget* — forecast first, then refine with the real numbers."
+
+  # ---------- slides 11+12 MERGED: what tasks cost (traits + scenario + $) ----------
+  - type: tiers
+    eyebrow: "12 · what tasks cost"
+    kicker: "real tasks, real money"
+    headline: "Light, medium, _heavy_."
+    tiers:
+      - { name: "Light", color: "#2f8f4e", traits: ["A few sources", "Light reasoning", "1 output"], example: "A weekly status update for my team, saved as a draft.", credits: "100–300", dollars: "$1–3" }
+      - { name: "Medium", color: "#7c4dd6", traits: ["Many sources", "Structured reasoning", "2+ outputs"], example: "Prep a customer meeting — a brief, an Excel of trends, a deck.", credits: "300–700", dollars: "$3–7" }
+      - { name: "Heavy", color: "#c08a2e", traits: ["Broad aggregation", "Deep reasoning", "Many outputs"], example: "Analyze 6 months of usage data into a leadership-ready report.", credits: "700+", dollars: "$7+" }
+    note: "Illustrative ranges (Microsoft GA basis). Each card = what defines the size + a real task + its cost. A lighter model lowers it."
+    notes: "Merged task-sizes + pricing into one. Each card: traits + a real scenario + the $ together. Tie back to the four inputs — Light = low on all four, Heavy = high. Same machine, different dials."
+    analogy: "like a meal — a *coffee* and a *catered lunch* are both food, but don't cost the same."
+
+  # ---------- slide 13 (the bridge) ----------
   - type: closing
-    kicker: "go deeper"
-    headline: "Story here. _Real math_ next door."
-    lead: "This scene frames the conversation. For an actual estimate, jump to the calculator — and the cost blog."
+    eyebrow: "13 · what's next"
+    kicker: "you've got it"
+    headline: "You get the *cost*. Next: *control* it."
+    pillars:
+      - { name: "Control", body: "Decide when Cowork turns on, who gets access, how much can be spent." }
+      - { name: "Visibility", body: "See real usage and cost as it happens." }
+      - { name: "Efficiency", body: "Tune models and policies to get more from every credit." }
     crossLinks:
-      - { label: "Do the real math →", url: "https://www.aguidetocloud.com/cowork-cost-calculator/" }
-      - { label: "Read the Cowork cost blog →", url: "https://www.aguidetocloud.com/blog/" }
-    notes: "Hand them somewhere to go. The demo opens the door; the calculator closes the detail."
+      - { label: "The cost story on the blog →", url: "https://www.aguidetocloud.com/blog/microsoft-copilot-cowork-pricing-cost-management/" }
+      - { label: "Try the cost calculator →", url: "https://www.aguidetocloud.com/cowork-cost-calculator/" }
+    notes: "Slide 13. The bridge: now you understand cost; the companion setup demo walks Control · Visibility · Efficiency in the admin dashboard."
 ---
 
-Speaker reference (not shown on stage): this demo is the MVP proving ground — it forces accurate
-numbers, source discipline, and the exec/security/cost lenses. Figures are illustrative placeholders.
+Speaker reference: an original, public-safe retelling of Microsoft's public Cowork cost model,
+in Microsoft's own build-up order (industry shift → meter philosophies → two-part model →
+differentiators → buying credits → the four inputs → a real task → plan spend → task sizes →
+pricing examples → Control/Visibility/Efficiency). Figures are illustrative. No internal-only
+content, no reproduced slides. This demo explains the model; the billing-setup demo walks the admin dashboard.

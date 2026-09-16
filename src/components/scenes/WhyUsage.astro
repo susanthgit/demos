@@ -1,0 +1,115 @@
+---
+// WhyUsage scene — the stage-setter (slide 3). AI work isn't one size: a spectrum of
+// task "weights" shows why a single flat price can't fairly cover light AND heavy work.
+// Bars grow on land (replays each time the scene becomes active).
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const steps = scene.spectrum.steps;
+const maxW = Math.max(...steps.map((s: any) => s.weight)) || 1;
+---
+<section class="screen why-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:60ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+    <div class="spectrum">
+      <div class="spec-rows">
+        {steps.map((s: any, i: number) => {
+          const pct = Math.max(8, Math.round((s.weight / maxW) * 100));
+          const coins = Math.max(1, Math.ceil(s.weight / 2.5));
+          return (
+            <div class="spec-row" style={`--w:${pct}; --i:${i}`}>
+              <div class="sr-label">{s.label}</div>
+              <div class="sr-track"><i class="sr-fill"></i></div>
+              <div class="sr-coins">{Array.from({ length: coins }).map(() => <span>$</span>)}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div class="spec-ends">
+        <span class="ax-cap low">↑ {scene.spectrum.lowLabel}</span>
+        <span class="ax-cap high">↓ {scene.spectrum.highLabel}</span>
+      </div>
+    </div>
+
+    {scene.footer && (
+      <div class="why-footer">
+        <span class="wf-arrow">↳</span><p set:html={fmt(scene.footer)} />
+      </div>
+    )}
+
+    {scene.takeaway && (
+      <div class="takeaway">
+        <div class="tlab">{scene.takeaway.label}</div>
+        <p set:html={fmt(scene.takeaway.body)} />
+      </div>
+    )}
+  </div>
+  </div>
+</section>
+
+<style>
+  .spec-rows { display: flex; flex-direction: column; gap: clamp(10px,1.6vw,16px); }
+  .spec-row { display: grid; grid-template-columns: minmax(150px, 24ch) 1fr auto; align-items: center; gap: clamp(14px,2vw,26px);
+    background: var(--card); border: 1.5px solid var(--hair); border-radius: 13px; padding: clamp(13px,1.6vw,18px) clamp(16px,2vw,24px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(10px); }
+  .why-scene.play .spec-row { animation: rowIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 110ms + 90ms); }
+  @keyframes rowIn { to { opacity: 1; transform: none; } }
+  .sr-label { font-family: var(--ui-semi); font-size: clamp(14px,1.7vw,18px); line-height: 1.25; color: var(--ink); }
+  .sr-track { height: 16px; border-radius: 999px; background: var(--navy-soft); overflow: hidden; }
+  .sr-fill { display: block; height: 100%; width: 0; border-radius: 999px;
+    background: linear-gradient(90deg, var(--navy), var(--brass));
+    transition: width .8s cubic-bezier(.22,.61,.36,1); transition-delay: calc(var(--i) * 110ms + 300ms); }
+  .why-scene.play .sr-fill { width: calc(var(--w) * 1%); }
+  .sr-coins { display: flex; gap: 2px; min-width: 4ch; }
+  .sr-coins span { font-family: var(--ui-semi); color: var(--brass); font-size: clamp(16px,1.9vw,21px); line-height: 1; opacity: 0; }
+  .why-scene.play .sr-coins span { animation: coinIn .45s ease forwards; animation-delay: calc(var(--i) * 110ms + 650ms); }
+  @keyframes coinIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .spec-ends { display: flex; justify-content: space-between; margin-top: 12px; padding: 0 4px; }
+  .ax-cap { font-family: var(--ui); font-weight: 600; font-style: italic; color: var(--inklite); font-size: clamp(13px,1.4vw,16px); line-height: 1.15; }
+
+  .why-footer { display: flex; align-items: flex-start; gap: 10px; margin-top: clamp(16px,2.4vw,24px); }
+  .why-footer .wf-arrow { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(22px,2.4vw,30px); line-height: 1; }
+  .why-footer p { font-size: clamp(16px,1.9vw,23px); line-height: 1.35; color: var(--ink); font-weight: 600; }
+  .why-footer .uline { box-shadow: inset 0 -.42em 0 var(--red-soft); color: var(--red); }
+
+  .takeaway { margin-top: clamp(18px,3vw,26px); background: var(--card); border: 1px solid var(--hair); border-left: 7px solid var(--navy); border-radius: 12px; padding: 16px 22px; box-shadow: var(--shadow); max-width: 72ch; }
+  .takeaway .tlab { font-family: var(--hand); color: var(--brass); font-size: clamp(22px,2.3vw,28px); line-height: 1; }
+  .takeaway p { margin-top: 6px; font-size: clamp(15px,1.6vw,19px); line-height: 1.45; }
+
+  @media (max-width: 560px) { .spec-row { grid-template-columns: 1fr auto; } .sr-track { grid-column: 1 / -1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .spec-row { opacity: 1; transform: none; }
+    .sr-fill { transition: none; width: calc(var(--w) * 1%); }
+  }
+</style>
+
+<script>
+  function initWhy() {
+    document.querySelectorAll<HTMLElement>('.why-scene').forEach((scene) => {
+      if ((scene as any)._whyInit) return;
+      (scene as any)._whyInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      // Only replay on the false->true transition. Never react to play()'s OWN class
+      // mutation — that self-trigger is an infinite microtask loop that pegs the page.
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initWhy();
+  document.addEventListener('astro:page-load', initWhy);
+</script>

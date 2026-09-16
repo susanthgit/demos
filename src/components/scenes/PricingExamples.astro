@@ -1,0 +1,79 @@
+---
+// PricingExamples scene (slide 12, Cowork-only) — real scenarios mapped to a Cowork $ range.
+// A clean table: size chip · scenario · estimated cost. Rows stagger in on land. No competitor column.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen pex-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:60ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+    <div class="pex-table">
+      {scene.rows.map((r: any, i: number) => (
+        <div class="pex-row" style={`--c:${r.color}; --i:${i}`}>
+          <div class="pex-size"><span class="pex-chip">{r.size}</span></div>
+          <div class="pex-scn">“{r.scenario}”</div>
+          <div class="pex-cost"><b>{r.range}</b><span>est. / task</span></div>
+        </div>
+      ))}
+    </div>
+    {scene.note && <div class="pex-note" set:html={fmt(scene.note)} />}
+    </div>
+  </div>
+</section>
+
+<style>
+  .pex-table { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .pex-row { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: clamp(14px,2vw,28px);
+    background: var(--card); border: 1px solid var(--hair); border-left: 6px solid var(--c); border-radius: 14px; padding: 16px 22px; box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .pex-scene.play .pex-row { animation: pexIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 120ms + 90ms); }
+  @keyframes pexIn { to { opacity: 1; transform: none; } }
+
+  .pex-chip { display: inline-block; font-family: var(--ui-semi); font-size: clamp(15px,1.8vw,20px); color: #fff; background: var(--c); padding: 6px 16px; border-radius: 999px; }
+  .pex-scn { font-size: clamp(13.5px,1.55vw,17px); color: var(--ink); line-height: 1.45; }
+  .pex-cost { text-align: right; white-space: nowrap; }
+  .pex-cost b { font-family: var(--ui-semi); font-size: clamp(22px,3vw,34px); color: var(--navy); display: block; line-height: 1; }
+  .pex-cost span { font-size: 11px; color: var(--inklite); font-weight: 600; }
+
+  .pex-note { margin-top: 16px; font-size: 12px; color: var(--inklite); line-height: 1.5; max-width: 72ch; }
+
+  @media (max-width: 720px) {
+    .pex-row { grid-template-columns: auto 1fr; grid-template-areas: "size cost" "scn scn"; row-gap: 10px; }
+    .pex-size { grid-area: size; } .pex-cost { grid-area: cost; } .pex-scn { grid-area: scn; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pex-row { opacity: 1; transform: none; }
+    .pex-scene.play .pex-row { animation: none; }
+  }
+</style>
+
+<script>
+  function initPex() {
+    document.querySelectorAll<HTMLElement>('.pex-scene').forEach((scene) => {
+      if ((scene as any)._pexInit) return;
+      (scene as any)._pexInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      // Only replay on the false->true transition. Never react to play()'s OWN class
+      // mutation — that self-trigger is an infinite microtask loop that pegs the page.
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initPex();
+  document.addEventListener('astro:page-load', initPex);
+</script>

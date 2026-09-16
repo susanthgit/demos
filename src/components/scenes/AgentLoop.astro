@@ -1,0 +1,202 @@
+---
+// AgentLoop scene — THE product-story hero. Messy SOURCES in -> Cowork PLANS / RECONCILES / EXECUTES
+// -> a DECISION PACK out, all inside your M365 tenant. A "Delegate it" button plays the run (sources
+// arrive -> steps tick -> deliverables appear); it also auto-plays when the scene lands. Transition-
+// guarded so it never pegs the page.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen loop-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:64ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+      <div class="al-run">
+        <button class="al-btn" data-loop-run type="button"><span class="al-tri">▶</span> {scene.runLabel}</button>
+        <span class="al-hint">watch a task run end-to-end</span>
+      </div>
+
+      <div class="al-flow">
+        <!-- IN -->
+        <div class="al-col al-in">
+          <div class="al-clab">{scene.inbox.label}</div>
+          <div class="al-folder">
+            {scene.inbox.items.map((it: string, i: number) => (
+              <span class="al-src" style={`--i:${i}`}><span class="al-doc">▢</span>{it}</span>
+            ))}
+          </div>
+        </div>
+
+        <div class="al-arrow a1">→</div>
+
+        <!-- PROCESS -->
+        <div class="al-col al-engine">
+          <div class="al-core"><span class="al-spark">✦</span> Cowork</div>
+          <div class="al-steps">
+            {scene.steps.map((s: any, i: number) => (
+              <div class="al-step" style={`--i:${i}`}>
+                <span class="al-tick">{i + 1}</span>
+                <div class="al-stext"><b set:html={fmt(s.label)} /><span set:html={fmt(s.desc)} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="al-arrow a2">→</div>
+
+        <!-- OUT -->
+        <div class="al-col al-out">
+          <div class="al-clab">{scene.outbox.label}</div>
+          <div class="al-pack">
+            {scene.outbox.items.map((it: string, i: number) => (
+              <span class="al-deliv" style={`--i:${i}`}><span class="al-chk">✓</span>{it}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {scene.boundary && <div class="al-boundary"><span class="al-lock">⛉</span><span set:html={fmt(scene.boundary)} /></div>}
+
+      {scene.moves && scene.moves.length > 0 && (
+        <div class="al-moves">
+          <span class="al-mlab">your part — just {scene.moves.length} moves</span>
+          <div class="al-mcards">
+            {scene.moves.map((m: any, i: number) => (
+              <div class="al-move" style={`--i:${i}`}><span class="al-mnum">{i + 1}</span><div><b>{m.tag}</b><span set:html={fmt(m.text)} /></div></div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+      {scene.disclaimer && <div class="al-disc">{scene.disclaimer}</div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-run { display: flex; align-items: center; gap: 12px; margin-bottom: clamp(6px,1vw,10px); }
+  .al-btn { display: inline-flex; align-items: center; gap: 9px; background: var(--navy); color: var(--paper); border: 0; border-radius: 999px;
+    padding: 10px 20px; font-family: var(--ui-semi); font-weight: 700; font-size: clamp(14px,1.6vw,17px); cursor: pointer; box-shadow: var(--shadow); transition: transform .15s, filter .15s; }
+  .al-btn:hover { transform: translateY(-1px); filter: brightness(1.07); }
+  .al-tri { font-size: .8em; }
+  .al-hint { font-family: var(--hand); font-weight: 700; color: var(--brass); font-size: clamp(14px,1.5vw,18px); }
+
+  .al-flow { display: grid; grid-template-columns: 1fr 26px 1.18fr 26px 1fr; gap: clamp(6px,1vw,12px); align-items: stretch; }
+  .al-col { background: var(--card); border: 1.5px solid var(--hair); border-radius: 15px; padding: clamp(10px,1.2vw,14px); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .al-clab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; font-size: clamp(10px,1.1vw,12px); color: var(--inklite); margin-bottom: 10px; }
+  .al-in { border-top: 5px solid var(--brass); }
+  .al-out { border-top: 5px solid var(--green); }
+  .al-engine { border-top: 5px solid var(--navy); }
+
+  .al-folder { display: flex; flex-direction: column; gap: 7px; }
+  .al-src { display: inline-flex; align-items: center; gap: 8px; font-family: var(--ui-semi); font-weight: 600; font-size: clamp(12px,1.3vw,14.5px); color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--hair); border-radius: 9px; padding: 6px 11px;
+    opacity: 0; transform: translateX(-8px); }
+  .al-doc { color: var(--brass); font-size: .9em; }
+  .loop-scene.run-1 .al-src { animation: alIn .4s ease forwards; animation-delay: calc(var(--i) * 90ms); }
+  @keyframes alIn { to { opacity: 1; transform: none; } }
+
+  .al-core { display: inline-flex; align-items: center; gap: 7px; align-self: flex-start; font-family: var(--ui-semi); font-weight: 800; font-size: clamp(13px,1.5vw,16px); color: var(--navy);
+    background: var(--navy-soft); border-radius: 999px; padding: 4px 13px; margin-bottom: 11px; }
+  .al-spark { color: var(--brass); }
+  .al-steps { display: flex; flex-direction: column; gap: 8px; position: relative; }
+  .al-step { display: flex; align-items: flex-start; gap: 11px; opacity: .42; transition: opacity .4s ease; }
+  .al-tick { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 2px solid var(--hair);
+    font-family: var(--ui-semi); font-weight: 800; font-size: 13px; color: var(--inklite); transition: all .4s ease; }
+  .al-stext b { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(13.5px,1.5vw,17px); color: var(--ink); display: block; line-height: 1.15; }
+  .al-stext span { font-size: clamp(11.5px,1.25vw,13.5px); color: var(--inklite); line-height: 1.3; display: block; margin-top: 1px; }
+  .loop-scene.run-2 .al-step { animation: stepLight .5s ease forwards; animation-delay: calc(var(--i) * 520ms + 150ms); }
+  @keyframes stepLight { to { opacity: 1; } }
+  .loop-scene.run-2 .al-step .al-tick { animation: tickOn .5s cubic-bezier(.34,1.3,.5,1) forwards; animation-delay: calc(var(--i) * 520ms + 150ms); }
+  @keyframes tickOn { to { background: var(--navy); border-color: var(--navy); color: var(--paper); } }
+
+  .al-pack { display: flex; flex-direction: column; gap: 7px; }
+  .al-deliv { display: inline-flex; align-items: center; gap: 8px; font-family: var(--ui-semi); font-weight: 700; font-size: clamp(12px,1.3vw,14.5px); color: var(--ink);
+    background: color-mix(in srgb, var(--green) 9%, var(--paper)); border: 1.5px solid color-mix(in srgb, var(--green) 28%, transparent); border-radius: 9px; padding: 6px 11px;
+    opacity: 0; transform: translateY(6px) scale(.96); }
+  .al-chk { color: var(--green); font-weight: 800; }
+  .loop-scene.run-3 .al-deliv { animation: delivIn .45s cubic-bezier(.34,1.3,.5,1) forwards; animation-delay: calc(var(--i) * 110ms); }
+  @keyframes delivIn { to { opacity: 1; transform: none; } }
+
+  .al-arrow { align-self: center; text-align: center; font-size: clamp(18px,2.2vw,26px); color: var(--hair); transition: color .4s ease; line-height: 1; }
+  .loop-scene.run-1 .al-arrow.a1 { color: var(--brass); }
+  .loop-scene.run-3 .al-arrow.a2 { color: var(--green); }
+
+  .al-boundary { display: inline-flex; align-items: center; gap: 9px; margin-top: clamp(7px,1vw,11px); align-self: center;
+    font-family: var(--ui-semi); font-weight: 700; font-size: clamp(12.5px,1.4vw,15.5px); color: var(--navy);
+    background: var(--navy-soft); border: 1.5px dashed color-mix(in srgb, var(--navy) 32%, transparent); border-radius: 999px; padding: 7px 18px;
+    opacity: .5; transition: opacity .5s ease; }
+  .loop-scene.run-4 .al-boundary { opacity: 1; }
+  .al-lock { font-size: 1.05em; }
+
+  .al-moves { margin-top: clamp(8px,1.2vw,12px); }
+  .al-mlab { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(15px,1.7vw,20px); }
+  .al-mcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+  .al-move { display: flex; gap: 9px; align-items: flex-start; background: var(--card); border: 1.5px solid var(--hair); border-left: 5px solid var(--red); border-radius: 12px; padding: 8px 12px; box-shadow: var(--shadow); }
+  .al-mnum { flex: none; font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(18px,2vw,24px); line-height: 1; }
+  .al-move b { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(13px,1.45vw,16px); color: var(--ink); display: block; line-height: 1.1; }
+  .al-move span { font-size: clamp(11.5px,1.25vw,13.5px); color: var(--inklite); line-height: 1.3; display: block; margin-top: 2px; }
+
+  .al-disc { margin-top: 8px; font-size: 11px; color: var(--inklite); }
+
+  @media (max-width: 860px) {
+    .al-flow { grid-template-columns: 1fr; }
+    .al-arrow { transform: rotate(90deg); }
+    .al-mcards { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .al-src, .al-deliv { opacity: 1; transform: none; }
+    .al-step { opacity: 1; }
+    .al-tick { background: var(--navy); border-color: var(--navy); color: var(--paper); }
+    .al-boundary { opacity: 1; }
+    .loop-scene .al-arrow.a1 { color: var(--brass); } .loop-scene .al-arrow.a2 { color: var(--green); }
+  }
+</style>
+
+<script>
+  function initLoop() {
+    document.querySelectorAll<HTMLElement>('.loop-scene').forEach((scene) => {
+      if ((scene as any)._loopInit) return;
+      (scene as any)._loopInit = true;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const STAGES = ['run-1', 'run-2', 'run-3', 'run-4'];
+
+      const run = () => {
+        STAGES.forEach((s) => scene.classList.remove(s));
+        (scene as any)._timers?.forEach((t: number) => clearTimeout(t));
+        void scene.offsetWidth;
+        if (reduce) { STAGES.forEach((s) => scene.classList.add(s)); return; }
+        const stepCount = scene.querySelectorAll('.al-step').length;
+        const engineMs = stepCount * 520 + 300;
+        (scene as any)._timers = [
+          setTimeout(() => scene.classList.add('run-1'), 150),
+          setTimeout(() => scene.classList.add('run-2'), 700),
+          setTimeout(() => scene.classList.add('run-3'), 700 + engineMs),
+          setTimeout(() => scene.classList.add('run-4'), 900 + engineMs),
+        ];
+      };
+
+      scene.querySelector('[data-loop-run]')?.addEventListener('click', run);
+
+      // auto-run on first land; replay only on false->true active transition (peg-guard)
+      let wasActive = scene.classList.contains('active');
+      if (wasActive) run();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) run();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initLoop();
+  document.addEventListener('astro:page-load', initLoop);
+</script>

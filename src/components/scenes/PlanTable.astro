@@ -1,0 +1,109 @@
+---
+// PlanTable scene — which prepaid plan funds Cowork. A table of plan types with a
+// funds-Cowork chip (yes / no / both) + a red gotcha callout. Rows stagger in on land.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const COWORK_LABEL: Record<string, string> = { yes: 'funds Cowork', no: 'GitHub only', both: 'Cowork + GitHub' };
+---
+<section class="screen plan-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:64ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+    <div class="plan-table">
+      <div class="pt-head">
+        <div class="pt-h">Prepaid plan</div>
+        <div class="pt-h">What it covers</div>
+        <div class="pt-h">Funds Cowork?</div>
+      </div>
+      {scene.rows.map((r: any, i: number) => (
+        <div class={`pt-row ${r.highlight ? 'hi' : ''}`} style={`--i:${i}`}>
+          <div class="pt-plan">
+            {r.highlight && <span class="pt-star">★</span>}
+            <div>
+              <div class="pt-name">{r.plan}</div>
+              {r.note && <div class="pt-note" set:html={fmt(r.note)} />}
+            </div>
+          </div>
+          <div class="pt-covers">{r.covers}</div>
+          <div class="pt-cowork">
+            <span class={`pt-chip ${r.cowork}`}>
+              <span class="pt-mk">{r.cowork === 'no' ? '−' : '✓'}</span>{COWORK_LABEL[r.cowork]}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {scene.gotcha && (
+      <div class="pt-gotcha"><span class="ptg-mk">⚠</span><span class="ptg-text" set:html={fmt(scene.gotcha)} /></div>
+    )}
+    {scene.note && <div class="pt-foot" set:html={fmt(scene.note)} />}
+    </div>
+  </div>
+</section>
+
+<style>
+  .plan-table { border: 1.5px solid var(--hair); border-radius: 14px; overflow: hidden; background: var(--card); box-shadow: var(--shadow); }
+  .pt-head, .pt-row { display: grid; grid-template-columns: 1.25fr 1.5fr .9fr; align-items: center; }
+  .pt-head { background: var(--navy-soft); }
+  .pt-h { padding: 12px 18px; font-family: var(--ui-semi); font-weight: 700; color: var(--navy); font-size: clamp(12px,1.4vw,15px); }
+  .pt-row { border-top: 1px solid var(--hair); opacity: 0; transform: translateY(8px); }
+  .plan-scene.play .pt-row { animation: ptIn .45s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 90ms + 120ms); }
+  @keyframes ptIn { to { opacity: 1; transform: none; } }
+  .pt-row.hi { background: var(--brass-soft); }
+
+  .pt-plan { padding: 13px 18px; display: flex; align-items: flex-start; gap: 9px; }
+  .pt-star { color: var(--brass); font-size: 15px; line-height: 1.5; flex: none; }
+  .pt-name { font-family: var(--ui-semi); font-size: clamp(13.5px,1.5vw,16px); color: var(--ink); line-height: 1.2; }
+  .pt-note { font-size: clamp(11.5px,1.3vw,13px); color: var(--inklite); line-height: 1.3; margin-top: 2px; }
+  .pt-covers { padding: 13px 18px; font-size: clamp(12.5px,1.4vw,14.5px); color: var(--inklite); line-height: 1.35; }
+  .pt-cowork { padding: 13px 18px; }
+  .pt-chip { display: inline-flex; align-items: center; gap: 6px; font-size: clamp(11.5px,1.3vw,13.5px); font-weight: 700; padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
+  .pt-mk { font-weight: 800; }
+  .pt-chip.yes { color: var(--green); background: color-mix(in srgb, var(--green) 13%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 32%, transparent); }
+  .pt-chip.both { color: var(--brass); background: var(--brass-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brass) 38%, transparent); }
+  .pt-chip.no { color: var(--inklite); background: var(--hair); }
+
+  .pt-gotcha { margin-top: clamp(14px,2vw,22px); display: flex; align-items: center; gap: 11px; background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--red); border-radius: 12px; padding: 13px 20px; box-shadow: var(--shadow); }
+  .ptg-mk { color: var(--red); font-size: clamp(18px,2vw,24px); flex: none; }
+  .ptg-text { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(16px,1.9vw,22px); line-height: 1.25; }
+  .pt-foot { margin-top: 12px; font-size: 12px; color: var(--inklite); line-height: 1.45; max-width: 76ch; }
+
+  @media (max-width: 700px) {
+    .pt-head { display: none; }
+    .pt-row { grid-template-columns: 1fr; gap: 2px; padding: 6px 0; }
+    .pt-covers { padding-top: 0; } .pt-cowork { padding-top: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pt-row { opacity: 1; transform: none; }
+    .plan-scene.play .pt-row { animation: none; }
+  }
+</style>
+
+<script>
+  function initPlan() {
+    document.querySelectorAll<HTMLElement>('.plan-scene').forEach((scene) => {
+      if ((scene as any)._planInit) return;
+      (scene as any)._planInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initPlan();
+  document.addEventListener('astro:page-load', initPlan);
+</script>

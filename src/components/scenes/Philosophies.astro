@@ -1,0 +1,113 @@
+---
+// Philosophies scene — two ways to APPLY usage-based pricing (slide 4), as a contrast.
+// NEUTRAL + public-safe: competitor unnamed. One approach meters everything; the other
+// keeps a predictable seat and meters only the heavy lifting (lead-in to the two-part bill).
+// Rows stagger in on land; the metered/included chips make the difference visceral.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen phil-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:64ch" set:html={fmt(scene.lead)} />}
+    </div>
+
+    <div class="s-body">
+    <div class="phil-grid">
+      {scene.options.map((o: any, oi: number) => (
+        <div class={`phil-card ${o.tone}`} style={`--oi:${oi}`}>
+          <div class="pc-tag">{o.tag}</div>
+          <h3 class="pc-name">{o.name}</h3>
+          <div class="pc-line">{o.line}</div>
+          <ul class="pc-rows">
+            {o.rows.map((r: any, ri: number) => (
+              <li style={`--ri:${ri}`}>
+                <span class="pc-work">{r.label}</span>
+                <span class={`pc-chip ${r.metered ? 'metered' : 'incl'}`}>
+                  {r.metered ? 'on the meter' : 'included'}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div class="pc-take">{o.takeaway}</div>
+        </div>
+      ))}
+    </div>
+
+    {scene.rule && (
+      <div class="rule">
+        <div class="rlab">{scene.rule.label}</div>
+        <p set:html={fmt(scene.rule.body)} />
+      </div>
+    )}
+    {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .phil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px,2.4vw,28px); margin-top: 18px; }
+  @media (max-width: 800px) { .phil-grid { grid-template-columns: 1fr; } }
+
+  .phil-card { background: var(--card); border: 1px solid var(--hair); border-radius: 16px; padding: 20px 22px 18px; box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .phil-scene.play .phil-card { animation: pcIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--oi) * 130ms + 80ms); }
+  @keyframes pcIn { to { opacity: 1; transform: none; } }
+  .phil-card.watch { border-top: 5px solid var(--brass); }
+  .phil-card.good  { border-top: 5px solid var(--navy); }
+
+  .pc-tag { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--brass); font-size: clamp(11px,1.2vw,13px); line-height: 1.2; }
+  .pc-name { font-family: var(--ui-semi); font-size: clamp(20px,2.4vw,27px); margin: 3px 0 4px; color: var(--ink); }
+  .pc-line { font-size: clamp(13.5px,1.5vw,16px); color: var(--inklite); line-height: 1.45; min-height: 2.9em; }
+
+  .pc-rows { list-style: none; margin: 14px 0 0; display: flex; flex-direction: column; gap: 8px; }
+  .pc-rows li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 13px; background: var(--paper); border: 1px solid var(--hair); border-radius: 10px;
+    opacity: 0; transform: translateX(-6px); }
+  .phil-scene.play .pc-rows li { animation: rowSlide .42s ease forwards; animation-delay: calc(var(--oi) * 130ms + var(--ri) * 70ms + 220ms); }
+  @keyframes rowSlide { to { opacity: 1; transform: none; } }
+  .pc-work { font-size: clamp(12.5px,1.4vw,15px); font-weight: 600; color: var(--ink); }
+  .pc-chip { font-size: 11px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap; flex: none; }
+  .pc-chip.metered { color: var(--brass); background: var(--brass-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brass) 35%, transparent); }
+  .pc-chip.incl { color: var(--navy); background: var(--navy-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--navy) 30%, transparent); }
+
+  .pc-take { margin-top: 15px; font-size: clamp(13px,1.5vw,16px); font-weight: 700; line-height: 1.4; padding-top: 13px; border-top: 1px dashed var(--hair); }
+  .phil-card.watch .pc-take { color: var(--brass); }
+  .phil-card.good  .pc-take { color: var(--navy); }
+
+  .rule { margin-top: 20px; background: var(--card); border: 1px solid var(--hair); border-left: 7px solid var(--navy); border-radius: 12px; padding: 16px 22px; box-shadow: var(--shadow); max-width: 74ch; }
+  .rule .rlab { font-family: var(--hand); color: var(--brass); font-size: clamp(22px,2.3vw,28px); line-height: 1; }
+  .rule p { margin-top: 6px; font-size: clamp(15px,1.6vw,19px); line-height: 1.45; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phil-card, .pc-rows li { opacity: 1; transform: none; }
+    .phil-scene.play .phil-card, .phil-scene.play .pc-rows li { animation: none; }
+  }
+</style>
+
+<script>
+  function initPhil() {
+    document.querySelectorAll<HTMLElement>('.phil-scene').forEach((scene) => {
+      if ((scene as any)._philInit) return;
+      (scene as any)._philInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      // Only replay on the false->true transition. Never react to play()'s OWN class
+      // mutation — that self-trigger is an infinite microtask loop that pegs the page.
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initPhil();
+  document.addEventListener('astro:page-load', initPhil);
+</script>

@@ -1,0 +1,107 @@
+---
+// BuyOptions scene — "two ways to buy credits" reimagined as a clean 2-card comparison
+// (pay-as-you-go vs prepaid) with hand-drawn icons + an everyday analogy. Cards stagger in.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+---
+<section class="screen buy-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    </div>
+    <div class="s-body">
+    <div class="buy-cards">
+      {scene.options.map((o: any, i: number) => (
+        <div class={`buy-card ${o.tone}`} style={`--i:${i}`}>
+          <div class="bc-top">
+            <div class="bc-ico">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                {o.icon === 'meter' && <g fill="none" stroke-width="2.6" stroke-linecap="round"><path d="M9 34 A17 17 0 0 1 39 34" /><line x1="24" y1="34" x2="33" y2="22" /><circle cx="24" cy="34" r="3.2" fill="currentColor" stroke="none" /></g>}
+                {o.icon === 'bundle' && <g fill="none" stroke-width="2.6" stroke-linejoin="round"><path d="M24 7 L40 15 V33 L24 41 L8 33 V15 Z" /><path d="M8 15 L24 23 L40 15 M24 23 V41" /></g>}
+              </svg>
+            </div>
+            <div>
+              <div class="bc-tag">{o.tag}</div>
+              <h3 class="bc-name">{o.name}</h3>
+            </div>
+          </div>
+          <div class="bc-price">{o.price}</div>
+          <div class="bc-best"><span class="bc-best-lab">best for</span>{o.bestFor}</div>
+          <ul class="bc-points">
+            {o.points.map((p: string) => <li><span class="tick">✓</span>{p}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    {scene.analogy && (
+      <div class="buy-analogy">
+        <span class="ba-tag">{scene.analogy.tag}</span>
+        <span class="ba-text" set:html={fmt(scene.analogy.text)} />
+      </div>
+    )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .buy-cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(18px,3vw,34px); }
+  @media (max-width: 760px) { .buy-cards { grid-template-columns: 1fr; } }
+  .buy-card { background: var(--card); border: 1.5px solid var(--hair); border-radius: 18px; padding: clamp(18px,2.4vw,28px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .buy-card.flex { border-top: 7px solid var(--navy); }
+  .buy-card.save { border-top: 7px solid var(--brass); }
+  .buy-scene.play .buy-card { animation: bcIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 130ms + 90ms); }
+  @keyframes bcIn { to { opacity: 1; transform: none; } }
+
+  .bc-top { display: flex; align-items: center; gap: 14px; }
+  .bc-ico { width: clamp(42px,5vw,54px); height: clamp(42px,5vw,54px); flex: none; display: grid; place-items: center; border-radius: 14px; }
+  .buy-card.flex .bc-ico { background: var(--navy-soft); color: var(--navy); }
+  .buy-card.save .bc-ico { background: var(--brass-soft); color: var(--brass); }
+  .bc-ico svg { width: 64%; height: 64%; stroke: currentColor; }
+  .bc-tag { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; font-size: clamp(11px,1.2vw,13px); }
+  .buy-card.flex .bc-tag { color: var(--navy); } .buy-card.save .bc-tag { color: var(--brass); }
+  .bc-name { font-family: var(--ui-semi); font-size: clamp(20px,2.4vw,28px); color: var(--ink); line-height: 1.1; margin-top: 2px; }
+  .bc-price { font-family: var(--ui-semi); font-size: clamp(18px,2.1vw,24px); color: var(--ink); margin: 14px 0 4px; }
+  .buy-card.flex .bc-price { color: var(--navy); } .buy-card.save .bc-price { color: var(--brass); }
+  .bc-best { font-size: clamp(13px,1.5vw,16px); color: var(--inklite); }
+  .bc-best-lab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 10.5px; color: var(--inklite); margin-right: 8px; }
+  .bc-points { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 9px; }
+  .bc-points li { font-size: clamp(13.5px,1.5vw,16px); display: flex; align-items: flex-start; gap: 9px; line-height: 1.4; color: var(--ink); }
+  .bc-points .tick { color: var(--green); font-weight: 800; }
+
+  .buy-analogy { margin-top: clamp(16px,2.4vw,26px); display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--red); border-radius: 14px; padding: 14px 24px; box-shadow: var(--shadow); }
+  .ba-tag { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(18px,2.1vw,25px); line-height: 1; }
+  .ba-text { font-size: clamp(14px,1.6vw,18px); font-weight: 600; color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .buy-card { opacity: 1; transform: none; }
+    .buy-scene.play .buy-card { animation: none; }
+  }
+</style>
+
+<script>
+  function initBuy() {
+    document.querySelectorAll<HTMLElement>('.buy-scene').forEach((scene) => {
+      if ((scene as any)._buyInit) return;
+      (scene as any)._buyInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initBuy();
+  document.addEventListener('astro:page-load', initBuy);
+</script>

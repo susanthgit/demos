@@ -1,0 +1,107 @@
+---
+// TwoPart scene — a predictable part + a variable part (the two-part bill).
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const [p1, p2] = scene.parts;
+---
+<section class="screen twopart-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    </div>
+    <div class="s-body">
+    <div class="parts">
+      {scene.parts.map((p: any) => (
+        <div class={`part ${p.kind}`}>
+          <div class="ptag">{p.tag}</div>
+          <div class="ptop">
+            <h3>{p.label}</h3>
+            {p.price && <div class="price">{p.price}</div>}
+          </div>
+          <div class="psub">{p.sub}</div>
+          {p.items.length > 0 && (
+            <ul class="pitems">
+              {p.items.map((it: string) => <li><span class="tick">✓</span>{it}</li>)}
+            </ul>
+          )}
+          <div class={`pbadge ${p.kind}`}>{p.kind === 'fixed' ? 'predictable' : 'pay for what you run'}</div>
+        </div>
+      ))}
+      <div class="plus">+</div>
+    </div>
+
+    {scene.rule && (
+      <div class="rule">
+        <div class="rlab">{scene.rule.label}</div>
+        <p set:html={fmt(scene.rule.body)} />
+      </div>
+    )}
+
+    {scene.analogy && (
+      <div class="analogy">
+        <span class="an-tag">{scene.analogy.tag}</span>
+        <div class="an-item">
+          <svg class="an-svg key" viewBox="0 0 56 28" aria-hidden="true">
+            <circle cx="12" cy="14" r="8" fill="none" stroke-width="2.6" />
+            <circle cx="12" cy="14" r="3" fill="none" stroke-width="2" />
+            <line x1="20" y1="14" x2="50" y2="14" stroke-width="2.6" stroke-linecap="round" />
+            <line x1="44" y1="14" x2="44" y2="21" stroke-width="2.6" stroke-linecap="round" />
+            <line x1="50" y1="14" x2="50" y2="22" stroke-width="2.6" stroke-linecap="round" />
+          </svg>
+          <span set:html={fmt(scene.analogy.seat)} />
+        </div>
+        <div class="an-item">
+          <svg class="an-svg tray" viewBox="0 0 56 32" aria-hidden="true">
+            <path d="M9 23 a19 14 0 0 1 38 0" fill="none" stroke-width="2.6" />
+            <circle cx="28" cy="7" r="2.4" />
+            <line x1="5" y1="24" x2="51" y2="24" stroke-width="2.6" stroke-linecap="round" />
+            <line x1="14" y1="28" x2="42" y2="28" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+          <span set:html={fmt(scene.analogy.usage)} />
+        </div>
+      </div>
+    )}
+  </div>
+  </div>
+</section>
+
+<style>
+  .parts { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(56px,6vw,82px); margin-top: 8px; position: relative; }
+  .plus { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-family: var(--ui-semi); font-size: clamp(30px,3.2vw,42px); color: var(--brass); background: var(--paper); width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--brass); box-shadow: 0 6px 18px -8px rgba(0,0,0,.35); z-index: 2; }
+  .part { background: var(--card); border: 1.5px solid var(--hair); border-radius: 18px; padding: clamp(24px,3vw,36px); box-shadow: var(--shadow); position: relative; }
+  .part.fixed { border-top: 7px solid var(--navy); }
+  .part.variable { border-top: 7px solid var(--brass); }
+  .ptag { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--brass); font-size: clamp(11px,1.2vw,13px); line-height: 1.2; margin-bottom: 10px; }
+  .ptop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .part h3 { font-family: var(--ui-semi); font-size: clamp(21px,2.6vw,30px); }
+  .price { font-family: var(--ui-semi); color: var(--navy); font-size: clamp(18px,2.1vw,24px); white-space: nowrap; }
+  .psub { font-size: clamp(14px,1.7vw,18px); color: var(--inklite); line-height: 1.45; margin-top: 8px; }
+  .pitems { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .pitems li { font-size: clamp(14px,1.6vw,16.5px); display: flex; align-items: flex-start; gap: 9px; line-height: 1.4; }
+  .pitems .tick { color: var(--navy); font-weight: 800; }
+  .pbadge { margin-top: 18px; display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 5px 12px; border-radius: 8px; }
+  .pbadge.fixed { color: var(--navy); background: var(--navy-soft); }
+  .pbadge.variable { color: var(--brass); background: var(--brass-soft); }
+  .rule { margin-top: 20px; background: var(--card); border: 1px solid var(--hair); border-left: 7px solid var(--navy); border-radius: 12px; padding: 16px 22px; box-shadow: var(--shadow); max-width: 62ch; }
+  .rule .rlab { font-family: var(--hand); color: var(--brass); font-size: clamp(22px,2.3vw,28px); line-height: 1; }
+  .rule p { margin-top: 6px; font-size: clamp(15px,1.6vw,19px); line-height: 1.45; }
+
+  .analogy { margin-top: clamp(18px,2.6vw,30px); display: flex; align-items: center; gap: clamp(16px,2.6vw,36px); flex-wrap: wrap;
+    background: var(--card); border: 1.5px solid var(--hair); border-left: 6px solid var(--red); border-radius: 14px; padding: 16px 26px; box-shadow: var(--shadow); }
+  .an-tag { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(20px,2.3vw,28px); line-height: 1; }
+  .an-item { display: flex; align-items: center; gap: 13px; font-size: clamp(14px,1.7vw,18px); font-weight: 600; color: var(--ink); }
+  .an-item .accent { color: var(--navy); font-style: normal; font-weight: 700; }
+  .an-svg { width: 58px; height: auto; flex: none; }
+  .an-svg.key { color: var(--navy); stroke: var(--navy); }
+  .an-svg.key circle { stroke: var(--navy); }
+  .an-svg.tray { color: var(--brass); stroke: var(--brass); }
+  .an-svg.tray circle { fill: var(--brass); }
+  @media (max-width: 640px) { .analogy { flex-direction: column; align-items: flex-start; } }
+  @media (max-width: 700px) { .parts { grid-template-columns: 1fr; } .plus { left: 50%; top: calc(50% - 0px); } }
+</style>

@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cowork Cost — new style</title>
+<style>
+  :root{
+    --bg:#f1eee7; --surface:#ffffff; --surface-2:#faf8f3;
+    --ink:#1c2230; --muted:#69707e; --faint:#9aa0ac; --line:#e7e3d8;
+    --navy:#2a3f63; --indigo:#4b53c7; --indigo-soft:#ecebff; --amber:#c2892b; --amber-soft:#f6edda;
+    --green:#2f8f5e; --green-soft:#e4f3ea; --red:#c0563f;
+    --shadow:0 18px 40px -22px rgba(20,24,38,.42); --shadow-lg:0 30px 70px -30px rgba(20,24,38,.5);
+    --semi:"Segoe UI Semibold","Segoe UI",system-ui,sans-serif; --ui:"Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:"Cascadia Code","Consolas",monospace; --e:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--ui);color:var(--ink);background:radial-gradient(120% 90% at 20% -5%,#fbfaf6,var(--bg) 55%);overflow:hidden}
+  .app{position:fixed;inset:0;display:flex;flex-direction:column}
+
+  /* top chrome */
+  .top{display:flex;align-items:center;gap:12px;padding:18px clamp(24px,4vw,52px) 0}
+  .brand{display:flex;align-items:center;gap:9px;font-family:var(--semi);font-weight:700;font-size:14px}
+  .brand .m{width:25px;height:25px;border-radius:7px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+  .brand small{color:var(--amber);font-style:italic;font-weight:600}
+  .counter{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:1px}
+
+  /* beat area */
+  .stage{flex:1;position:relative;min-height:0}
+  .beat{position:absolute;inset:0;display:flex;flex-direction:column;padding:clamp(14px,2.4vh,30px) clamp(24px,5vw,72px) 0;
+    opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .45s var(--e),transform .45s var(--e);overflow:hidden}
+  .beat.on{opacity:1;transform:none;pointer-events:auto}
+  .head{flex:none;max-width:60ch}
+  .eyebrow{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:2.4px;font-size:11px;color:var(--navy)}
+  .hline{font-family:var(--semi);font-weight:800;font-size:clamp(26px,3.6vw,46px);line-height:1.05;letter-spacing:-.6px;margin:8px 0 0}
+  .hline em{font-style:normal;color:var(--indigo)} .hline u{text-decoration:none;box-shadow:inset 0 -.42em 0 var(--amber-soft)}
+  .hsub{margin-top:8px;font-size:clamp(14px,1.6vw,18px);color:var(--muted);line-height:1.4;max-width:52ch}
+  .canvas{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+  .try{position:absolute;font-family:var(--semi);font-weight:700;color:var(--red);font-size:13px;display:inline-flex;align-items:center;gap:6px;opacity:.9}
+  .try .pt{font-size:15px}
+
+  /* bottom chrome */
+  .foot{flex:none;display:flex;align-items:center;gap:16px;padding:0 clamp(24px,5vw,52px) 20px;justify-content:center}
+  .nav{width:42px;height:42px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;font-size:18px;display:grid;place-items:center;box-shadow:var(--shadow);transition:.16s}
+  .nav:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-1px)}
+  .dots{display:flex;gap:7px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;transition:.25s}
+  .dots i.on{background:var(--amber);width:24px;border-radius:99px}
+  .hint{font-size:11.5px;color:var(--faint)}
+  .note{position:absolute;left:clamp(24px,5vw,72px);bottom:4px;font-size:10px;color:var(--faint)}
+
+  /* ---- shared widgets ---- */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  .pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 13px;font-family:var(--semi);font-weight:700;font-size:13px}
+  .big-credits{font-family:var(--semi);font-weight:800;letter-spacing:-1px;color:var(--amber);line-height:1}
+  .analogy{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:12px;padding:9px 16px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);font-weight:600}
+  .analogy b{color:var(--red)}
+
+  /* B1 cover */
+  .cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+  .cover .coins{display:flex;gap:10px;margin-bottom:8px}
+  .cover .coin{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e7c98e,var(--amber));color:#fff;display:grid;place-items:center;font-family:var(--semi);font-weight:800;font-size:24px;box-shadow:var(--shadow);opacity:0;transform:translateY(14px) scale(.8)}
+  .cover.play .coin{animation:coinUp .6s var(--e) forwards;animation-delay:calc(var(--i)*120ms)}
+  @keyframes coinUp{to{opacity:1;transform:none}}
+
+  /* B2 usage toggle + meter */
+  .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+  .seg button{border:0;background:transparent;font-family:var(--semi);font-weight:700;font-size:14px;color:var(--muted);padding:9px 18px;border-radius:9px;cursor:pointer;transition:.18s}
+  .seg button.on{background:var(--navy);color:#fff}
+  .meterwrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .meter svg{width:min(420px,68vw);height:auto}
+  .m-arc{fill:none;stroke:var(--line);stroke-width:10;stroke-linecap:round}
+  .m-fill{fill:none;stroke:var(--amber);stroke-width:10;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1s var(--e)}
+  .m-needle{stroke:var(--navy);stroke-width:5;stroke-linecap:round;transform-origin:130px 120px;transform:rotate(-78deg);transition:transform 1s var(--e)}
+  .m-read{font-family:var(--semi);font-weight:800;font-size:clamp(20px,2.4vw,30px);color:var(--ink)}
+  .m-read span{color:var(--amber)}
+
+  /* B3 task-size slider */
+  .sizer{width:min(820px,92%);display:flex;flex-direction:column;gap:22px}
+  .sz-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+  .sz-task{font-family:var(--semi);font-weight:800;font-size:clamp(18px,2.2vw,26px);transition:.2s}
+  .sz-num{text-align:right}
+  .sz-num .c{font-family:var(--semi);font-weight:800;font-size:clamp(28px,3.6vw,46px);color:var(--amber);line-height:1}
+  .sz-num .d{font-size:14px;color:var(--muted);font-weight:700}
+  .rangewrap{position:relative;height:54px;display:flex;align-items:center}
+  .track{position:absolute;left:0;right:0;height:14px;border-radius:99px;background:linear-gradient(90deg,var(--green-soft),var(--amber-soft));border:1px solid var(--line)}
+  .track .fillbar{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--amber));width:30%;transition:width .15s}
+  input[type=range]{position:relative;width:100%;-webkit-appearance:none;appearance:none;background:transparent;height:54px;cursor:grab}
+  input[type=range]:active{cursor:grabbing}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:var(--shadow);margin-top:0}
+  input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:var(--shadow)}
+  .sz-ends{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600}
+
+  /* B4 two-part */
+  .twogrid{display:grid;grid-template-columns:1fr 44px 1fr;gap:18px;align-items:stretch;width:min(960px,96%)}
+  .pcard{padding:18px 20px;display:flex;flex-direction:column}
+  .pcard .ptag{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:1.2px;font-size:11px}
+  .pcard.seat{border-top:5px solid var(--navy)} .pcard.seat .ptag{color:var(--navy)}
+  .pcard.use{border-top:5px solid var(--amber)} .pcard.use .ptag{color:var(--amber)}
+  .pcard h3{font-family:var(--semi);font-weight:800;font-size:clamp(17px,2vw,22px);margin:3px 0 2px}
+  .pcard .price{font-family:var(--semi);font-weight:800;font-size:15px;color:var(--ink)}
+  .pcard .price.var{color:var(--amber)}
+  .tasks{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .task{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:13.5px;font-weight:600;transition:.18s}
+  .task .tg{margin-left:auto;font-size:11px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.5px}
+  .task.cov{border-color:var(--navy);background:#fff} .task.cov .tg{color:var(--navy)}
+  .task.met{border-color:var(--amber);background:var(--amber-soft)} .task.met .tg{color:var(--amber)}
+  .plus{align-self:center;font-size:26px;color:var(--faint);font-weight:800;text-align:center}
+
+  /* B5 four inputs (hero) */
+  .fourwrap{display:grid;grid-template-columns:1.3fr .9fr;gap:26px;width:min(1040px,98%);align-items:center}
+  .dials{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .dial{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);cursor:pointer;transition:.18s;border-top:4px solid var(--dc)}
+  .dial:hover{transform:translateY(-2px)}
+  .dial .dl{display:flex;align-items:center;justify-content:space-between}
+  .dial .dname{font-family:var(--semi);font-weight:800;font-size:15px}
+  .dial .dlvl{font-family:var(--semi);font-weight:800;font-size:12px;color:var(--dc);text-transform:uppercase;letter-spacing:.5px}
+  .dial .dbars{display:flex;gap:5px;margin-top:10px}
+  .dial .dbars i{flex:1;height:9px;border-radius:4px;background:var(--line);transition:.2s}
+  .dial.l0 .dbars i:nth-child(-n+1),.dial.l1 .dbars i:nth-child(-n+2),.dial.l2 .dbars i:nth-child(-n+3){background:var(--dc)}
+  .dial .ddesc{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.3}
+  .meterpanel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);padding:24px;text-align:center;border-top:6px solid var(--amber)}
+  .meterpanel .lab{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:11px;color:var(--faint)}
+  .meterpanel .credits{font-family:var(--semi);font-weight:800;font-size:clamp(40px,6vw,68px);color:var(--amber);line-height:1;margin:6px 0}
+  .meterpanel .dollars{font-size:15px;color:var(--muted);font-weight:700}
+  .fuel{height:12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);margin-top:16px;overflow:hidden}
+  .fuel i{display:block;height:100%;width:20%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--amber));transition:width .4s var(--e)}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .preset{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 13px;font-family:var(--semi);font-weight:700;font-size:13px;cursor:pointer;transition:.16s}
+  .preset:hover,.preset.on{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+
+  /* B6 /cost chat */
+  .chat{width:min(560px,94%)}
+  .chatwin{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+  .cbar{display:flex;align-items:center;gap:7px;padding:11px 15px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .cbar i{width:10px;height:10px;border-radius:50%}.cbar .r{background:#cf6a5a}.cbar .y{background:#cda86a}.cbar .g{background:#6aa57f}
+  .cbar b{margin-left:8px;font-family:var(--semi);font-size:13px}
+  .cbar .tag{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);padding:2px 8px;border-radius:99px}
+  .cbody{padding:16px;display:flex;flex-direction:column;gap:11px}
+  .msg{max-width:84%;font-size:14px;line-height:1.45;padding:10px 14px;border-radius:13px;opacity:0;transform:translateY(8px)}
+  .msg.show{opacity:1;transform:none;transition:.4s var(--e)}
+  .msg.u{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+  .msg.a{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.cmd{align-self:flex-end;background:var(--ink);color:#fff;font-family:var(--mono);font-size:13px}
+  .costbox{align-self:flex-start;background:#fff;border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:13px;padding:12px 16px;opacity:0;transform:translateY(8px)}
+  .costbox.show{opacity:1;transform:none;transition:.5s var(--e)}
+  .costbox .cc{font-family:var(--semi);font-weight:800;font-size:32px;color:var(--amber);line-height:1}
+  .costbox .cn{font-weight:700;color:var(--red);font-size:14px;margin-top:4px}
+
+  /* B7 estimator */
+  .estwrap{display:grid;grid-template-columns:1fr .8fr;gap:28px;width:min(1000px,98%);align-items:center}
+  .controls{display:flex;flex-direction:column;gap:18px}
+  .ctrl label{display:flex;justify-content:space-between;font-family:var(--semi);font-weight:700;font-size:14px;margin-bottom:7px}
+  .ctrl label b{color:var(--indigo)}
+  .ctrl input[type=range]{height:34px}
+  .ctrl .track{height:10px}
+  .profiles{display:flex;gap:8px}
+  .profiles button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px;font-family:var(--semi);font-weight:700;font-size:13px;cursor:pointer;transition:.16s}
+  .profiles button.on{border-color:var(--indigo);background:var(--indigo-soft);color:var(--indigo)}
+  .estout{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);padding:26px;text-align:center;border-top:6px solid var(--indigo)}
+  .estout .lab{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:11px;color:var(--faint)}
+  .estout .amount{font-family:var(--semi);font-weight:800;font-size:clamp(38px,5.6vw,62px);color:var(--ink);line-height:1;margin:6px 0}
+  .estout .per{font-size:14px;color:var(--muted);font-weight:700}
+  .estpresets{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+
+  /* B8 buying */
+  .buygrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(900px,96%)}
+  .buy{padding:20px;display:flex;flex-direction:column;gap:6px}
+  .buy.payg{border-top:5px solid var(--green)} .buy.pre{border-top:5px solid var(--indigo)}
+  .buy .bt{font-family:var(--semi);font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:11px}
+  .buy.payg .bt{color:var(--green)} .buy.pre .bt{color:var(--indigo)}
+  .buy h3{font-family:var(--semi);font-weight:800;font-size:clamp(18px,2.1vw,24px)}
+  .buy ul{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:7px}
+  .buy li{font-size:13.5px;color:var(--muted);padding-left:18px;position:relative}
+  .buy li::before{content:"–";position:absolute;left:3px;color:var(--amber);font-weight:800}
+  .reveal{margin-top:12px;font-family:var(--semi);font-weight:700;font-size:13px;color:var(--indigo);cursor:pointer;border:1px dashed var(--indigo);border-radius:9px;padding:8px 12px;text-align:center;transition:.18s}
+  .reveal:hover{background:var(--indigo-soft)}
+  .p3{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:0;overflow:hidden;max-height:0;opacity:0;transition:.5s var(--e)}
+  .p3.open{max-height:280px;opacity:1;padding:14px 18px}
+  .p3 .p3row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .p3 .p3row:last-child{border:0}
+  .p3 .p3name{font-family:var(--semi);font-weight:700;flex:1}
+  .p3 .yes{color:var(--green);font-weight:800}.p3 .no{color:var(--faint);font-weight:800}.p3 .both{color:var(--indigo);font-weight:800}
+
+  /* B9 tiers */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:min(980px,96%)}
+  .tier{padding:18px;cursor:pointer;border-top:5px solid var(--tc);transition:.2s;display:flex;flex-direction:column;gap:8px}
+  .tier:hover,.tier.on{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .tier h3{font-family:var(--semi);font-weight:800;color:var(--tc);font-size:clamp(17px,2vw,22px)}
+  .tier .ex{font-size:13px;color:var(--muted);line-height:1.4;flex:1}
+  .tier .nums{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px}
+  .tier .nums .c{font-family:var(--semi);font-weight:800;font-size:20px;color:var(--ink)}
+  .tier .nums .d{font-weight:800;font-size:13px;color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,transparent);padding:3px 9px;border-radius:8px}
+
+  /* B10 closing */
+  .closing{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center}
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(820px,96%)}
+  .pil{padding:16px;border-top:5px solid var(--navy)}
+  .pil .pn{font-family:var(--semi);font-weight:800;color:var(--navy);font-size:18px}
+  .pil .pb{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.4}
+  .links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .xl{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;padding:12px 18px;font-family:var(--semi);font-weight:700;font-size:14px;background:var(--surface);box-shadow:var(--shadow);text-decoration:none;color:var(--ink)}
+
+  @media(max-width:880px){.fourwrap,.estwrap{grid-template-columns:1fr}.twogrid{grid-template-columns:1fr}.plus{display:none}.tiers,.pillars{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><span class="m">D</span> Cowork cost <small>· new style</small></div>
+    <div class="counter" id="counter">01 / 10</div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- B1 cover -->
+    <section class="beat" data-init="cover">
+      <div class="canvas">
+        <div class="cover" id="cover">
+          <div class="coins"><span class="coin" style="--i:0">¢</span><span class="coin" style="--i:1">$</span><span class="coin" style="--i:2">¢</span></div>
+          <div class="hline" style="font-size:clamp(30px,4.6vw,58px)">What does Cowork <em>actually</em> cost?</div>
+          <div class="hsub" style="max-width:46ch;text-align:center">Not one scary number. We build it up slowly — one idea at a time. <b style="color:var(--amber)">Press → to begin.</b></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B2 usage-based -->
+    <section class="beat" data-init="usage">
+      <div class="head"><span class="eyebrow">01 · the shift</span><div class="hline">You pay for the <em>work that's done</em>.</div><div class="hsub">The industry moved to usage-based pricing. Flip it and watch.</div></div>
+      <div class="canvas">
+        <div class="meterwrap">
+          <div class="seg" id="usageSeg"><button data-u="flat">Flat fee</button><button class="on" data-u="usage">Pay for usage</button></div>
+          <div class="meter"><svg viewBox="0 0 260 150">
+            <path class="m-arc" d="M30 120 A100 100 0 0 1 230 120"/>
+            <path class="m-fill" id="mFill" d="M30 120 A100 100 0 0 1 230 120"/>
+            <line class="m-needle" id="mNeedle" x1="130" y1="120" x2="130" y2="44"/>
+            <circle cx="130" cy="120" r="8" fill="var(--navy)"/>
+          </svg></div>
+          <div class="m-read" id="mRead">metered: <span>only what you use</span></div>
+          <div class="analogy"><b>✎ like</b> a taxi or your power bill — the meter moves with the work.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B3 task size -->
+    <section class="beat" data-init="size">
+      <div class="head"><span class="eyebrow">02 · why usage</span><div class="hline">AI work isn't all the <u>same size</u>.</div><div class="hsub">Drag the task from a quick ask to a big multi-step job — the cost follows.</div></div>
+      <div class="canvas">
+        <div class="sizer">
+          <div class="sz-top">
+            <div class="sz-task" id="szTask">A quick question</div>
+            <div class="sz-num"><div class="c" id="szC">~20</div><div class="d">credits · <span id="szD">$0.20</span></div></div>
+          </div>
+          <div class="rangewrap">
+            <div class="track"><div class="fillbar" id="szFill"></div></div>
+            <input type="range" id="szRange" min="0" max="100" value="12"/>
+          </div>
+          <div class="sz-ends"><span>↤ a quick ask · seconds</span><span>a big, multi-step job · minutes ↦</span></div>
+          <div class="analogy" style="align-self:center"><b>✎ like</b> a meal — a coffee and a catered lunch are both food, but don't cost the same.</div>
+        </div>
+        <div class="try" id="szTry" style="right:6%;bottom:30%"><span class="pt">☞</span> drag me</div>
+      </div>
+    </section>
+
+    <!-- B4 two-part model -->
+    <section class="beat" data-init="twopart">
+      <div class="head"><span class="eyebrow">03 · the model</span><div class="hline">It splits in <em>two</em>.</div><div class="hsub">A flat seat covers the everyday. Cowork meters only the heavy jobs. Click a task.</div></div>
+      <div class="canvas">
+        <div class="twogrid">
+          <div class="card pcard seat">
+            <span class="ptag">part 1 · the seat</span><h3>Microsoft 365 Copilot</h3><span class="price">$30 / user / mo · flat</span>
+            <div class="tasks" id="seatTasks">
+              <div class="task" data-kind="seat">Everyday chat <span class="tg">covered</span></div>
+              <div class="task" data-kind="seat">Copilot in your Office apps <span class="tg">covered</span></div>
+              <div class="task" data-kind="seat">Researcher &amp; Analyst <span class="tg">covered</span></div>
+            </div>
+          </div>
+          <div class="plus">+</div>
+          <div class="card pcard use">
+            <span class="ptag">part 2 · the usage</span><h3>Cowork</h3><span class="price var">paid in Copilot Credits</span>
+            <div class="tasks" id="useTasks">
+              <div class="task" data-kind="use">A big multi-step job <span class="tg">metered</span></div>
+              <div class="task" data-kind="use">Prep a full meeting pack <span class="tg">metered</span></div>
+              <div class="task" data-kind="use">Analyze 6 months of data <span class="tg">metered</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="analogy" style="position:absolute;bottom:2%"><b>✎ like</b> a hotel — the room key gets you in (seat); room service is only what you order (Cowork).</div>
+      </div>
+    </section>
+
+    <!-- B5 four inputs (HERO) -->
+    <section class="beat" data-init="four">
+      <div class="head"><span class="eyebrow">04 · what drives cost</span><div class="hline"><em>Four</em> things drive a task's cost.</div><div class="hsub">Flip the dials — or hit a real-world preset — and watch the credits move.</div></div>
+      <div class="canvas">
+        <div class="fourwrap">
+          <div class="dials" id="dials"></div>
+          <div>
+            <div class="meterpanel">
+              <div class="lab">this task costs</div>
+              <div class="credits" id="fourC">—</div>
+              <div class="dollars" id="fourD">≈ $0.00</div>
+              <div class="fuel"><i id="fourFuel"></i></div>
+            </div>
+            <div class="presets" id="presets"></div>
+          </div>
+        </div>
+        <div class="try" id="fourTry" style="left:6%;bottom:6%"><span class="pt">☞</span> click a dial</div>
+      </div>
+    </section>
+
+    <!-- B6 /cost -->
+    <section class="beat" data-init="cost">
+      <div class="head"><span class="eyebrow">05 · the exact number</span><div class="hline">Want the <em>exact</em> number?</div><div class="hsub">Run a task, type <b style="font-family:var(--mono);color:var(--amber)">/cost</b>, see the real credits.</div></div>
+      <div class="canvas">
+        <div class="chat">
+          <div class="chatwin">
+            <div class="cbar"><i class="r"></i><i class="y"></i><i class="g"></i><b>Microsoft 365 Copilot</b><span class="tag">Cowork</span></div>
+            <div class="cbody" id="costBody">
+              <div class="msg u" data-d="0">Prep my Adatum meeting — brief, deck &amp; a summary email.</div>
+              <div class="msg a" data-d="1">Done — briefing doc, client deck &amp; summary email are ready.</div>
+              <div class="msg cmd" data-d="2">/cost</div>
+              <div class="costbox" data-d="3"><div class="cc" id="costC">379.6 credits</div><div class="cn">≈ $3.80 — about the price of a coffee.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B7 estimator -->
+    <section class="beat" data-init="est">
+      <div class="head"><span class="eyebrow">06 · plan your spend</span><div class="hline"><em>Plan</em> your spend.</div><div class="hsub">Drag in your own numbers — the monthly estimate moves live.</div></div>
+      <div class="canvas">
+        <div class="estwrap">
+          <div class="controls">
+            <div class="ctrl"><label>Users <b id="euV">50</b></label><div class="rangewrap" style="height:34px"><div class="track"><div class="fillbar" id="euFill"></div></div><input type="range" id="euR" min="10" max="5000" step="10" value="50"></div></div>
+            <div class="ctrl"><label>Cowork tasks / user / day <b id="epV">3</b></label><div class="rangewrap" style="height:34px"><div class="track"><div class="fillbar" id="epFill"></div></div><input type="range" id="epR" min="1" max="20" step="1" value="3"></div></div>
+            <div class="ctrl"><label>Usage mix</label><div class="profiles" id="profiles"><button data-p="150" class="on">Mostly light</button><button data-p="450">Balanced</button><button data-p="900">Heavy</button></div></div>
+          </div>
+          <div class="estout">
+            <div class="lab">estimated</div>
+            <div class="amount" id="estAmt">$0</div>
+            <div class="per">per month · illustrative, not a quote</div>
+            <div class="estpresets" id="estPresets"><button class="preset" data-u="50">Pilot · 50</button><button class="preset" data-u="500">Dept · 500</button><button class="preset" data-u="5000">Enterprise · 5,000</button></div>
+          </div>
+        </div>
+        <div class="try" id="estTry" style="left:6%;bottom:6%"><span class="pt">☞</span> drag a slider</div>
+      </div>
+    </section>
+
+    <!-- B8 buying -->
+    <section class="beat" data-init="buy">
+      <div class="head"><span class="eyebrow">07 · buying credits</span><div class="hline">Pay as you go, <em>or</em> prepay.</div><div class="hsub">And only some prepaid plans actually fund Cowork — tap to see.</div></div>
+      <div class="canvas">
+        <div class="buygrid">
+          <div class="card buy payg"><span class="bt">flexible</span><h3>Pay-as-you-go</h3><div class="price" style="font-family:var(--semi);font-weight:800;color:var(--green)">$0.01 / credit</div><ul><li>No commitment</li><li>Billed monthly for what you used</li><li>Turn it up or down anytime</li></ul></div>
+          <div class="card buy pre"><span class="bt">predictable</span><h3>Prepaid</h3><div class="price" style="font-family:var(--semi);font-weight:800;color:var(--indigo)">lowest / credit</div><ul><li>Annual reservation (an Azure commit)</li><li>Volume discount</li><li>MACC-eligible</li></ul><div class="reveal" id="p3btn">Which prepaid plan funds Cowork? ↓</div></div>
+          <div class="p3" id="p3">
+            <div class="p3row"><span class="p3name">Microsoft Agent Pre-Purchase</span><span class="both">Cowork + GitHub</span></div>
+            <div class="p3row"><span class="p3name">Copilot Credit Pre-Purchase</span><span class="yes">funds Cowork ✓</span></div>
+            <div class="p3row"><span class="p3name">GitHub Pre-Purchase</span><span class="no">not Cowork</span></div>
+            <div class="p3row"><span class="p3name">GitHub AI Credit Pre-Purchase</span><span class="no">not Cowork</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B9 tiers -->
+    <section class="beat" data-init="tiers">
+      <div class="head"><span class="eyebrow">08 · what tasks cost</span><div class="hline">Light, medium, <em>heavy</em>.</div><div class="hsub">Click a size for a real task and its range.</div></div>
+      <div class="canvas">
+        <div class="tiers" id="tiers">
+          <div class="card tier on" style="--tc:var(--green)" data-t="0"><h3>Light</h3><div class="ex" id="tx0">A weekly status update for my team, saved as a draft.</div><div class="nums"><span class="c">100–300</span><span class="d">$1–3</span></div></div>
+          <div class="card tier" style="--tc:var(--indigo)" data-t="1"><h3>Medium</h3><div class="ex" id="tx1">Prep a customer meeting — a brief, an Excel of trends, a deck.</div><div class="nums"><span class="c">300–700</span><span class="d">$3–7</span></div></div>
+          <div class="card tier" style="--tc:var(--amber)" data-t="2"><h3>Heavy</h3><div class="ex" id="tx2">Analyze 6 months of usage into a leadership-ready report.</div><div class="nums"><span class="c">700+</span><span class="d">$7+</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B10 closing -->
+    <section class="beat" data-init="close">
+      <div class="head" style="text-align:center;margin:0 auto"><span class="eyebrow">09 · what's next</span><div class="hline">You get the <em>cost</em>. Next: <u>control</u> it.</div></div>
+      <div class="canvas">
+        <div class="closing">
+          <div class="pillars">
+            <div class="card pil"><div class="pn">Control</div><div class="pb">Decide when Cowork turns on, who gets access, the cap.</div></div>
+            <div class="card pil"><div class="pn">Visibility</div><div class="pb">See real usage and cost as it happens.</div></div>
+            <div class="card pil"><div class="pn">Efficiency</div><div class="pb">Tune models &amp; policies to get more per credit.</div></div>
+          </div>
+          <div class="links"><a class="xl" href="#">Meet Cowork — the product story →</a><a class="xl" href="#">Try the cost calculator →</a></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="foot">
+    <button class="nav" id="prev">‹</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav" id="next">›</button>
+    <span class="hint">→ / Space to advance · click to interact</span>
+  </div>
+  <div class="note">Illustrative figures only — not Microsoft pricing or a quote. New-style rebuild of the cost story.</div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>n.toLocaleString('en-US');
+const beats=$$('.beat'), N=beats.length;
+let beat=0;
+const dotsEl=$('#dots'); beats.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>go(i);dotsEl.appendChild(d)});
+function go(i){beat=Math.max(0,Math.min(N-1,i));
+  beats.forEach((b,j)=>b.classList.toggle('on',j===beat));
+  $$('#dots i').forEach((d,j)=>d.classList.toggle('on',j===beat));
+  $('#counter').textContent=String(beat+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+  const init=beats[beat].dataset.init; if(INIT[init])INIT[init]();
+}
+$('#next').onclick=()=>go(beat+1); $('#prev').onclick=()=>go(beat-1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(beat+1)}else if(e.key==='ArrowLeft'){e.preventDefault();go(beat-1)}});
+
+// count-up helper
+function countTo(el,to,dur=600,pre='',suf=''){const from=parseFloat((el._v||0));const t0=performance.now();
+  (function f(now){let t=Math.min((now-t0)/dur,1),e=1-Math.pow(1-t,3);const v=from+(to-from)*e;
+    el.textContent=pre+fmt(Math.round(v))+suf; if(t<1)requestAnimationFrame(f); else {el._v=to;el.textContent=pre+fmt(to)+suf;}})(performance.now());}
+
+const once={};
+const INIT={
+  cover(){const c=$('#cover');c.classList.remove('play');void c.offsetWidth;c.classList.add('play');},
+  usage(){ const seg=$('#usageSeg'); if(!seg._b){seg._b=1;$$('button',seg).forEach(b=>b.onclick=()=>{$$('button',seg).forEach(x=>x.classList.remove('on'));b.classList.add('on');setUsage(b.dataset.u)});}
+    setUsage('flat'); setTimeout(()=>{$$('button',seg).forEach(x=>x.classList.toggle('on',x.dataset.u==='usage'));setUsage('usage')},700); },
+  size(){ const r=$('#szRange'); if(!r._b){r._b=1;r.oninput=()=>{szUpd();$('#szTry').style.opacity=0};} szUpd();
+    if(!once.size){once.size=1; let v=12;const sweep=setInterval(()=>{v+=4;r.value=v;szUpd();if(v>=70){clearInterval(sweep);setTimeout(()=>{r.value=40;szUpd()},250)}},28);} },
+  twopart(){ if(!once.tp){once.tp=1; $$('.task').forEach(t=>t.onclick=()=>t.classList.toggle(t.dataset.kind==='seat'?'cov':'met'));}
+    $$('.task').forEach((t,i)=>setTimeout(()=>t.classList.add(t.dataset.kind==='seat'?'cov':'met'),200+i*140)); },
+  four(){ buildFour(); setTimeout(()=>applyPreset(1),650); },
+  cost(){ $$('#costBody .msg, #costBody .costbox').forEach(m=>m.classList.remove('show'));
+    [...$$('#costBody [data-d]')].forEach(m=>setTimeout(()=>m.classList.add('show'),300+m.dataset.d*650)); },
+  est(){ if(!$('#euR')._b){$('#euR')._b=1;$('#euR').oninput=()=>{estUpd();$('#estTry').style.opacity=0};$('#epR').oninput=estUpd;
+      $$('#profiles button').forEach(b=>b.onclick=()=>{$$('#profiles button').forEach(x=>x.classList.remove('on'));b.classList.add('on');estCpp=+b.dataset.p;estUpd()});
+      $$('#estPresets .preset').forEach(b=>b.onclick=()=>{$('#euR').value=b.dataset.u;estUpd()});}
+    estUpd(); if(!once.est){once.est=1;setTimeout(()=>{$('#euR').value=500;estUpd()},650);} },
+  buy(){ if(!$('#p3btn')._b){$('#p3btn')._b=1;$('#p3btn').onclick=()=>$('#p3').classList.toggle('open');} },
+  tiers(){ if(!once.ti){once.ti=1;$$('.tier').forEach(t=>t.onclick=()=>{$$('.tier').forEach(x=>x.classList.remove('on'));t.classList.add('on')});} },
+  close(){}
+};
+
+// B2 usage
+function setUsage(mode){const fill=$('#mFill'),nd=$('#mNeedle'),rd=$('#mRead');
+  if(mode==='flat'){fill.style.strokeDashoffset=251-251*0.62;nd.style.transform='rotate(28deg)';rd.innerHTML='flat fee: <span>same every month</span>';}
+  else{fill.style.strokeDashoffset=251-251*0.34;nd.style.transform='rotate(-26deg)';rd.innerHTML='metered: <span>only what you use</span>';}}
+
+// B3 size
+const SZ=[{p:0,t:'A quick question',c:20},{p:25,t:'Summarize a thread',c:90},{p:50,t:'Prep a meeting brief',c:300},{p:75,t:'Build a full meeting pack',c:620},{p:100,t:'Analyze 6 months of data',c:900}];
+function szUpd(){const v=+$('#szRange').value; $('#szFill').style.width=v+'%';
+  let lo=SZ[0],hi=SZ[SZ.length-1];for(let i=0;i<SZ.length-1;i++){if(v>=SZ[i].p&&v<=SZ[i+1].p){lo=SZ[i];hi=SZ[i+1];break}}
+  const f=(v-lo.p)/((hi.p-lo.p)||1);const c=Math.round(lo.c+(hi.c-lo.c)*f);const task=f<.5?lo.t:hi.t;
+  $('#szTask').textContent=task;$('#szC').textContent='~'+fmt(c);$('#szD').textContent='$'+(c*0.01).toFixed(2);}
+
+// B5 four inputs
+const INPUTS=[{id:'models',label:'Models',c:'#7c4dd6',desc:'Better / faster models cost more.',lv:[20,120,400]},
+  {id:'context',label:'Context',c:'#2f8f4e',desc:'People, files & history behind the work.',lv:[15,150,520]},
+  {id:'tools',label:'Tools',c:'#c0398f',desc:'Actions taken — mail, docs, scheduling.',lv:[10,90,320]},
+  {id:'runtime',label:'Runtime',c:'#c08a2e',desc:'Keeping agents running across the job.',lv:[25,140,360]}];
+const PRESETS=[{label:'Email reply',lv:[0,0,0,0]},{label:'Meeting prep',lv:[1,2,1,1]},{label:'Deep analysis',lv:[2,2,2,2]}];
+let fourLv=[0,0,0,0];
+function buildFour(){const d=$('#dials');if(d._b)return;d._b=1;
+  d.innerHTML=INPUTS.map((x,i)=>`<div class="dial l0" style="--dc:${x.c}" data-i="${i}"><div class="dl"><span class="dname">${x.label}</span><span class="dlvl">low</span></div><div class="dbars"><i></i><i></i><i></i></div><div class="ddesc">${x.desc}</div></div>`).join('');
+  $$('.dial',d).forEach(el=>el.onclick=()=>{const i=+el.dataset.i;fourLv[i]=(fourLv[i]+1)%3;$('#presets').querySelectorAll('.preset').forEach(p=>p.classList.remove('on'));fourUpd();$('#fourTry').style.opacity=0;});
+  $('#presets').innerHTML=PRESETS.map((p,i)=>`<button class="preset" data-i="${i}">${p.label}</button>`).join('');
+  $$('#presets .preset').forEach(b=>b.onclick=()=>applyPreset(+b.dataset.i));
+  fourUpd();}
+function applyPreset(i){fourLv=[...PRESETS[i].lv];$$('#presets .preset').forEach((b,j)=>b.classList.toggle('on',j===i));fourUpd();}
+function fourUpd(){let total=0;$$('.dial').forEach((el,i)=>{el.className='dial l'+fourLv[i];el.style.setProperty('--dc',INPUTS[i].c);
+  el.querySelector('.dlvl').textContent=['low','mid','high'][fourLv[i]];total+=INPUTS[i].lv[fourLv[i]];});
+  countTo($('#fourC'),total,500);$('#fourD').textContent='≈ $'+(total*0.01).toFixed(2);
+  const max=INPUTS.reduce((s,x)=>s+x.lv[2],0);$('#fourFuel').style.width=Math.max(5,total/max*100)+'%';}
+
+// B7 estimator
+let estCpp=150;
+function estUpd(){const u=+$('#euR').value,p=+$('#epR').value;$('#euV').textContent=fmt(u);$('#epV').textContent=p;
+  $('#euFill').style.width=((u-10)/4990*100)+'%';$('#epFill').style.width=((p-1)/19*100)+'%';
+  const monthly=Math.round(u*p*22*estCpp*0.01);countTo($('#estAmt'),monthly,600,'$');}
+
+go(0);
+</script>
+</body>
+</html>

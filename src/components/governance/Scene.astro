@@ -1,0 +1,40 @@
+---
+import type { GovernanceScene } from '../../data/governance';
+interface Props {
+  scene: GovernanceScene;
+  number: number;
+  variant?: string;
+}
+const { scene, number, variant = '' } = Astro.props;
+const Heading = number === 1 ? 'h1' : 'h2';
+const highlight = scene.highlight || '';
+const titleParts = highlight ? scene.title.split(highlight) : [scene.title];
+---
+<section id={scene.id} class:list={['gov-scene', variant]} data-scene aria-labelledby={`${scene.id}-title`}>
+  <header class="gov-scene-heading">
+    <p class="gov-eyebrow"><span>{String(number).padStart(2, '0')}</span> {scene.chapter}</p>
+    <Heading id={`${scene.id}-title`} tabindex="-1">{titleParts[0]}{highlight && <><span class="gov-highlight">{highlight}</span>{titleParts.slice(1).join(highlight)}</>}</Heading>
+    <p class="gov-lede">{scene.description}</p>
+  </header>
+  <div class="gov-scene-grid">
+    <div class="gov-visual">
+      <slot />
+    </div>
+    <aside class="gov-argument">
+      <slot name="argument" />
+    </aside>
+  </div>
+  <div class="gov-scene-meta">
+    <div class="gov-sources">
+      <span>Read the source</span>
+      {scene.sources.map((source) => <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}<span class="gov-sr"> (opens in new tab)</span></a>)}
+    </div>
+    <details class="gov-notes" id={`${scene.id}-notes`}>
+      <summary>Presenter notes <span aria-hidden="true">+</span></summary>
+      <div class="gov-note-copy">
+        <p class="gov-eyebrow">Public talk track only</p>
+        {scene.note.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </details>
+  </div>
+</section>

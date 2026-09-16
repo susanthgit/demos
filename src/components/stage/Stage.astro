@@ -76,11 +76,14 @@ const { demoTitle, topic, scenes } = Astro.props;
   .stage { position: fixed; inset: 0; background-color: var(--paper);
     background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size: 46px 46px; overflow: hidden; }
-  .screen { position: absolute; inset: 0; display: none; padding: clamp(28px,5vw,84px) clamp(28px,5vw,84px) 96px;
-    align-items: center; justify-content: center; opacity: 0; transform: translateY(14px) scale(.992);
+  .screen { position: absolute; inset: 0; display: none; padding: clamp(60px,7vw,92px) clamp(28px,5vw,84px) 96px;
+    align-items: flex-start; justify-content: center; opacity: 0; transform: translateY(14px) scale(.992);
     transition: opacity var(--t), transform var(--t); overflow: auto; }
   .screen.active { display: flex; opacity: 1; transform: none; }
-  .wrap { width: min(1160px, 100%); margin: auto; }
+  .wrap { width: min(1160px, 100%); margin: 0 auto; }
+  /* the cover stays centered; every other scene reads top-down like a PowerPoint slide */
+  .cover-scene { align-items: center; }
+  .cover-scene .wrap { margin: auto; }
   @media (prefers-reduced-motion: reduce) { .screen { transition: none; } }
 </style>
 
@@ -88,7 +91,7 @@ const { demoTitle, topic, scenes } = Astro.props;
   .brandtag { position: fixed; top: 18px; left: 22px; z-index: 40; display: flex; align-items: center; gap: 10px; }
   .brandtag .logo { width: 32px; height: 32px; border-radius: 9px; background: var(--navy); color: var(--paper); display: grid; place-items: center; font-family: var(--ui-semi); font-weight: 800; font-size: 15px; }
   .brandtag b { font-family: var(--ui-semi); font-size: 13.5px; line-height: 1; }
-  .brandtag small { display: block; font-family: var(--hand); color: var(--brass); font-size: 15px; line-height: 1; text-transform: capitalize; }
+  .brandtag small { display: block; font-family: var(--ui); font-style: italic; font-weight: 600; color: var(--brass); font-size: 12px; line-height: 1; text-transform: capitalize; }
   .hud { position: fixed; top: 16px; right: 18px; display: flex; gap: 8px; z-index: 40; }
   .hud button, .navbtn { width: 42px; height: 42px; border-radius: 11px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); cursor: pointer; font-size: 17px; display: grid; place-items: center; box-shadow: 0 8px 20px -14px rgba(0,0,0,.5); transition: all .18s; }
   .hud button:hover, .navbtn:hover { border-color: var(--navy); color: var(--navy); transform: translateY(-1px); }
@@ -97,7 +100,7 @@ const { demoTitle, topic, scenes } = Astro.props;
   .dots { display: flex; gap: 9px; }
   .dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--hair); transition: all .25s; cursor: pointer; }
   .dots span.on { background: var(--brass); width: 26px; border-radius: 999px; }
-  .counter { font-family: var(--hand); color: var(--brass); font-size: 20px; min-width: 64px; text-align: center; }
+  .counter { font-family: var(--ui); font-weight: 700; color: var(--brass); font-size: 14px; min-width: 64px; text-align: center; letter-spacing: .5px; }
   .setchip { display: inline-flex; align-items: center; gap: 6px; background: var(--brass-soft); border: 1px solid var(--brass); color: var(--brass); font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 999px; }
   .setchip[hidden] { display: none; }
   .notes { position: fixed; left: 0; right: 0; bottom: -46vh; height: 42vh; z-index: 50; background: var(--card); border-top: 3px solid var(--navy); box-shadow: 0 -20px 50px -20px rgba(0,0,0,.4); padding: 22px 30px; transition: bottom .35s cubic-bezier(.22,.61,.36,1); overflow: auto; }

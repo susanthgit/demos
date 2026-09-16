@@ -1,0 +1,152 @@
+---
+// CoworkChat scene — an original, notebook-styled mock of a Microsoft 365 Copilot (Cowork) chat
+// window, used to show `/cost` returning real credits. Illustrative recreation (not a screenshot),
+// so it stays public-safe. Messages stagger in on land; the cost reply lands last and big.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+---
+<section class="screen chat-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    </div>
+
+    <div class="s-body">
+      <div class="chatwin">
+        <div class="cw-bar">
+          <span class="cw-dot r"></span><span class="cw-dot y"></span><span class="cw-dot g"></span>
+          <div class="cw-app">
+            <svg class="cw-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2 C10 7 7 10 2 12 C7 14 10 17 12 22 C14 17 17 14 22 12 C17 10 14 7 12 2 Z" />
+            </svg>
+            <b>{scene.appName}</b><span class="cw-tag">Cowork</span>
+          </div>
+        </div>
+
+        <div class="cw-thread">
+          {scene.thread.map((m: any, i: number) => (
+            <div class={`cw-msg ${m.who}`} style={`--i:${i}`}>
+              {m.who === 'agent' && (
+                <svg class="cw-ava" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2 C10 7 7 10 2 12 C7 14 10 17 12 22 C14 17 17 14 22 12 C17 10 14 7 12 2 Z" />
+                </svg>
+              )}
+              <div class="cw-body">
+                {m.text && <div class="cw-text" set:html={fmt(m.text)} />}
+                {m.steps && m.steps.length > 0 && (
+                  <div class="cw-plan">
+                    <div class="cw-plan-lab">workspace plan</div>
+                    {m.steps.map((s: string) => <div class="cw-pstep"><span class="cw-pchk">✓</span><span set:html={fmt(s)} /></div>)}
+                  </div>
+                )}
+                {m.chips && m.chips.length > 0 && (
+                  <div class="cw-chips">{m.chips.map((c: string) => <span class="cw-chip"><span class="cw-check">✓</span>{c}</span>)}</div>
+                )}
+                {m.checkpoint && (
+                  <div class="cw-cp">
+                    <div class="cw-cp-head"><span class="cw-cp-ico">⏸</span><div><b set:html={fmt(m.checkpoint.label)} />{m.checkpoint.sub && <span set:html={fmt(m.checkpoint.sub)} />}</div></div>
+                    <div class="cw-cp-btns"><span class="cw-cp-ok">Approve &amp; send</span><span class="cw-cp-edit">Edit</span></div>
+                  </div>
+                )}
+                {m.cost && (
+                  <div class="cw-cost">
+                    <div class="cw-credits"><b>{m.cost.credits}</b><span>credits used</span></div>
+                    <div class="cw-costnote">{m.cost.note}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cw-input"><span class="cw-ph">Ask Cowork to do something…</span><span class="cw-send">↑</span></div>
+      </div>
+      {scene.note && <div class="cw-foot" set:html={fmt(scene.note)} />}
+    </div>
+  </div>
+</section>
+
+<style>
+  .chat-scene .s-body { align-items: center; }
+  .chatwin { width: min(640px, 100%); background: var(--card); border: 1.5px solid var(--hair); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .cw-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--navy) 6%, var(--card)); }
+  .cw-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .cw-dot.r { background: #cf6a5a; } .cw-dot.y { background: #cda86a; } .cw-dot.g { background: #6aa57f; }
+  .cw-app { display: flex; align-items: center; gap: 8px; margin-left: 10px; font-size: 13.5px; }
+  .cw-app b { font-family: var(--ui-semi); font-weight: 700; }
+  .cw-logo { width: 18px; height: 18px; fill: var(--navy); }
+  .cw-tag { font-size: 11px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--brass); background: var(--brass-soft); padding: 2px 8px; border-radius: 999px; }
+
+  .cw-thread { padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; max-height: 56vh; overflow: auto; }
+  .cw-msg { display: flex; gap: 10px; opacity: 0; transform: translateY(8px); }
+  .chat-scene.play .cw-msg { animation: msgIn .45s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 600ms + 200ms); }
+  @keyframes msgIn { to { opacity: 1; transform: none; } }
+  .cw-msg.user { justify-content: flex-end; }
+  .cw-ava { width: 26px; height: 26px; fill: var(--navy); flex: none; margin-top: 2px; }
+  .cw-body { max-width: 80%; }
+  .cw-text { font-size: clamp(13.5px,1.5vw,15.5px); line-height: 1.5; padding: 11px 15px; border-radius: 14px; }
+  .cw-msg.user .cw-text { background: var(--navy); color: var(--paper); border-bottom-right-radius: 4px; }
+  .cw-msg.agent .cw-text { background: var(--paper); border: 1px solid var(--hair); color: var(--ink); border-bottom-left-radius: 4px; }
+  .cw-text code { font-family: "Cascadia Code","Consolas",monospace; background: rgba(255,255,255,.18); padding: 1px 6px; border-radius: 5px; font-size: .9em; }
+  .cw-msg.agent .cw-text code { background: var(--navy-soft); color: var(--navy); }
+
+  .cw-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+  .cw-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); border: 1px solid color-mix(in srgb, var(--green) 30%, transparent); padding: 4px 11px; border-radius: 999px; }
+  .cw-check { font-weight: 800; }
+
+  .cw-plan { margin-top: 9px; background: var(--paper); border: 1px solid var(--hair); border-radius: 12px; padding: 10px 14px; }
+  .cw-plan-lab { font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 10.5px; color: var(--inklite); margin-bottom: 6px; }
+  .cw-pstep { display: flex; align-items: baseline; gap: 8px; font-size: clamp(12px,1.35vw,14px); color: var(--ink); line-height: 1.5; }
+  .cw-pchk { color: var(--green); font-weight: 800; flex: none; }
+
+  .cw-cp { margin-top: 9px; background: var(--paper); border: 1px solid var(--hair); border-left: 5px solid var(--brass); border-radius: 12px; padding: 12px 15px; }
+  .cw-cp-head { display: flex; align-items: flex-start; gap: 10px; }
+  .cw-cp-ico { color: var(--brass); font-size: 1.05em; line-height: 1.3; }
+  .cw-cp-head b { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(13px,1.45vw,15px); color: var(--ink); display: block; line-height: 1.2; }
+  .cw-cp-head span { font-size: 12px; color: var(--inklite); display: block; margin-top: 2px; line-height: 1.35; }
+  .cw-cp-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .cw-cp-ok { font-family: var(--ui-semi); font-weight: 700; font-size: 12.5px; color: var(--paper); background: var(--navy); border-radius: 8px; padding: 6px 13px; }
+  .cw-cp-edit { font-family: var(--ui-semi); font-weight: 700; font-size: 12.5px; color: var(--ink); background: transparent; border: 1.5px solid var(--hair); border-radius: 8px; padding: 6px 13px; }
+
+  .cw-cost { margin-top: 9px; background: var(--paper); border: 1px solid var(--hair); border-left: 5px solid var(--brass); border-radius: 12px; padding: 12px 16px; }
+  .cw-credits { display: flex; align-items: baseline; gap: 8px; }
+  .cw-credits b { font-family: var(--ui-semi); font-size: clamp(28px,4vw,42px); color: var(--brass); line-height: 1; }
+  .cw-credits span { font-size: 12px; color: var(--inklite); font-weight: 600; }
+  .cw-costnote { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(15px,1.7vw,20px); margin-top: 6px; }
+
+  .cw-input { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 14px 16px; padding: 11px 16px; border: 1.5px solid var(--hair); border-radius: 999px; background: var(--paper); }
+  .cw-ph { font-size: 13.5px; color: var(--inklite); }
+  .cw-send { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--paper); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  .cw-foot { margin-top: 14px; font-size: 12px; color: var(--inklite); text-align: center; max-width: 60ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cw-msg { opacity: 1; transform: none; }
+    .chat-scene.play .cw-msg { animation: none; }
+  }
+</style>
+
+<script>
+  function initChat() {
+    document.querySelectorAll<HTMLElement>('.chat-scene').forEach((scene) => {
+      if ((scene as any)._chatInit) return;
+      (scene as any)._chatInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initChat();
+  document.addEventListener('astro:page-load', initChat);
+</script>

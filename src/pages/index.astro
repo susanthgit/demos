@@ -22,6 +22,14 @@ for (const d of built) {
     note: d.data.note, status: 'ready', href: `/${d.id}`,
   });
 }
+cards.push({
+  topic: 'copilot', slug: 'governance',
+  title: 'Copilot governance, made visible',
+  blurb: 'Explore permissions, SharePoint controls, agent identities and audit evidence through an interactive technical walkthrough.',
+  modality: 'annotated', durationMin: 45,
+  note: 'Explore the controls, then agree the pilot',
+  status: 'ready', href: '/copilot/governance?scoutTheme=dark',
+});
 for (const p of PLANNED) {
   if (seen.has(`${p.topic}/${p.slug}`)) continue;
   cards.push({ ...p, status: 'soon' });

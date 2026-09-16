@@ -9,9 +9,23 @@ function fmt(s = '') {
 ---
 <section class="screen closing-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
   <div class="wrap">
-    {scene.kicker && <div class="kicker">{scene.kicker}</div>}
-    <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    </div>
+    <div class="s-body">
     {scene.lead && <p class="lead" style="margin-top:8px">{scene.lead}</p>}
+    {scene.pillars && scene.pillars.length > 0 && (
+      <div class="pillars">
+        {scene.pillars.map((p: any, i: number) => (
+          <div class="pillar" style={`--i:${i}`}>
+            <div class="pl-name">{p.name}</div>
+            <div class="pl-body">{p.body}</div>
+          </div>
+        ))}
+      </div>
+    )}
     {scene.crossLinks && scene.crossLinks.length > 0 && (
       <div class="links">
         {scene.crossLinks.map((l: any) => (
@@ -22,11 +36,44 @@ function fmt(s = '') {
       </div>
     )}
   </div>
+  </div>
 </section>
 
 <style>
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 24px; }
+  @media (max-width: 760px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar { background: var(--card); border: 1px solid var(--hair); border-top: 5px solid var(--navy); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); }
+  .closing-scene.play .pillar { animation: plIn .5s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 120ms + 100ms); }
+  @keyframes plIn { to { opacity: 1; transform: none; } }
+  .pl-name { font-family: var(--ui-semi); font-size: clamp(18px,2.2vw,24px); color: var(--navy); }
+  .pl-body { font-size: clamp(13px,1.5vw,15.5px); color: var(--inklite); line-height: 1.45; margin-top: 6px; }
+  @media (prefers-reduced-motion: reduce) {
+    .pillar { opacity: 1; transform: none; }
+    .closing-scene.play .pillar { animation: none; }
+  }
+
   .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
   .xlink { display: inline-flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--hair); border-left: 5px solid var(--brass); border-radius: 12px; padding: 16px 22px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: clamp(15px,1.7vw,19px); box-shadow: var(--shadow); transition: transform .18s, border-color .18s; }
   .xlink:hover { transform: translateY(-3px); border-color: var(--navy); }
-  .xlink .arrow { font-family: var(--hand); color: var(--navy); font-size: 30px; line-height: .8; }
+  .xlink .arrow { font-family: var(--ui); font-weight: 800; color: var(--navy); font-size: 20px; line-height: 1; }
 </style>
+
+<script>
+  function initClosing() {
+    document.querySelectorAll<HTMLElement>('.closing-scene').forEach((scene) => {
+      if ((scene as any)._clInit) return;
+      (scene as any)._clInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initClosing();
+  document.addEventListener('astro:page-load', initClosing);
+</script>

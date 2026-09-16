@@ -1,0 +1,38 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+  kind: 'rcd' | 'dspm';
+}
+const { src, alt, caption, width, height, kind } = Astro.props;
+---
+<figure class:list={['gov-capture', `gov-capture-${kind}`]} data-capture-kind={kind}>
+  <div class="gov-capture-top">
+    {kind === 'dspm' ? <div class="gov-evidence-select" role="group" aria-label="Choose the evidence crop">
+      <button type="button" data-evidence-crop="prompt" aria-pressed="true">The prompt</button>
+      <button type="button" data-evidence-crop="response" aria-pressed="false">The response</button>
+      <button type="button" data-evidence-crop="resources" aria-pressed="false">The files</button>
+    </div> : <button type="button" data-rcd-context class="gov-text-button">Show both settings</button>}
+    <button type="button" class="gov-original-button" data-zoom={src} data-zoom-alt={alt} data-zoom-caption={caption}>Show full screen <span aria-hidden="true">↗</span></button>
+  </div>
+  <div class="gov-capture-image gov-crop-window" data-image-crop={kind === 'rcd' ? 'rcd' : 'prompt'}>
+    <img src={src} alt={alt} width={width} height={height} loading="eager" decoding="async" data-crop-image />
+    {kind === 'rcd' && <>
+      <svg class="gov-crop-ink gov-ink-rcd" viewBox="0 0 740 195" aria-hidden="true">
+        <path d="M 14 60 C -4 62 0 114 23 122 C 60 132 125 122 135 105 C 153 74 113 55 65 59 C 39 60 24 58 14 60" />
+        <path d="M 428 192 C 421 157 249 167 148 109 M 157 127 L 148 109 L 172 110" />
+      </svg>
+      <svg class="gov-crop-ink gov-ink-rac" viewBox="0 0 720 195" aria-hidden="true">
+        <path d="M 15 68 C -1 73 0 114 22 121 C 71 135 131 119 140 103 C 146 76 111 64 65 66 C 39 65 20 65 15 68" />
+        <path d="M 423 192 C 415 159 258 164 149 112 M 157 130 L 149 112 L 174 115" />
+      </svg>
+    </>}
+  </div>
+  {kind === 'rcd' ? <p class="gov-capture-callout gov-handwritten" data-capture-callout aria-live="polite">This hides discovery.<br />The file can still open.</p>
+    : <p class="gov-evidence-caption" data-evidence-caption aria-live="polite">The prompt, with the original lab annotation. Content is cropped for readability, not changed.</p>}
+  <figcaption><span class="gov-crop-label">Cropped for readability. Original UI and redactions retained.</span> {caption}</figcaption>
+  <noscript><div class="gov-reading-original"><p>Full published capture (reading view)</p><img src={src} alt={alt} width={width} height={height} /></div></noscript>
+</figure>

@@ -1,0 +1,122 @@
+---
+// ValueCurve scene — "where Cowork fits": a maturity ladder plotted as effort-to-deploy (x) vs
+// business-impact (y). Stages rise along a dashed curve; one is flagged "you are here". Nodes pop
+// in on land (transition-guarded replay). Original notebook take on the public value-curve idea.
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const stages = scene.stages;
+const n = stages.length;
+const pts = stages.map((s: any, i: number) => {
+  const t = n === 1 ? 0 : i / (n - 1);
+  const x = 8 + 84 * t;          // 8% .. 92%
+  const y = 80 - 64 * t;         // 80% (low) .. 16% (high)
+  return { ...s, x, y, place: y > 46 ? 'above' : 'below', i };
+});
+const poly = pts.map((p: any) => `${p.x},${p.y}`).join(' ');
+---
+<section class="screen vc-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+      {scene.lead && <p class="lead" style="max-width:64ch" set:html={fmt(scene.lead)} />}
+    </div>
+    <div class="s-body">
+      <div class="vc-plot">
+        <span class="vc-yax">{scene.yLabel}</span>
+        <div class="vc-area">
+          <svg class="vc-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="3" y1="3" x2="3" y2="97" class="vc-axis" vector-effect="non-scaling-stroke" />
+            <line x1="3" y1="97" x2="98" y2="97" class="vc-axis" vector-effect="non-scaling-stroke" />
+            <polyline points={poly} class="vc-line" vector-effect="non-scaling-stroke" />
+          </svg>
+          {pts.map((p: any) => (
+            <div class={`vc-node ${p.place} ${p.here ? 'here' : ''}`} style={`left:${p.x}%; top:${p.y}%; --i:${p.i}`}>
+              <span class="vc-dot"></span>
+              <div class="vc-card">
+                {p.here && <span class="vc-here">◆ you are here</span>}
+                <div class="vc-name" set:html={fmt(p.name)} />
+                {p.sub && <div class="vc-sub" set:html={fmt(p.sub)} />}
+                {p.roi && <div class="vc-roi">{p.roi}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <span class="vc-xax">{scene.xLabel}</span>
+      </div>
+      {scene.footer && (
+        <div class="vc-footer"><span class="vc-fmark">↳</span><p set:html={fmt(scene.footer)} /></div>
+      )}
+      {scene.analogy && <div class="analogy-line"><span class="al-mark">✎</span><span class="al-text" set:html={fmt(scene.analogy)} /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .vc-plot { position: relative; display: grid; grid-template-columns: 22px 1fr; grid-template-rows: 1fr 22px; gap: 4px; }
+  .vc-yax { grid-column: 1; grid-row: 1; writing-mode: vertical-rl; transform: rotate(180deg); align-self: center; justify-self: center;
+    font-family: var(--ui); font-weight: 700; font-style: italic; color: var(--inklite); font-size: clamp(11px,1.2vw,13px); letter-spacing: .3px; }
+  .vc-xax { grid-column: 2; grid-row: 2; text-align: center; font-family: var(--ui); font-weight: 700; font-style: italic; color: var(--inklite); font-size: clamp(11px,1.2vw,13px); }
+  .vc-area { grid-column: 2; grid-row: 1; position: relative; height: clamp(270px, 38vh, 420px); }
+  .vc-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .vc-axis { stroke: var(--hair); stroke-width: 2; }
+  .vc-line { fill: none; stroke: var(--brass); stroke-width: 2.5; stroke-dasharray: 6 6; stroke-linecap: round;
+    stroke-dashoffset: 320; opacity: .85; }
+  .vc-scene.play .vc-line { animation: vcDraw 1s ease forwards .2s; }
+  @keyframes vcDraw { to { stroke-dashoffset: 0; } }
+
+  .vc-node { position: absolute; transform: translate(-50%, -50%); }
+  .vc-dot { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 16px; height: 16px; border-radius: 50%;
+    background: var(--navy); border: 3px solid var(--card); box-shadow: 0 0 0 2px var(--navy); }
+  .vc-node.here .vc-dot { background: var(--red); box-shadow: 0 0 0 2px var(--red), 0 0 0 8px var(--red-soft); }
+  .vc-card { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: 22ch; text-align: center;
+    background: var(--card); border: 1.5px solid var(--hair); border-radius: 11px; padding: 8px 13px; box-shadow: var(--shadow);
+    opacity: 0; }
+  .vc-node.above .vc-card { bottom: 18px; }
+  .vc-node.below .vc-card { top: 18px; }
+  .vc-node.here .vc-card { border-color: var(--red); }
+  .vc-scene.play .vc-card { animation: vcPop .45s cubic-bezier(.34,1.3,.5,1) forwards; animation-delay: calc(var(--i) * 150ms + 500ms); }
+  @keyframes vcPop { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%); } }
+  .vc-here { display: block; font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(12px,1.3vw,15px); line-height: 1; margin-bottom: 3px; }
+  .vc-name { font-family: var(--ui-semi); font-weight: 700; font-size: clamp(14px,1.6vw,18px); color: var(--ink); line-height: 1.1; }
+  .vc-name .accent { color: var(--navy); font-style: normal; }
+  .vc-node.here .vc-name { color: var(--red); }
+  .vc-sub { font-size: clamp(11.5px,1.3vw,13.5px); color: var(--inklite); font-weight: 600; margin-top: 2px; line-height: 1.2; }
+  .vc-roi { font-family: var(--ui); font-weight: 700; font-size: clamp(10.5px,1.1vw,12px); color: var(--brass); margin-top: 4px; }
+
+  .vc-footer { display: flex; align-items: flex-start; gap: 10px; margin-top: clamp(10px,1.6vw,16px); }
+  .vc-footer .vc-fmark { font-family: var(--hand); font-weight: 700; color: var(--red); font-size: clamp(20px,2.2vw,28px); line-height: 1; }
+  .vc-footer p { font-size: clamp(15px,1.8vw,22px); line-height: 1.35; color: var(--ink); font-weight: 600; }
+  .vc-footer .uline { box-shadow: inset 0 -.42em 0 var(--red-soft); color: var(--red); }
+
+  @media (max-width: 620px) { .vc-card { max-width: 14ch; padding: 6px 9px; } .vc-name { font-size: 13px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .vc-line { stroke-dashoffset: 0; }
+    .vc-card { opacity: 1; }
+    .vc-scene.play .vc-line, .vc-scene.play .vc-card { animation: none; }
+  }
+</style>
+
+<script>
+  function initVC() {
+    document.querySelectorAll<HTMLElement>('.vc-scene').forEach((scene) => {
+      if ((scene as any)._vcInit) return;
+      (scene as any)._vcInit = true;
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  initVC();
+  document.addEventListener('astro:page-load', initVC);
+</script>

@@ -26,6 +26,7 @@ export interface PlannedDemo {
 }
 
 export const TOPICS: Topic[] = [
+  { id: 'copilot',      label: 'Governance',         tagline: 'Access, guardrails and audit evidence',   order: 0 },
   { id: 'cowork',       label: 'Cowork',             tagline: 'The multi-source AI coworker',          order: 1 },
   { id: 'scout',        label: 'Scout',              tagline: 'Agentic research & reasoning',          order: 2 },
   { id: 'copilot-l100', label: 'Copilot L100',       tagline: 'Foundations for every audience',        order: 3 },

@@ -1,0 +1,273 @@
+---
+import Scene from '../../components/governance/Scene.astro';
+import Screenshot from '../../components/governance/Screenshot.astro';
+import { scenes, sources } from '../../data/governance';
+import '../../styles/governance.css';
+
+const readiness = [
+  'Name an owner and approve the source set.',
+  'Test least privilege with allowed and denied users.',
+  'Review connection identities and destinations.',
+  'Prove logging and authorised investigation access.',
+  'Assign the incident owner and containment steps.',
+  'Confirm licences and tenant feature availability.',
+];
+---
+<!doctype html>
+<html lang="en-NZ" data-theme="dark" class="gov-notebook">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="A public-source, interactive guide to Microsoft 365 Copilot governance. Sixteen scenes on permissions, agents, controls and evidence." />
+    <title>Copilot governance, made visible | A Guide to Cloud</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='4' y='25' font-size='28'%3Eg%3C/text%3E%3C/svg%3E" />
+    <script is:inline>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const explicit = params.get('scoutTheme');
+        const alias = params.get('theme');
+        const theme = explicit === 'light' || explicit === 'dark'
+          ? explicit : alias === 'day' ? 'light' : alias === 'night' ? 'dark' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body class="gov-app">
+    <a href="#gov-main" class="gov-skip">Skip to the presentation</a>
+    <header class="gov-topbar">
+      <a href="/" class="gov-brand" aria-label="A Guide to Cloud demos home"><span class="gov-brand-mark" aria-hidden="true">g.</span><span>Copilot governance<small>A Guide to Cloud</small></span></a>
+      <div class="gov-route-label">Copilot / Governance</div>
+      <nav class="gov-toolbar" aria-label="Presentation controls">
+        <button type="button" data-menu class="gov-tool-button">Chapters <span aria-hidden="true">≡</span></button>
+        <button type="button" data-theme-toggle class="gov-tool-button" aria-label="Switch to light theme">Light view</button>
+        <button type="button" data-fullscreen class="gov-tool-button gov-fullscreen" aria-label="Enter fullscreen">Full screen</button>
+      </nav>
+    </header>
+    <main id="gov-main" tabindex="-1">
+      <noscript><p class="gov-noscript">Reading view: all 16 scenes are below. Interactive experiments and zoom need JavaScript; the diagrams and notes remain readable.</p></noscript>
+
+      <Scene scene={scenes[0]} number={1} variant="gov-cover">
+        <Fragment slot="argument">
+          <p class="gov-product-line">Microsoft 365 Copilot / SharePoint / agents</p>
+          <a href="#risk" class="gov-primary">Begin the conversation <span aria-hidden="true">→</span></a>
+          <p class="gov-date">15 September 2026 <span>•</span> A personal demo by Sush</p>
+          <p class="gov-cover-disclaimer">Public sources. Fictional examples. No live tenant or Microsoft guarantee.</p>
+        </Fragment>
+        <p class="gov-handwritten gov-cover-note">Let’s follow one file.</p>
+      </Scene>
+
+      <Scene scene={scenes[1]} number={2} variant="gov-risk-scene gov-statement-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Which question matters in your room?</p></Fragment>
+        <div class="gov-question-list">
+          <a href="#permissions"><span>People</span><strong>Who can reach the source?</strong><b aria-hidden="true">↗</b></a>
+          <a href="#discovery-access"><span>Data</span><strong>Hide it, or block access?</strong><b aria-hidden="true">↗</b></a>
+          <a href="#credentials"><span>Actions</span><strong>Whose authority does an agent use?</strong><b aria-hidden="true">↗</b></a>
+          <a href="#audit"><span>Evidence</span><strong>Can we investigate what happened?</strong><b aria-hidden="true">↗</b></a>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[2]} number={3} variant="gov-request-scene">
+        <Fragment slot="argument"><p class="gov-small">Web search and actions can cross other boundaries. Audit does not cover every tool invocation.</p></Fragment>
+        <div class="gov-flow gov-grid-paper" data-request-flow>
+          <div class="gov-board-heading"><span>A simplified request path</span><span data-flow-count>1 / 5</span></div>
+          <ol class="gov-flow-steps">
+            <li><button type="button" data-flow-step="0" aria-pressed="true"><span>01</span><strong>User prompt</strong><small>Ask in the user’s context</small></button></li>
+            <li><button type="button" data-flow-step="1" aria-pressed="false"><span>02</span><strong>Orchestration</strong><small>Plan the supported request</small></button></li>
+            <li class="gov-permission-gate"><button type="button" data-flow-step="2" aria-pressed="false"><span>03</span><strong>Permitted M365 retrieval</strong><small>Check access to the source</small></button></li>
+            <li><button type="button" data-flow-step="3" aria-pressed="false"><span>04</span><strong>Model response</strong><small>Use eligible grounding</small></button></li>
+            <li><button type="button" data-flow-step="4" aria-pressed="false"><span>05</span><strong>Audit evidence</strong><small>Record supported activity</small></button></li>
+          </ol>
+          <div class="gov-flow-explain" aria-live="polite"><span class="gov-handwritten">The file still has a gate.</span><p data-flow-detail>A signed-in user asks a question. This diagram stays within the built-in Microsoft 365 retrieval path.</p><button type="button" data-flow-reset class="gov-text-button">Start again</button></div>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[3]} number={4} variant="gov-permission-scene">
+        <Fragment slot="argument"><p class="gov-small">Illustrative model, not a tenant test. Eligible access does not guarantee Copilot retrieval. Existing downloads and copies are not revoked.</p></Fragment>
+        <div class="gov-experiment" data-permission-experiment>
+          <div class="gov-presets" role="group" aria-label="RAC enabled presets"><span>Start with a scenario →</span><button type="button" data-preset="permission" aria-pressed="true">Permission only</button><button type="button" data-preset="group" aria-pressed="false">Group only</button><button type="button" data-preset="both" aria-pressed="false">Both</button><button type="button" data-permission-reset class="gov-text-button">Reset</button></div>
+          <div class="gov-experiment-columns">
+          <div class="gov-input-side">
+          <div class="gov-file"><span class="gov-file-icon" aria-hidden="true">txt</span><div><strong>Board-review-demo.txt</strong><small>A fictional SharePoint source</small></div></div>
+          <fieldset class="gov-switches"><legend class="gov-sr">Configure source and group access</legend>
+            <label data-gate-control="acl"><span><strong>Existing source permission</strong><small>The file already grants access</small></span><input type="checkbox" data-permission="acl" checked /><span class="gov-switch" aria-hidden="true"></span></label>
+            <label data-gate-control="rac"><span><strong>RAC enabled</strong><small>Add the allowed-group gate</small></span><input type="checkbox" data-permission="rac" checked /><span class="gov-switch" aria-hidden="true"></span></label>
+            <label data-gate-control="group"><span><strong>Member of allowed RAC group</strong><small>The second gate, not a file permission</small></span><input type="checkbox" data-permission="group" /><span class="gov-switch" aria-hidden="true"></span></label>
+          </fieldset>
+          </div>
+          <div class="gov-output-side">
+          <div class="gov-door-path" aria-label="Two gates to direct source access"><div data-gate="acl" data-pass="true"><span>File permission</span><b data-gate-acl>Granted</b></div><span aria-hidden="true">→</span><div data-gate="rac" data-pass="false"><span>RAC group gate</span><b data-gate-rac>Missing</b></div></div>
+          <div class="gov-access-result" data-access-result data-state="denied" role="status"><span data-access-symbol aria-hidden="true">×</span><div><strong data-access-heading>Direct access denied</strong><p data-access-reason>Source permission exists, but the allowed RAC group membership is missing.</p></div></div>
+          <p class="gov-formula">ACL <b>AND</b> (RAC off <b>OR</b> allowed group)</p>
+          </div>
+          </div>
+          <div class="gov-task-strip"><p>“I have <button type="button" class="gov-phrase" data-gate-phrase="acl" aria-pressed="false">existing file permission</button>. With <button type="button" class="gov-phrase" data-gate-phrase="rac" aria-pressed="false">RAC switched on</button>, do I also belong to the <button type="button" class="gov-phrase" data-gate-phrase="group" aria-pressed="false">allowed group</button>?”</p><span class="gov-handwritten">Tap a phrase. Check the matching gate. ↑</span></div>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[4]} number={5} variant="gov-discover-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Ask the site owner first.</p><p class="gov-small">Reports run asynchronously. A permission snapshot starts the review; it does not certify the site.</p></Fragment>
+        <div class="gov-review">
+          <div class="gov-board-heading"><span>Illustrative review queue</span><span class="gov-tag">3 FICTIONAL SITES</span></div>
+          <div class="gov-review-row"><span>01</span><div><strong>Project archive</strong><p>Everyone except external users</p></div><small>Review the audience</small></div>
+          <div class="gov-review-row"><span>02</span><div><strong>Board demo</strong><p>Broad sharing link</p></div><small>Inspect the link scope</small></div>
+          <div class="gov-review-row"><span>03</span><div><strong>Operations lab</strong><p>Broken inheritance</p></div><small>Check unique grants</small></div>
+          <ol class="gov-lifecycle-strip"><li>Find</li><li>Owner review</li><li>Right-size</li><li>Recheck</li></ol>
+          <p class="gov-panel-note">Illustrative risk factors only. These are not scanned results.</p>
+          <details class="gov-inline-detail"><summary>Check the licence boundary</summary><p>One assigned qualifying Copilot licence plus the required base licence unlocks documented included SAM features, not all SAM capabilities. Check SAM Plan 1 exceptions and E5 requirements for sensitivity-label reports.</p></details>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[5]} number={6} variant="gov-proof-scene">
+        <Fragment slot="argument">
+          <div class="gov-segmented" role="group" aria-label="Compare discovery and access controls"><button type="button" data-control="rcd" aria-pressed="true">RCD / discovery</button><button type="button" data-control="rac" aria-pressed="false">RAC / access</button></div>
+          <div class="gov-control-copy" aria-live="polite"><strong data-control-heading>Reduce organisation-wide discovery</strong><p data-control-detail>RCD keeps source permissions intact. Direct access and site-context search remain different routes.</p></div>
+          <p class="gov-caution">RCD docs conflict on recent files. Validate the route; do not assume every existing agent is denied.</p>
+        </Fragment>
+        <Screenshot src="/governance/rcd-public-demo.webp" width={1562} height={1217} kind="rcd" alt="Official Microsoft SharePoint demonstration. Restricted content discovery is On at left; restricted access control is Not set at right." caption="Official Microsoft demonstration from Sush’s published oversharing article, not today’s Caldova tenant. UI and behaviour vary." />
+      </Scene>
+
+      <Scene scene={scenes[6]} number={7} variant="gov-label-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Read the rights behind the label.</p><p class="gov-small">Supported encrypted content needs VIEW + EXTRACT. Rights Management OWNER is different from SharePoint Full Control.</p></Fragment>
+        <div class="gov-label-diagram gov-grid-paper">
+          <div class="gov-board-heading"><span>Three separate decisions</span><span>CONCEPT</span></div>
+          <div class="gov-label-layer"><span class="gov-layer-index">01</span><div><strong>Site / container</strong><p>Set the collaboration boundary</p><small>A site label does not label every file inside it.</small></div></div>
+          <div class="gov-label-layer"><span class="gov-layer-index">02</span><div><strong>Item / encryption</strong><p>Apply a label and usage rights</p><small>Read and extraction rights affect supported processing.</small></div></div>
+          <div class="gov-label-layer"><span class="gov-layer-index">03</span><div><strong>DLP / processing</strong><p>Apply the configured policy action</p><small>Check conditions, scope and the Copilot surface.</small></div></div>
+          <div class="gov-before-after"><div><small>LABEL NAME ONLY</small><strong>Confidential</strong></div><span aria-hidden="true">→</span><div><small>REVIEW THE CONFIGURATION</small><strong>Settings + rights + policy</strong></div></div>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[7]} number={8} variant="gov-dlp-scene">
+        <Fragment slot="argument"><p class="gov-small">Policy illustration, not a rule editor. No prompt is submitted. Check entitlements and rollout; allow up to four hours for changes.</p></Fragment>
+        <div class="gov-dlp" data-dlp-demo>
+          <div class="gov-board-heading"><span>Choose the policy question</span><span>ILLUSTRATION</span></div>
+          <div class="gov-policy-choices" role="group" aria-label="DLP policy mode">
+            <button type="button" data-dlp="simulation" aria-pressed="true"><span>01</span>Simulation</button>
+            <button type="button" data-dlp="label" aria-pressed="false"><span>02</span>Label-based content policy</button>
+            <button type="button" data-dlp="prompt" aria-pressed="false"><span>03</span>Prompt policy <small>PREVIEW</small></button>
+          </div>
+          <div class="gov-policy-result" aria-live="polite"><span class="gov-policy-state" data-dlp-status>OBSERVE</span><h3 data-dlp-title>See matches before enforcement</h3><p data-dlp-detail>Simulation lets you review policy matches without blocking the interaction.</p><p class="gov-panel-note" data-dlp-limit>Use the evidence to tune scope and conditions before turning on enforcement.</p></div>
+          <p class="gov-dlp-separate"><strong>A separate action:</strong> block external web search for matching sensitive prompts while permitted internal grounding can continue.</p>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[8]} number={9} variant="gov-wide-diagram gov-statement-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Same front door. Check the engine.</p><p class="gov-small">Uploaded copies need their own review. Core M365 privacy does not put every connected service inside one boundary.</p></Fragment>
+        <div class="gov-agent-map gov-grid-paper">
+          <div class="gov-host"><span>INTERACTION CHANNEL</span><strong>Microsoft 365 Copilot</strong><p>Can host both approaches</p></div>
+          <div class="gov-branches"><div><span class="gov-branch-line" aria-hidden="true"></span><h3>Declarative</h3><p>Microsoft 365 Copilot orchestration</p><ul><li>Define instructions and knowledge</li><li>Review tools and configured access</li></ul></div><div><span class="gov-branch-line" aria-hidden="true"></span><h3>Custom-engine</h3><p>Your configured orchestration</p><ul><li>Build with Studio / Foundry</li><li>Review models, tools and services</li></ul></div></div>
+          <div class="gov-map-boundary"><span>FOLLOW EACH PATH</span><strong>Sources → copies → connections → destinations</strong></div>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[9]} number={10} variant="gov-credential-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">A live chat can use the maker’s connection too.</p></Fragment>
+        <div class="gov-identity gov-grid-paper">
+          <div class="gov-board-heading"><span>Choose a connection model</span><span>CONCEPT</span></div>
+          <div class="gov-identity-options" role="group" aria-label="Connection identity"><button type="button" data-identity="user" aria-pressed="true">User delegated</button><button type="button" data-identity="maker" aria-pressed="false">Maker provided</button><button type="button" data-identity="automated" aria-pressed="false">Automated connection</button></div>
+          <div class="gov-identity-path"><span>Person asks</span><b aria-hidden="true">→</b><span>Agent calls a tool</span><b aria-hidden="true">→</b><strong data-identity-name>User’s connection</strong></div>
+          <div class="gov-identity-result" aria-live="polite"><p class="gov-eyebrow">Authority to inspect</p><h3 data-identity-title>The user’s granted scope</h3><p data-identity-detail>The tool acts through the signed-in user’s delegated connection. Downstream permissions and authorisation still matter.</p></div>
+          <p class="gov-panel-note">Check connection owner, permissions, downstream authorisation and destination.</p>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[10]} number={11} variant="gov-lifecycle-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Sharing the agent does not settle source access.</p><p class="gov-small">Power Platform data policies control connectors, channels and supported endpoints, not all sensitive-content classification.</p></Fragment>
+        <div class="gov-lifecycle">
+          <div class="gov-board-heading"><span>Publish with ownership</span><span>FIVE GATES</span></div>
+          <ol class="gov-gates">
+            <li><span>01</span><div><strong>Environment + maker</strong><p>Agree where it can be built and who can build it.</p></div></li>
+            <li><span>02</span><div><strong>Sources + connectors</strong><p>Approve source scope, connections and destinations.</p></div></li>
+            <li><span>03</span><div><strong>Publish + audience</strong><p>Validate channel controls and separate sharing grants.</p></div></li>
+            <li><span>04</span><div><strong>Owner + monitoring</strong><p>Keep an inventory. Know the coverage gaps.</p></div></li>
+            <li><span>05</span><div><strong>Retire + verify</strong><p>Revoke the relevant agent, source and connection paths.</p></div></li>
+          </ol>
+          <p class="gov-panel-note">Registry coverage depends on platform integration. An empty findings list does not prove an agent is clean.</p>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[11]} number={12} variant="gov-audit-scene">
+        <Fragment slot="argument"><p class="gov-handwritten" data-audit-pen>Start with who asked.</p><p class="gov-small">Synthetic field sketch with invented IDs. Real fields and coverage vary by host and activity.</p></Fragment>
+        <div class="gov-audit">
+          <div class="gov-board-heading"><span>CopilotInteraction</span><span class="gov-tag">INVENTED DATA</span></div>
+          <div class="gov-audit-options" role="group" aria-label="Highlight audit fields"><button type="button" data-audit-field="who" aria-pressed="true">Who?</button><button type="button" data-audit-field="host" aria-pressed="false">Which host?</button><button type="button" data-audit-field="resource" aria-pressed="false">Which resource?</button><button type="button" data-audit-field="message" aria-pressed="false">Which message?</button></div>
+          <div class="gov-event-code" aria-label="Synthetic audit event fields">
+            <p><span>Operation</span><strong>CopilotInteraction</strong></p>
+            <p data-event-field="who" class="is-highlighted"><span>User</span><strong>Fictional pilot user</strong></p>
+            <p data-event-field="host"><span>AppHost</span><strong>Microsoft 365 Copilot</strong></p>
+            <p data-event-field="resource"><span>Resource reference</span><strong>demo-resource-01</strong></p>
+            <p data-event-field="message"><span>Message reference</span><strong>demo-message-01</strong></p>
+          </div>
+          <p class="gov-audit-explain" data-audit-explain aria-live="polite">Who initiated the activity? Check the recorded user identity within the supported event.</p>
+          <div class="gov-audit-absence"><span aria-hidden="true">∅</span><p><strong>Full prompt and response</strong><br />Not in the standard audit event.</p></div>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[12]} number={13} variant="gov-proof-scene gov-dspm-scene">
+        <Fragment slot="argument">
+          <div class="gov-authority-list"><p><span>01</span><strong>DSPM / eDiscovery</strong><small>Use the relevant roles and scoped access.</small></p><p><span>02</span><strong>Authorised export app</strong><small>A separate route with separate permissions.</small></p></div>
+          <p class="gov-caution">Manager access alone is not enough. Copilot audit defaults to 180 days, including E5; content retention and holds are separate.</p>
+        </Fragment>
+        <Screenshot src="/governance/dspm-public-demo.webp" width={965} height={805} kind="dspm" alt="Published, redacted August lab screenshot of a Purview conversation detail view. Original red annotations identify the prompt, full response and referenced files." caption="Published demo capture, not live telemetry. Redacted August lab image from Sush’s auditing article." />
+      </Scene>
+
+      <Scene scene={scenes[13]} number={14} variant="gov-respond-scene">
+        <Fragment slot="argument"><p class="gov-small">No purge or delete default. Audit and content retention differ. Holds can preserve content after deletion.</p></Fragment>
+        <div class="gov-response gov-grid-paper">
+          <div class="gov-board-heading"><span>A scoped response path</span><span>INVESTIGATE FIRST</span></div>
+          <ol><li><span>01</span><div><h3>Preserve evidence</h3><p>Keep relevant events and content through authorised processes.</p></div></li><li><span>02</span><div><h3>Contain the path</h3><p>Review source access, agent audience and tool connections.</p></div></li><li><span>03</span><div><h3>Investigate actual scope</h3><p>Establish what was reached, copied, shared or acted on.</p></div></li><li><span>04</span><div><h3>Remediate + retest</h3><p>Correct the grants and policies. Verify allowed and denied cases.</p></div></li></ol>
+          <p class="gov-handwritten">Keep what explains it.</p>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[14]} number={15} variant="gov-pilot-scene">
+        <Fragment slot="argument"><p class="gov-handwritten">Who owns the evidence for each tick?</p><p class="gov-small">Discussion checklist only. No certification or risk score. Selections clear on reload and are never sent.</p></Fragment>
+        <div class="gov-readiness">
+          <div class="gov-board-heading"><span>Before the pilot</span><button type="button" data-readiness-reset class="gov-text-button">Reset checklist</button></div>
+          <fieldset><legend class="gov-sr">Pilot discussion gates</legend>{readiness.map((item, index) => <label class="gov-check-row"><input type="checkbox" data-readiness /><span class="gov-check-number">{String(index + 1).padStart(2, '0')}</span><span>{item}</span></label>)}</fieldset>
+          <p class="gov-readiness-status" data-readiness-status role="status">0 of 6 discussion gates marked. Evidence still needs review.</p>
+          <p class="gov-panel-note">Changing this checklist does not change your tenant.</p>
+        </div>
+      </Scene>
+
+      <Scene scene={scenes[15]} number={16} variant="gov-close">
+        <Fragment slot="argument"><a href="#pilot" class="gov-primary">Return to the pilot gates <span aria-hidden="true">↗</span></a><p class="gov-small gov-close-disclaimer">A personal A Guide to Cloud demo.<br />Public sources and fictional examples only.<br />No live tenant, confidential content or Microsoft guarantee.</p></Fragment>
+        <div class="gov-reference-board">
+          <div class="gov-board-heading"><span>Keep the conversation grounded</span><span>15 SEP 2026</span></div>
+          <div class="gov-read-more">
+            {[sources.articleAudit, sources.articleSharing, sources.articleAgents, sources.articleQuestions].map((source, index) => <a href={source.url} target="_blank" rel="noopener noreferrer"><span>{String(index + 1).padStart(2, '0')}</span><strong>{source.label}</strong><b aria-hidden="true">↗</b></a>)}
+          </div>
+          <details class="gov-inline-detail"><summary>Microsoft Learn reference desk</summary><div class="gov-reference-links">{Object.entries(sources).filter(([key]) => !key.startsWith('article')).map(([, source]) => <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}</a>)}</div></details>
+          <div class="gov-caveats"><h3>Carry these caveats into the room</h3><p>RCD docs currently conflict on recently interacted files. Test the exact route.</p><p>Restricted SharePoint Search new enablement was blocked from 31 July 2026. It is not a new rollout recommendation here.</p><p>Roles, licences, channels and rollout vary. Validate the target tenant.</p></div>
+        </div>
+      </Scene>
+    </main>
+    <footer class="gov-bottom">
+      <div class="gov-bottom-actions"><button type="button" data-prev aria-label="Previous scene" disabled>←</button><div class="gov-progress-block"><span data-scene-count>01 / 16</span><progress data-progress max="16" value="1" aria-label="Presentation progress"></progress><span data-current-chapter>The question</span></div><button type="button" data-next aria-label="Next scene">→</button></div>
+      <div class="gov-bottom-tools"><span class="gov-key-hint">← → to move</span><button type="button" data-notes-toggle aria-pressed="false">Notes</button></div>
+    </footer>
+    <p class="gov-sr" data-shell-status role="status"></p>
+    <dialog class="gov-chapter-dialog" data-chapter-dialog aria-labelledby="gov-chapter-title">
+      <div class="gov-dialog-heading"><div><p class="gov-eyebrow">16 scenes / a guided conversation</p><h2 id="gov-chapter-title">Choose the next question</h2></div><div><button type="button" data-print>Print / PDF</button><button type="button" data-close-menu autofocus aria-label="Close chapter menu">Close ×</button></div></div>
+      <nav aria-label="Chapters"><ol>{scenes.map((scene, index) => <li><a href={`#${scene.id}`} data-chapter-link><span>{String(index + 1).padStart(2, '0')}</span><div><small>{scene.chapter}</small><strong>{scene.title}</strong></div></a></li>)}</ol></nav>
+      <p class="gov-panel-note">Arrow keys or Space move between scenes when focus is outside a control. Escape closes dialogs. Print shows every scene.</p>
+    </dialog>
+    <dialog class="gov-zoom-dialog" data-zoom-dialog aria-labelledby="gov-zoom-title">
+      <div class="gov-dialog-heading"><h2 id="gov-zoom-title">Original published capture</h2><div><button type="button" data-zoom-size aria-pressed="false">Actual size</button><button type="button" data-close-zoom autofocus aria-label="Close screenshot zoom">Close ×</button></div></div>
+      <div class="gov-zoom-viewport" tabindex="0" role="region" aria-label="Published screenshot. Use arrow keys to scroll at actual size."><img data-zoom-image alt="" /></div>
+      <p data-zoom-description class="gov-panel-note"></p>
+    </dialog>
+    <script>
+      import '../../components/governance/client';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+---
+// Compare scene — an animated product comparison table (explainer).
+// Rows stagger in when you land on the scene; click a row to reveal the "why".
+interface Props { scene: any; index: number; }
+const { scene, index } = Astro.props;
+function fmt(s = '') {
+  return s.replace(/\*([^*]+)\*/g, '<span class="uline">$1</span>')
+          .replace(/_([^_]+)_/g, '<span class="accent">$1</span>');
+}
+const [colA, colB] = scene.columns;
+---
+<section class="screen compare-scene" data-scene-index={index} data-notes={scene.notes} id={scene.id}>
+  <div class="wrap">
+    <div class="s-head">
+      {scene.eyebrow && <span class="eyebrow">{scene.eyebrow}</span>}
+      {scene.kicker && <div class="kicker">{scene.kicker}</div>}
+      <h1 class="scene-h1" set:html={fmt(scene.headline)} />
+    </div>
+    <div class="s-body">
+    <div class="ctable" role="table">
+      <div class="crow chead" role="row">
+        <div class="cc lab" role="columnheader"></div>
+        <div class="cc" role="columnheader"><span class="dot a"></span>{colA.name}</div>
+        <div class="cc" role="columnheader"><span class="dot b"></span>{colB.name}</div>
+      </div>
+      {scene.rows.map((r: any, i: number) => (
+        <div class={`crow ${r.why ? 'has-why' : ''}`} role="row" style={`--i:${i}`} data-row>
+          <div class="cc lab" role="cell">
+            {r.label}
+            {r.why && <span class="whytoggle" aria-hidden="true">ⓘ</span>}
+          </div>
+          <div class={`cc ${r.winner === 'a' || r.winner === 'both' ? 'win' : ''}`} role="cell">
+            {(r.winner === 'a' || r.winner === 'both') && <span class="tick">✓</span>}{r.a}
+          </div>
+          <div class={`cc ${r.winner === 'b' || r.winner === 'both' ? 'win' : ''}`} role="cell">
+            {(r.winner === 'b' || r.winner === 'both') && <span class="tick">✓</span>}{r.b}
+          </div>
+          {r.why && <div class="why" role="note">{r.why}</div>}
+        </div>
+      ))}
+    </div>
+
+    {scene.rule && (
+      <div class="rule">
+        <div class="rlab">{scene.rule.label}</div>
+        <p set:html={fmt(scene.rule.body)} />
+      </div>
+    )}
+  </div>
+  </div>
+</section>
+
+<style>
+  .compare-scene .ctable { margin-top: 18px; border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; background: var(--card); box-shadow: var(--shadow); }
+  .crow { display: grid; grid-template-columns: 1.1fr 1fr 1fr; align-items: stretch; }
+  .crow:not(.chead) { border-top: 1px solid var(--hair); }
+  .cc { padding: 14px 18px; font-size: clamp(13px,1.5vw,16.5px); line-height: 1.35; display: flex; align-items: center; gap: 8px; }
+  .cc.lab { font-weight: 700; color: var(--inklite); }
+  .chead .cc { background: var(--navy-soft); font-family: var(--ui-semi); font-weight: 700; color: var(--navy); font-size: clamp(13px,1.5vw,16px); }
+  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .dot.a { background: var(--inklite); } .dot.b { background: var(--brass); }
+  .cc.win { color: var(--navy); font-weight: 700; background: var(--brass-soft); }
+  .tick { color: var(--brass); font-weight: 800; }
+  .crow.has-why .cc.lab { cursor: pointer; }
+  .whytoggle { color: var(--brass); font-size: 13px; opacity: .7; }
+  .why { grid-column: 1 / -1; padding: 0 18px; max-height: 0; overflow: hidden; color: var(--inklite); font-size: 13.5px; line-height: 1.5;
+         background: var(--paper); transition: max-height .3s ease, padding .3s ease; }
+  .crow.open .why { max-height: 120px; padding: 12px 18px; border-top: 1px dashed var(--hair); }
+  .crow.open .cc.lab .whytoggle { opacity: 1; }
+
+  /* stagger-in animation, replays each time you land on the scene */
+  .compare-scene .crow:not(.chead) { opacity: 0; transform: translateY(10px); }
+  .compare-scene.play .crow:not(.chead) { animation: rowIn .45s cubic-bezier(.22,.61,.36,1) forwards; animation-delay: calc(var(--i) * 70ms + 80ms); }
+  @keyframes rowIn { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .compare-scene .crow:not(.chead) { opacity: 1; transform: none; }
+    .compare-scene.play .crow:not(.chead) { animation: none; }
+  }
+
+  .rule { margin-top: 18px; background: var(--card); border: 1px solid var(--hair); border-left: 7px solid var(--navy); border-radius: 12px; padding: 16px 22px; box-shadow: var(--shadow); max-width: 60ch; }
+  .rule .rlab { font-family: var(--hand); color: var(--brass); font-size: clamp(22px,2.3vw,28px); line-height: 1; }
+  .rule p { margin-top: 6px; font-size: clamp(15px,1.6vw,19px); line-height: 1.45; }
+  @media (max-width: 640px) { .crow { grid-template-columns: 1fr; } .cc.lab { background: var(--navy-soft); } }
+</style>
+
+<script>
+  function initCompare() {
+    document.querySelectorAll<HTMLElement>('.compare-scene').forEach((scene) => {
+      if ((scene as any)._cmpInit) return;
+      (scene as any)._cmpInit = true;
+
+      // replay stagger each time the scene becomes active
+      let wasActive = scene.classList.contains('active');
+      const play = () => { scene.classList.remove('play'); void scene.offsetWidth; scene.classList.add('play'); };
+      if (wasActive) play();
+      // Only replay on the false->true transition. Never react to play()'s OWN class
+      // mutation — that self-trigger is an infinite microtask loop that pegs the page.
+      new MutationObserver(() => {
+        const isActive = scene.classList.contains('active');
+        if (isActive && !wasActive) play();
+        wasActive = isActive;
+      }).observe(scene, { attributes: true, attributeFilter: ['class'] });
+
+      // click a row to reveal the "why"
+      scene.querySelectorAll<HTMLElement>('.crow.has-why').forEach((row) => {
+        const lab = row.querySelector('.cc.lab');
+        lab?.addEventListener('click', () => row.classList.toggle('open'));
+      });
+    });
+  }
+  initCompare();
+  document.addEventListener('astro:page-load', initCompare);
+</script>

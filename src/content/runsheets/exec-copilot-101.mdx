@@ -1,0 +1,441 @@
+---
+title: "Copilot 101 for an MD"
+blurb: "Sixty minutes, in person, three people in a room. Half demo, half his own inbox. The exec session."
+order: 3
+durationMin: 60
+topic: copilot-l100
+audience: "Managing Director and his EA. Small room, in person, no slides."
+note: "run it on HIS data, not mine"
+visibility: noindex
+
+files:
+  - name: "Caldova / ColinB - Session Demos / Exec"
+    what: "Gulf retail leadership paper, one page brief, market assessment, two sets of leadership minutes. The safe controlled half."
+    where: "Colin Ballinger OneDrive, Caldova tenant"
+  - name: "Caldova / ColinB - mail folder 'Exec demo'"
+    what: "Nine decision-shaped messages including two people disagreeing on the record."
+    where: "Colin Ballinger mailbox, Caldova tenant"
+  - name: "Colin's own Gulf Retail Launch folder"
+    what: "Three partner proposals, scorecard, category plan, legal drafts. Already there, use it."
+    where: "Colin Ballinger OneDrive, Caldova tenant"
+  - name: "His own laptop"
+    what: "The most important asset in the room. He has a licence and real data."
+    where: "in front of him"
+
+preflight:
+  - "Book the room 10 minutes early. In person means cables, and the room seats six."
+  - "Sign in to Caldova as ColinB in a dedicated Edge profile BEFORE they walk in."
+  - "Open the Exec demo mail folder and the Session Demos/Exec folder so nothing is hunted for live."
+  - "Confirm Nick has an M365 Copilot licence assigned. If he does not, the second half changes completely."
+  - "Have the prompt list ready to paste into a chat or email at the end - he will ask for it."
+  - "Decide in advance which THREE prompts he will run himself. Do not improvise this."
+  - "Close every other window. Small room, big screen, nothing personal on it."
+
+gotchas:
+  - title: "This is not a demo, it is a working session"
+    body: "Three people in a six-person room. If you present at them for an hour you have misread it. The win condition is Nick running a prompt on his own data and seeing something useful come back. Everything else is setup for that moment."
+  - title: "He is new in the seat"
+    body: "New MD, and his EA asked for this on his behalf. He is drinking from a firehose. Do not add to it. One idea, three prompts, a card he keeps. If he leaves with one habit that is a success."
+  - title: "Do not demo Microsoft to Microsoft"
+    body: "He works here. He has seen the keynote. Skip what Copilot is, skip the roadmap, skip the numbers. Start at what it does for his Thursday."
+  - title: "His EA is the highest-value person in the room"
+    body: "Alle runs his inbox, his calendar and his prep. Half the value of this hour lands on her, not him. Address her directly at least twice and give her the delegation-shaped prompts."
+  - title: "Cowork is in the invite title"
+    body: "The meeting is called Copilot AND Cowork. Do not let Cowork eat the hour, but do not skip it either. Five minutes at the end, framed as what is coming, is right."
+  - title: "Enter sends"
+    body: "Every prompt here copies as one unbroken block. Paste something with blank lines and only the first sentence is submitted."
+
+pivots:
+  - trigger: "He opens his laptop in the first ten minutes"
+    goto: "4"
+    why: "Abandon the demo and go straight to his data. That is the better session and he has told you he wants it."
+  - trigger: "He asks what it does with our data"
+    goto: "2"
+    why: "Work vs Web and the sources panel. Answer it once, properly, then move on."
+  - trigger: "He is quiet and giving nothing back"
+    goto: "3"
+    why: "The disagreement scenario. Two of his VPs contradicting each other is the thing every MD recognises."
+  - trigger: "Alle is engaged and he is not"
+    goto: "6"
+    why: "Go to the EA prompts. She will use it daily and she will teach him."
+  - trigger: "He asks about agents or building something"
+    goto: "8"
+    why: "Cowork, briefly. Then stop - that is a second session, not this one."
+  - trigger: "He asks what other MDs do with it"
+    goto: "7"
+    why: "The habits section. Concrete, short, and it is the question behind most exec questions."
+  - trigger: "Running short"
+    goto: "9"
+    why: "Cut 5 and 8. Never cut the close or the card."
+
+recovery:
+  - when: "His tenant is slow or Copilot is thinking"
+    then: "Keep talking to Alle about what a good answer would contain. Do not fill silence by resending."
+  - when: "A prompt on his data returns something thin"
+    then: "Say so, then fix it in one line in front of him. That IS the lesson. An exec who watches you correct a bad answer learns more than one who watches a clean run."
+  - when: "He has no Copilot licence"
+    then: "Run everything on Caldova and give him the card. Then tell Alle exactly who to ask for a licence, by name."
+  - when: "He asks something you cannot answer"
+    then: "Say you will come back within the day, and do. He is the MD, he will remember whether you did."
+  - when: "Down to 20 minutes"
+    then: "Sections 2, 4 and 9. Trust, his own inbox, the card."
+
+ledger:
+  claims:
+    - "Microsoft 365 Copilot can be grounded on work content or web content and the toggle is visible"
+    - "Copilot cites its sources and each one can be opened"
+    - "Files can be referenced in a prompt by typing a forward slash"
+    - "Copilot is available in Word, Outlook, Excel, Teams, Edge and at m365copilot.com"
+    - "Prompts can be saved and scheduled to run on a recurrence"
+  sources:
+    - "https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-privacy"
+    - "https://support.microsoft.com/en-us/copilot-m365"
+  capturedOn: "2026-09-19"
+  lastVerified: "2026-09-19"
+  staleAfter: "2026-12-19"
+  classification: public
+
+sections:
+  - n: "1"
+    title: "Open - ask before you tell"
+    mode: "Nothing on screen"
+    where: "Just talk"
+    minutes: 4
+    anchor: true
+    blocks:
+      - type: callout
+        kind: win
+        title: "The whole session turns on this"
+        body: "Do not open with what Copilot is. Open by finding out what his Thursday actually looks like. Everything after this is shaped by the answer, and if you skip it you will demo the wrong thing for an hour."
+      - type: say
+        body: "Before I show you anything - what does a bad Thursday look like for you? Not the strategy part. The bit where you are behind and you know it."
+      - type: points
+        title: "Listen for which of these he says, then aim the hour at it"
+        items:
+          - label: "Too much inbox"
+            body: "Go heavy on section 4 and give Alle the delegation prompts in section 6."
+          - label: "Walking into meetings unprepared"
+            body: "Section 5 is your anchor. Meeting prep is the highest-value exec use case there is."
+          - label: "Too many long documents"
+            body: "Section 3. Reduce a leadership paper to a one page brief in front of him."
+          - label: "Writing the same things repeatedly"
+            body: "Section 7, saved and scheduled prompts. This is the one that changes a habit."
+      - type: say
+        body: "I am going to show you three things on a demo tenant so nothing here is real, and then I want you to run two or three on your own inbox while I am in the room. The second part is the one that matters. If it does not work on your data it does not count."
+      - type: callout
+        kind: note
+        title: "Say this to Alle directly, early"
+        body: "A lot of what I am about to show is more useful to you than to Nick, because you are the one in his inbox at seven in the morning. I will point out which ones as we go."
+
+  - n: "2"
+    title: "The trust question, answered once"
+    mode: "Chat only"
+    where: "Caldova, m365copilot.com as ColinB"
+    minutes: 6
+    anchor: true
+    blocks:
+      - type: say
+        body: "One thing out of the way first, because it is the question everyone asks and it deserves a straight answer rather than a slide."
+      - type: points
+        title: "Three facts, said plainly"
+        items:
+          - label: "It sees what you can already see"
+            body: "Copilot has your permissions, not more. If you cannot open a file today, Copilot cannot read it for you either."
+          - label: "There is a toggle"
+            body: "Work searches your own email and files. Web searches the internet. They are different tools and it matters which one you are in."
+          - label: "It shows its working"
+            body: "Every answer lists what it read, numbered, and you can click through to the actual file."
+      - type: prompt
+        label: "Run this, then click a source"
+        body: |-
+          Search my files and email for the Gulf retail partner decision. Tell me what has been decided so far, what is still open, and who is waiting on whom. List your sources.
+      - type: callout
+        kind: win
+        title: "Then do the thing that actually earns trust"
+        body: "Scroll to the sources and OPEN ONE. Say: this is how you check it. If an answer is going to change what you do, open at least one source first. Ten seconds, and it is the difference between using this well and badly."
+      - type: say
+        body: "That is the whole governance conversation for today. If you want the deeper version - what an admin can see, what is retained, what happens with sensitivity labels - that is a different hour and I will bring the right person."
+
+  - n: "3"
+    title: "A long paper, reduced"
+    mode: "Copilot in Word or the chat"
+    where: "Session Demos / Exec"
+    minutes: 8
+    anchor: true
+    blocks:
+      - type: say
+        body: "Here is a leadership decision paper. Nine sections, about two thousand words, lands on a Friday, decision on Thursday. You have all had this document."
+      - type: prompt
+        label: "The exec briefing"
+        body: |-
+          Summarise this paper for someone who has not read it and has five minutes. One paragraph on the decision being asked for, then the options with the strongest argument for and against each, then what I am specifically being asked to decide. No more than one page, plain sentences, no adjectives.
+      - type: say
+        body: "Useful. But that is the summary anyone would write. Here is the one that is actually worth something."
+      - type: prompt
+        label: "The question behind the question"
+        note: "This is the prompt to make sure he leaves with."
+        body: |-
+          Based on this paper, what are the three hardest questions I am likely to be asked in the meeting, and where is the weakest answer in the document? Tell me which section each one comes from.
+      - type: callout
+        kind: win
+        title: "What a good answer finds"
+        body: "The scorecard favours Meridian but the recommendation is Al Noor, and the paper's own reasoning is that Saudi Arabia cannot be in wave one. A good answer spots that the recommendation contradicts the scorecard and explains why. That is the moment this stops looking like summarising."
+      - type: say
+        body: "Notice it did not leave the document. No web, nothing invented. Everything it said is in the paper and you can check it."
+
+  - n: "4"
+    title: "His inbox - the part that matters"
+    mode: "Allow editing, on HIS account"
+    where: "Nick's own Outlook"
+    minutes: 12
+    anchor: true
+    blocks:
+      - type: callout
+        kind: warn
+        title: "Hand over the keyboard"
+        body: "This is the pivot point of the session. Stop demoing. He runs these on his own inbox with you sitting beside him. If you demo this on Caldova instead, you have wasted the hour - he already believes it works on fake data."
+      - type: say
+        body: "I want you to run this one, not me. It is your inbox, and if it does not work on your inbox it does not count."
+      - type: prompt
+        label: "1. Triage - run this first"
+        note: "The safest possible first prompt. Read-only, no risk, and immediately useful."
+        body: |-
+          Review my unread email from the last three days and group it into three lists: needs a decision from me this week, needs a short reply but is not urgent, and no action needed. For each item in the first list give me one line on what the decision is and who is waiting on it. Put the list in the order I should deal with them, not the order they arrived.
+      - type: prompt
+        label: "2. What did I miss"
+        body: |-
+          What has happened in my email in the last week that I have not replied to and probably should have? Tell me who is waiting, how long they have waited, and what they asked for.
+      - type: prompt
+        label: "3. Catch me up on one thing"
+        note: "Ask him to name a topic he is behind on, then use it here."
+        body: |-
+          Catch me up on everything about this topic across my email and files over the last month. What was decided, what is still open, and what is the single most recent position. Tell me where each point came from.
+      - type: callout
+        kind: win
+        title: "Watch his face on the second one"
+        body: "Who is waiting on me and how long have they waited is the prompt that lands hardest with every executive who has ever run one. It is uncomfortable in exactly the right way."
+      - type: say
+        body: "If the answer is not right, do not start again. Tell it what was wrong in one line - too long, you missed the board paper, ignore anything from the all-staff list - and it revises. Correcting is faster than re-prompting and it is what gets you the answer you wanted."
+
+  - n: "5"
+    title: "Ten minutes before a meeting"
+    mode: "On his account"
+    where: "His own calendar"
+    minutes: 8
+    anchor: true
+    blocks:
+      - type: say
+        body: "This is the one I would put money on you using every week. Open your calendar and pick a meeting you have next week that you have not prepared for."
+      - type: prompt
+        label: "Meeting prep"
+        body: |-
+          I have a meeting about this next week. Pull together everything I need: what was agreed last time, what has happened since, what is unresolved, and who is bringing what. Then give me the three questions I am most likely to be asked and a one line answer to each.
+      - type: prompt
+        label: "The follow-up that nobody thinks of"
+        body: |-
+          Looking at the same material, what is the thing most likely to be raised that nobody has prepared for? Tell me why you think that and what I would need to know.
+      - type: say
+        body: "For the demo version of this, the two sets of leadership minutes in the Caldova folder show it clearly. The September set carries actions forward from the August set rather than closing them, which is exactly the pattern every governance meeting has and nobody tracks."
+      - type: callout
+        kind: note
+        title: "This is Alle's prompt as much as his"
+        body: "Say directly to her: you could run this the evening before and put the answer at the top of his brief. That is a ten minute job that saves him twenty and makes him look prepared."
+
+  - n: "6"
+    title: "For the EA - the prompts Alle will actually use"
+    mode: "On her account"
+    where: "Alle's Outlook"
+    minutes: 6
+    anchor: true
+    blocks:
+      - type: callout
+        kind: win
+        title: "Do not skip this because he is the MD"
+        body: "She runs his inbox, his calendar and his prep. Half the value of this hour lands on her. And she is the one who will still be using it in three months, which means she is the one who makes it stick."
+      - type: prompt
+        label: "The morning brief"
+        body: |-
+          Go through the mail that arrived overnight and write me a short brief: what needs his decision today, what needs a reply from me, and what he needs to know before his first meeting. Three short lists, one line each, no preamble.
+      - type: prompt
+        label: "Draft in his voice"
+        note: "The single most useful EA prompt there is."
+        body: |-
+          Draft a reply to this on his behalf. Courteous and direct, four sentences at most, no adjectives, and do not thank them more than once. Match the tone of how he normally writes to this person.
+      - type: prompt
+        label: "The chase list"
+        body: |-
+          Who has he asked for something in the last month and not received it? List the person, what he asked for, when he asked, and how long it has been outstanding.
+      - type: prompt
+        label: "Before the week starts"
+        body: |-
+          Look at his calendar for next week and tell me which meetings need preparation from me, what that preparation is, and which ones have no agenda and probably should.
+      - type: say
+        body: "That last one is my favourite. It is not a summary, it is a judgement about what is missing, and it is the sort of thing that takes an experienced EA five years to learn to spot."
+
+  - n: "7"
+    title: "Save it, so it happens without you"
+    mode: "On his account"
+    where: "Copilot chat"
+    minutes: 5
+    blocks:
+      - type: say
+        body: "Everything so far you have to remember to do. This is how it happens without you remembering."
+      - type: steps
+        title: "Show it once, slowly"
+        items:
+          - "Run a prompt you liked, for example the triage one."
+          - "Save it, so it is one click next time rather than retyped."
+          - "Schedule it, so it runs before you get in and the answer is waiting."
+          - "Point out the Prompt Gallery - there are good ones there and they are worth five minutes of browsing."
+      - type: callout
+        kind: win
+        title: "The habit, not the feature"
+        body: "Say: the difference between people who get value from this and people who do not is not skill, it is whether it became a habit. A scheduled prompt is a habit you only have to decide once."
+      - type: points
+        title: "Three worth scheduling for an MD"
+        items:
+          - label: "Monday 7am"
+            body: "What needs my decision this week, from my email and calendar."
+          - label: "Friday 4pm"
+            body: "What did I commit to this week that I have not done."
+          - label: "Night before a leadership meeting"
+            body: "Prep brief for tomorrow's meeting, with the three likely questions."
+
+  - n: "8"
+    title: "Cowork, briefly - it is in the invite"
+    mode: "Talk, show only if asked"
+    where: "-"
+    minutes: 4
+    pivot: true
+    blocks:
+      - type: callout
+        kind: warn
+        title: "Five minutes, then stop"
+        body: "The meeting is titled Copilot and Cowork so it has to be mentioned. But it is a different product with a different conversation and it will eat the hour if you let it."
+      - type: points
+        title: "The honest framing"
+        items:
+          - label: "Copilot is in the flow of your work"
+            body: "It sits in Outlook and Word and helps with the thing in front of you."
+          - label: "Cowork takes a job away"
+            body: "You hand over something that would have taken a person hours, and it comes back done, with its working shown."
+          - label: "The difference that matters to you"
+            body: "Copilot is per seat. Cowork is consumption, so you pay for work done rather than for people who might use it."
+      - type: say
+        body: "If that is interesting I would rather bring it back properly than squeeze it into five minutes. There is a good cost and control walkthrough I can show you in twenty."
+      - type: callout
+        kind: note
+        body: "If he wants to go deeper, point him at the Cowork Cost and Control demo on the same site rather than improvising it here."
+
+  - n: "9"
+    title: "Close - one habit and a card"
+    mode: "Nothing on screen"
+    where: "Just talk"
+    minutes: 4
+    anchor: true
+    blocks:
+      - type: callout
+        kind: win
+        title: "Never cut this"
+        body: "An exec session that ends with one concrete habit and something in his inbox is worth more than one that showed two more features and ran to the bell."
+      - type: say
+        body: "One thing. Not ten. Tomorrow morning, before you open your inbox properly, run the triage prompt. That is it. If it works for you once, the rest of the card is there when you want it."
+      - type: steps
+        title: "Then, in this order"
+        items:
+          - "Send the prompt list to both of them while you are still in the room. Do not promise to send it later."
+          - "Ask Alle directly which two of hers she will try this week. Naming them makes them happen."
+          - "Offer the follow-up: thirty minutes in three weeks to see what stuck and fix what did not."
+          - "Ask him one question: who else in his leadership team should get this hour."
+      - type: say
+        body: "That last question does two things. It tells you whether the hour landed, and it is how this turns into eight more sessions rather than one."
+
+  - n: "Prompts"
+    title: "The full exec prompt library - send this after"
+    pivot: true
+    blocks:
+      - type: callout
+        kind: note
+        title: "Paste this into the chat before you leave the room"
+        body: "Grouped by the job to be done, not by feature. An exec does not care which app it is in."
+      - type: points
+        title: "Getting on top of the inbox"
+        items:
+          - label: "Triage"
+            body: "Review my unread email from the last three days and group it into three lists: needs a decision from me this week, needs a short reply but is not urgent, and no action needed. Order them by when they are needed, not when they arrived."
+          - label: "Who is waiting"
+            body: "What has arrived in the last week that I have not replied to and probably should have? Tell me who is waiting, how long, and what they asked for."
+          - label: "The long thread"
+            body: "Summarise this thread. What is actually being decided, who holds which position, and what is the specific question I have to answer."
+          - label: "Before I reply"
+            body: "Before I answer this, tell me what I have said to this person about this topic previously, so I do not contradict myself."
+      - type: points
+        title: "Documents and papers"
+        items:
+          - label: "Five minute brief"
+            body: "Summarise this for someone who has not read it and has five minutes. What is being asked, the options with the best argument for and against each, and what I am being asked to decide. One page maximum."
+          - label: "The hard questions"
+            body: "What are the three hardest questions I will be asked about this, and where is the weakest answer in the document?"
+          - label: "Compare two papers"
+            body: "Compare these two documents. Where do they agree, where do they contradict each other, and what does one raise that the other does not address at all? Give me both numbers wherever they state different figures for the same thing."
+          - label: "What is missing"
+            body: "What question does this paper not answer that it should have? Do not summarise what is there, tell me what is absent."
+      - type: points
+        title: "Meetings"
+        items:
+          - label: "Prep"
+            body: "Pull together everything I need for this meeting: what was agreed last time, what has happened since, what is unresolved, and who is bringing what. Then the three questions I am most likely to be asked."
+          - label: "Carried forward"
+            body: "Looking at the last two sets of minutes, which actions were carried forward rather than completed, and who owes what to whom?"
+          - label: "After"
+            body: "Summarise this meeting into decisions taken, actions with an owner and a date, and matters left unresolved. Anything discussed but not decided goes in the third list, not the first."
+          - label: "The unprepared question"
+            body: "What is most likely to come up in this meeting that nobody has prepared for?"
+      - type: points
+        title: "Decisions with competing advice"
+        items:
+          - label: "Map the disagreement"
+            body: "Two of my directs disagree about this. Set out each position, what each is optimising for, what they actually agree on, and what single fact would resolve it."
+          - label: "The third option"
+            body: "I have been given two options. Is there a third that neither has proposed? Say plainly if there is not."
+          - label: "Pressure test"
+            body: "Argue against this recommendation as strongly as the evidence allows. I want the best case for the other side, not a balanced summary."
+          - label: "What would change my mind"
+            body: "What would have to be true for the opposite decision to be the right one?"
+      - type: points
+        title: "Writing"
+        items:
+          - label: "Short reply"
+            body: "Draft a reply agreeing to this but asking for two more weeks. Four sentences, courteous and direct, no adjectives, and do not thank them more than once."
+          - label: "The difficult one"
+            body: "Draft a reply declining this. Clear, respectful, gives a reason, and does not leave the door open when it should be closed."
+          - label: "Same message, two audiences"
+            body: "Rewrite this for my leadership team, and then again for the whole organisation. The second one should assume no context."
+          - label: "Make it shorter"
+            body: "Cut this by half without losing anything that matters. Tell me what you removed."
+      - type: points
+        title: "For the EA"
+        items:
+          - label: "Morning brief"
+            body: "Go through overnight mail and write a short brief: what needs his decision today, what needs a reply from me, what he should know before his first meeting. Three lists, one line each."
+          - label: "Draft on his behalf"
+            body: "Draft a reply on his behalf. Courteous and direct, four sentences at most, matching how he normally writes to this person."
+          - label: "The chase list"
+            body: "Who has he asked for something in the last month and not received it? Person, what, when, and how long outstanding."
+          - label: "Week ahead"
+            body: "Which meetings next week need preparation from me, what preparation, and which have no agenda and probably should."
+      - type: points
+        title: "Worth scheduling"
+        items:
+          - label: "Monday morning"
+            body: "What needs my decision this week, drawn from my email and my calendar."
+          - label: "Friday afternoon"
+            body: "What did I commit to this week that I have not done?"
+          - label: "Night before a board or leadership meeting"
+            body: "Prep brief for tomorrow, with the three questions I am most likely to be asked."
+---
+
+Built for the session on Thursday 24 September 2026, 09:30, Conf Room AUCKLAND-22/607 Takapuna.
+Requested by the MD's EA. In person, six-person room, three attendees.
+
+The controlled half runs on Caldova as ColinB. The half that matters runs on his own account.

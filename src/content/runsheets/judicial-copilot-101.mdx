@@ -1,0 +1,467 @@
+---
+title: "Copilot 101 for the judiciary"
+blurb: "Three identical sessions for judges, associates and clerks. Email and Word first, everything synthetic, all three recorded."
+order: 2
+durationMin: 60
+topic: copilot-l100
+audience: "Judges, associates (judges' EAs) and clerks. Heads of bench primary."
+note: "basic level on purpose — intermediate comes later"
+visibility: noindex
+
+files:
+  - name: "Consultation paper - Remote participation in civil proceedings.docx"
+    what: "The long document. ~2,600 words, figures buried in prose. Executive briefing, / referencing, speech source."
+    where: "OneDrive · Documents · Microsoft Scout · Judicial Copilot demo"
+  - name: "Submissions analysis - Remote participation.docx"
+    what: "The comparison partner. Agrees in places, contradicts in four specific checkable ways."
+    where: "same folder"
+  - name: "Draft speech - Judicial Education Conference 2027.docx"
+    what: "Half finished with [TO DO] markers. Speech prep and Word to PowerPoint."
+    where: "same folder"
+  - name: "Committee minutes - JTPC 12 August and 9 September 2026.docx"
+    what: "Two meetings. September carries August actions forward rather than closing them."
+    where: "same folder"
+  - name: "Court workload statistics FY26.xlsx"
+    what: "Excel to chart. Totals sit outside the table so Copilot charts registries, not the total."
+    where: "same folder"
+  - name: "JTPC papers - meeting of 14 October 2026.pdf"
+    what: "Four page genuine PDF for the Edge demo."
+    where: "same folder"
+  - name: "Copilot prompt card - judges.pdf"
+    what: "THE HANDOUT. Two pages, one prompt per use case on their own list. Send it after every session."
+    where: "same folder"
+  - name: "seed-judicial-inbox.ps1"
+    what: "Creates a synthetic mail folder so inbox triage is demoed without the real inbox."
+    where: "same folder"
+
+preflight:
+  - "Seed the demo inbox: az login, then .\\seed-judicial-inbox.ps1 -Seed. Check the folder has 10 messages."
+  - "Open all five Word documents once so they appear in Recent. The / picker finds recent files fastest."
+  - "Open the workbook once and let it calculate."
+  - "Close every other window. Everything on screen is being recorded."
+  - "Sign in on the demo account. Never the corporate or admin one."
+  - "Confirm the Work / Web toggle is visible in the Copilot box before you start."
+  - "Have the prompt card open in a tab, ready to send in the chat at the end."
+  - "Decide your ONE thing to try tomorrow line before you start, not during."
+
+gotchas:
+  - title: "All three sessions are recorded"
+    body: "Andrew Bain records every session and decides afterwards which to publish. Never open the real inbox, a real file, or anything with a customer or colleague name on it. Every asset in this runsheet is synthetic for exactly this reason. Close Teams notifications before you share."
+  - title: "SharePoint is not rolled out to the judiciary"
+    body: "They use OneDrive and share drives. Nathan's use case list says 'searches across SharePoint, Teams, OneDrive' but a SharePoint-centric demo will not land and will make the whole session feel like it was written for someone else. Say files and email, not SharePoint."
+  - title: "Some judges do not use Teams"
+    body: "Judges are mid-50s to 70 and mainly use email and Word. Lead with Outlook and Word. Teams is a mention, not a demo. If you open Teams as the first surface you lose part of the room in the first two minutes."
+  - title: "Enter sends, so a pasted prompt gets cut at the first blank line"
+    body: "Every prompt here copies as one unbroken block. If you paste something with blank lines in it, only the opening sentence is submitted and you get a scope with no task. Check the sent bubble contains your last sentence before you talk over it."
+  - title: "Judges are precise about language"
+    body: "Waffle loses this audience faster than a failed demo. Nathan's parting advice was: be direct and state things plainly. Do not oversell, do not say transform, and do not use the word journey."
+  - title: "Last year's attempt did not land"
+    body: "A previous effort with the judiciary struggled because they did not have the time or the prompting know-how to get output they liked. That is the bar. Low friction and a good result first time is the stated success criterion, and it is why the prompt card matters more than any single demo."
+
+pivots:
+  - trigger: "Room is mostly judges, quiet, unsure"
+    goto: "5"
+    why: "Outlook triage. It is the surface they already live in and needs nothing new learned."
+  - trigger: "Room is mostly clerks and associates, moving fast"
+    goto: "7"
+    why: "File referencing and comparison. Clerks do the research and drafting and will get there first."
+  - trigger: "Anyone asks is it safe, or where does my data go"
+    goto: "3"
+    why: "Work vs Web, ZQL, and showing the sources. Andrew asked for this explicitly."
+  - trigger: "Anyone raises the shared tenancy with the Ministry"
+    goto: "3"
+    why: "Show the sources panel. It is the honest answer and it is visible on screen."
+  - trigger: "I get a bad answer live"
+    goto: "4"
+    why: "Turn it into the prompting lesson. Fix it in one line rather than starting again."
+  - trigger: "They ask can it write my judgment"
+    goto: "1"
+    why: "Go back to the boundary. Do not improvise this one."
+  - trigger: "Running long, need to cut"
+    goto: "11"
+    why: "Drop 8, 9 and 10. Keep the close and the card. Never cut the close."
+  - trigger: "Someone asks about the agents they have heard about"
+    goto: "10"
+    why: "Researcher and Analyst, light touch only. Do not let it become the session."
+
+recovery:
+  - when: "Copilot is slow"
+    then: "Talk through what you asked for and what a good answer would contain. Do not resend, that queues a second job."
+  - when: "The answer is wrong or thin"
+    then: "Say so plainly and fix it in one line in front of them. This audience trusts a recovered mistake far more than a clean run."
+  - when: "A file will not appear in the / picker"
+    then: "Open it once in Word, then try again. Recent files surface first."
+  - when: "The inbox folder is empty"
+    then: "Run the seeder again, or fall back to the Word documents and do sections 6 and 7 instead. Never open the real inbox."
+  - when: "Someone asks a legal or policy question you cannot answer"
+    then: "Say you will come back to them through Andrew. Do not guess in front of judges."
+  - when: "Down to 20 minutes"
+    then: "Sections 1, 3, 5 and 11 only. Boundary, trust, one real demo, the card."
+
+ledger:
+  claims:
+    - "Microsoft 365 Copilot can be grounded on work content or web content, and the toggle is visible to the user"
+    - "MoJ has enabled zero query logging for Bing search, so web grounding is available to the judiciary"
+    - "Copilot cites its sources and the user can open each one"
+    - "Files can be referenced in a prompt by typing a forward slash"
+    - "Copilot is available in Word, Outlook, Excel, Teams, Edge and at m365copilot.com"
+  sources:
+    - "https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-privacy"
+    - "https://support.microsoft.com/en-us/copilot-m365"
+  capturedOn: "2026-09-19"
+  lastVerified: "2026-09-19"
+  staleAfter: "2026-12-19"
+  classification: public
+
+sections:
+  - n: "1"
+    title: "Open, and name the boundary"
+    mode: "Nothing on screen yet"
+    where: "Just talk"
+    minutes: 3
+    anchor: true
+    blocks:
+      - type: callout
+        kind: win
+        title: "Do this first and do not skip it"
+        body: "Every one of the ten tasks the Clerk asked for is administrative or governance work. None is about deciding a case. Naming that boundary out loud in the first two minutes buys more trust with this audience than any feature you can show them."
+      - type: say
+        body: "Before anything else, I want to be clear about what this hour is and what it is not. Everything I am going to show you is about the paperwork around the work. Correspondence, committee papers, briefings, speeches, meeting preparation. None of it is about deciding a case and none of it is about drafting a judgment. That line is deliberate, and it is yours to hold, not mine."
+      - type: say
+        body: "The second thing. Everything you see on my screen today is invented. The court, the committee, the consultation, the judges named in these documents, all of it. There is no real matter anywhere in this session."
+      - type: points
+        title: "Then set expectations honestly"
+        items:
+          - label: "This is the basic session"
+            body: "Say it plainly. Intermediate and advanced come later. Nobody should feel they are behind."
+          - label: "I am going to go slowly"
+            body: "Aimed at people who mainly use email and Word. If you are ahead, the card at the end has more."
+          - label: "You will get a card"
+            body: "Two pages, ten prompts, one for each task on the list Nathan put together. Mention it now so they know something survives the hour."
+
+  - n: "2"
+    title: "Where Copilot actually lives"
+    mode: "Chat only is fine here"
+    where: "Word, then Outlook, then Edge"
+    minutes: 5
+    blocks:
+      - type: say
+        body: "The first question I get is always the same. Where is it. So before anything clever, here is where you will find it in the things you already use."
+      - type: steps
+        title: "Show these four, in this order, slowly"
+        items:
+          - "WORD. Home tab, Copilot button on the right. Then show the icon that appears in the margin of an empty paragraph. This is the one most of them will use first."
+          - "OUTLOOK. Open a message, point at Summarise at the top. Then New mail and the Copilot icon. Two different jobs, two different buttons."
+          - "EDGE ON A PDF. Open the JTPC papers PDF in Edge, click the Copilot icon top right. This surprises people every time."
+          - "ON ITS OWN. m365copilot.com. Mention pinning it in Teams in one sentence and move on — some of this room does not use Teams."
+      - type: callout
+        kind: warn
+        title: "Do not linger in Teams"
+        body: "Judges are mid-50s to 70 and some do not use Teams at all. If Teams is your first surface you lose part of the room immediately. Mention it, do not demo it."
+
+  - n: "3"
+    title: "Work or web, and what it actually read"
+    mode: "Chat only"
+    where: "m365copilot.com"
+    minutes: 7
+    anchor: true
+    blocks:
+      - type: callout
+        kind: warn
+        title: "Andrew asked for this explicitly"
+        body: "The judiciary shares a tenancy with the Ministry and, in Andrew's words, all the SharePoints are open by default. He asked that you cover how to see what Copilot grounded on. This section is the answer, and it is the one that decides whether this audience trusts the tool."
+      - type: say
+        body: "There is a toggle in the box. Work searches your own email and files. Web searches the internet. They are different tools and it matters which one you are in."
+      - type: prompt
+        label: "Web grounding, so the toggle is visible"
+        body: |-
+          Using web sources, give me a short plain-English explanation of how other common law jurisdictions have approached remote participation in civil hearings since 2020. Three or four points, and cite where each one comes from.
+      - type: points
+        title: "Then say the thing about logging"
+        items:
+          - label: "Your web searches are not logged against you"
+            body: "The Ministry has zero query logging switched on for Bing. Nathan confirmed it on 1 September. That is why web grounding is available to you at all."
+          - label: "Say it plainly, do not oversell it"
+            body: "This audience will notice if you overclaim. State the setting, say who confirmed it, move on."
+      - type: prompt
+        label: "Now switch to Work and ask the same kind of question"
+        note: "Switch the toggle on screen so they see it move. Then send this."
+        body: |-
+          Search my own files and email for anything about interpreters in remote hearings. I do not know the file name. List what you find with the date and where it is saved, most recent first, and tell me in one line what each one says.
+      - type: callout
+        kind: win
+        title: "The moment that matters"
+        body: "Scroll to the sources underneath the answer and CLICK ONE. Open the actual file. Say: this is how you check. Every answer lists what it read, and you can open it. If it cites nothing, it is writing rather than reading."
+      - type: say
+        body: "If an answer is going to change what you do, open at least one source before you rely on it. That is the whole discipline. It takes ten seconds and it is the difference between using this well and using it badly."
+
+  - n: "4"
+    title: "Four things that make a prompt work"
+    mode: "Chat only"
+    where: "Stay where you are"
+    minutes: 5
+    anchor: true
+    blocks:
+      - type: say
+        body: "Nathan covered some of this already, so I am reinforcing rather than teaching it fresh. There are four things. You do not need all four every time, but when an answer disappoints you it is usually because one of them is missing."
+      - type: table
+        caption: "Put this on screen and leave it there"
+        head: ["", "What it means", "Example"]
+        rows:
+          - ["GOAL", "What you want, as a verb", "Summarise. Draft. Compare. List."]
+          - ["CONTEXT", "Who it is for and why", "For a colleague who has not read it"]
+          - ["SOURCE", "What it should use", "Type / then the file name"]
+          - ["EXPECTATION", "The shape and the length", "Six bullets. No more than one page."]
+      - type: say
+        body: "Watch what happens with and without them. Same document, two questions."
+      - type: prompt
+        label: "The weak one — send this first, on purpose"
+        note: "It will produce something bland. That is the point. Do not apologise for it."
+        body: |-
+          Summarise this document.
+      - type: prompt
+        label: "The strong one"
+        body: |-
+          Summarise this consultation paper for a colleague who has not read it and has five minutes. One paragraph on what is being asked, then the three options with the strongest argument for and against each, then what I am being asked to decide. No more than one page, plain sentences, no adjectives.
+      - type: callout
+        kind: win
+        title: "Say this while both answers are on screen"
+        body: "Same document, same tool, thirty seconds apart. The difference is entirely in what I asked for. This is the whole skill, and it is about ten seconds of extra typing."
+      - type: points
+        title: "Then the thing nobody tells them"
+        items:
+          - label: "Correct it, do not start again"
+            body: "If the answer is wrong, say what was wrong in one line. Too long. You missed the resource question. Use the September minutes not August. It revises. Starting over is the most common mistake and it is slower."
+
+  - n: "5"
+    title: "Outlook — triage the morning and draft a reply"
+    mode: "Copilot in Outlook"
+    where: "Judicial demo inbox folder"
+    minutes: 8
+    anchor: true
+    blocks:
+      - type: callout
+        kind: warn
+        title: "The synthetic folder, never the real inbox"
+        body: "This is recorded. Open the Judicial demo inbox folder and nothing else. Ten invented messages from invented people."
+      - type: say
+        body: "This is the one most of you will use tomorrow. Associates especially. Ten messages arrived overnight, and the question is not what do they say, it is which of them need me."
+      - type: prompt
+        label: "Triage"
+        body: |-
+          Review the unread messages in this folder and group them into three lists: needs a decision from me this week, needs a short reply but is not urgent, and no action needed. For each item in the first list give me one line on what the decision is and who is waiting on it. Put the list in date order of when it is needed, not when it arrived.
+      - type: points
+        title: "What a good answer finds"
+        items:
+          - label: "Top of the list"
+            body: "The registry costing from Jane Ashworth, because the Ministry figure is materially different and she cannot finish the paper without a steer. And the conference opening address, because the programme goes to print on 30 September."
+          - label: "Pushed down"
+            body: "The library acquisitions and the network maintenance notice. Both are informational and neither needs anything."
+          - label: "The judgement call"
+            body: "Judge Fairbairn's message needs a reply but not today. If Copilot puts it top, say so — that is a reasonable disagreement and it shows you are still the one deciding."
+      - type: say
+        body: "Now the second half. Reading is useful. Replying is where the time actually goes."
+      - type: prompt
+        label: "Draft a reply — open Judge Thackeray's message first"
+        body: |-
+          Draft a reply agreeing to read the paper and offering a view before the papers go out, but saying I will not be able to do it until the end of next week. Four sentences, courteous and direct, no adjectives, and do not thank him more than once. New Zealand spelling.
+      - type: callout
+        kind: win
+        title: "Say the quiet part"
+        body: "Notice I told it how long and how to sound. Four sentences, direct, no adjectives. Left to itself it writes longer and warmer than any of you would. That instruction is the difference between a draft you edit and a draft you delete."
+
+  - n: "6"
+    title: "Word — a long paper reduced to something you can act on"
+    mode: "Copilot in Word"
+    where: "Consultation paper - Remote participation"
+    minutes: 8
+    anchor: true
+    blocks:
+      - type: say
+        body: "Everyone in this room has a version of this document. Long, worthy, circulated on a Friday, and you are expected to have a view by Tuesday."
+      - type: prompt
+        label: "The executive briefing"
+        note: "This is the same strong prompt from section 4. Say so — it shows the recipe is reusable."
+        body: |-
+          Summarise this consultation paper for a colleague who has not read it and has five minutes. One paragraph on what is being asked, then the three options with the strongest argument for and against each, then what I am being asked to decide. No more than one page, plain sentences, no adjectives.
+      - type: say
+        body: "Now the bit that actually saves the afternoon. I do not just want to know what it says. I want to know what I am going to be asked."
+      - type: prompt
+        label: "Then push it further"
+        body: |-
+          Based on this paper, what are the three hardest questions I am likely to be asked about it, and where in the document is the weakest answer? Tell me the section for each.
+      - type: callout
+        kind: win
+        title: "Watch for this"
+        body: "A good answer finds the resource estimate in section 5 and the data limitations in section 2.1, both of which are genuinely soft in the document. That is the moment this stops looking like a summarising toy."
+      - type: points
+        title: "Point out on screen"
+        items:
+          - label: "It did not leave the document"
+            body: "No web, no invention. Everything it said is in the paper in front of you and you can check it."
+          - label: "You can keep going"
+            body: "Now rewrite that as an email to the Chair. Now give me the version for someone who disagrees with me. Same source, different job."
+
+  - n: "7"
+    title: "The forward slash, and comparing two papers"
+    mode: "m365copilot.com or Word"
+    where: "Both remote participation documents"
+    minutes: 6
+    blocks:
+      - type: say
+        body: "Everything so far has been about the document I had open. This is how you point it at documents you do not have open. Type a forward slash and it offers you your own files."
+      - type: callout
+        kind: warn
+        title: "Type the slash slowly and let them watch the picker appear"
+        body: "This is the single most useful mechanic in the session for clerks and associates, and it is invisible unless you slow down. Type /, pause, let the list appear, pick the file, then carry on typing."
+      - type: prompt
+        label: "Compare the two papers"
+        note: "Type / and pick each file rather than typing the names out."
+        body: |-
+          Compare the consultation paper on remote participation with the submissions analysis. Tell me where they agree, where the submissions contradict the paper, and what the submissions raise that the paper does not address at all. Where the two documents give different figures for the same thing, give me both numbers.
+      - type: table
+        caption: "The four contradictions are real and checkable. This is what a good answer finds."
+        head: ["Topic", "The paper says", "The submissions say"]
+        rows:
+          - ["Preferred option", "Committee prefers Option B", "More submitters chose Option C, 9 against 7"]
+          - ["Demeanour", "Remains contested", "16 of 23 say the concern is overstated"]
+          - ["Technology failures", "12 per cent of feedback", "Closer to 30 per cent outside the main centres"]
+          - ["Systems cost", "60,000 to 90,000, 0.4 FTE", "Ministry says 140,000 to 180,000, 1.0 FTE"]
+      - type: points
+        title: "And four things only the submissions raise"
+        items:
+          - label: "Not in the consultation paper at all"
+            body: "Interpreters, recording retention, cross-border participation, and hybrid hearings. If Copilot finds these, say out loud that this is the part a human reading both documents on a Friday afternoon would most likely miss."
+
+  - n: "8"
+    title: "A speech, and then slides from it"
+    mode: "Copilot in Word, then PowerPoint"
+    where: "Draft speech - Judicial Education Conference 2027"
+    minutes: 5
+    pivot: true
+    blocks:
+      - type: say
+        body: "This one is for anyone who has been asked to speak and has three quarters of a draft and no time."
+      - type: prompt
+        label: "Fill the gaps"
+        body: |-
+          This draft has sections marked TO DO. For each one, suggest what should go there based on the argument the rest of the speech is making. Do not write the anecdotes for me, just tell me what each one needs to do. Keep the whole response under a page.
+      - type: prompt
+        label: "Then slides"
+        body: |-
+          Create a presentation from this speech. One slide per section, no more than four lines of text on any slide, and put the detail in the speaker notes rather than on the slide.
+      - type: callout
+        kind: note
+        body: "Do not oversell the slides. They will need editing and everyone knows it. The honest claim is that it saves the first forty minutes, not that it produces a finished deck."
+
+  - n: "9"
+    title: "Excel — numbers into a picture"
+    mode: "Copilot in Excel"
+    where: "Court workload statistics FY26"
+    minutes: 4
+    pivot: true
+    blocks:
+      - type: say
+        body: "Short one. If you get sent workload figures and you want to see them rather than read them."
+      - type: prompt
+        label: "Chart it"
+        body: |-
+          Create a chart showing remote participation events by registry, and tell me in two sentences what the chart shows that the table does not.
+      - type: prompt
+        label: "Then the real question"
+        body: |-
+          Which registry is the outlier in this data and why? Use the median disposal days and the clearance rate, and tell me which cells you used.
+      - type: callout
+        kind: win
+        title: "The answer is Southern"
+        body: "Worst deterioration at 53 days and the only registry below 92 per cent clearance. A good answer connects those two facts. Western is the only one that improved and is also the only one that changed its recording practice mid-year, which a careful answer will flag."
+
+  - n: "10"
+    title: "Researcher and Analyst, one minute each"
+    mode: "m365copilot.com"
+    where: "Agent picker"
+    minutes: 4
+    pivot: true
+    blocks:
+      - type: callout
+        kind: warn
+        title: "Light touch only"
+        body: "Andrew asked for a gateway, not a deep dive. Two minutes each, then stop. If this becomes the session you have lost the judges and gained the clerks, which is the wrong trade."
+      - type: say
+        body: "Two of these are worth knowing exist. You do not need them today."
+      - type: points
+        items:
+          - label: "Researcher"
+            body: "For when the question needs more than one source and you would otherwise spend an afternoon. It takes several minutes and shows you its reasoning as it goes."
+          - label: "Analyst"
+            body: "For when you have data rather than documents. It writes and runs code to work something out, and shows you the code."
+      - type: prompt
+        label: "If you run one, run this"
+        note: "Set expectations: this takes a few minutes. Keep talking while it works."
+        body: |-
+          Research how comparable common law jurisdictions have handled interpreters appearing remotely in civil hearings. I want the practice rather than the theory, with sources, and tell me clearly where you could not find an authoritative answer.
+      - type: say
+        body: "Notice what it did at the end there. It told me where it could not find an answer. That is worth more than the parts it did find."
+
+  - n: "11"
+    title: "Close — the one thing, and the card"
+    mode: "Nothing on screen"
+    where: "Just talk"
+    minutes: 4
+    anchor: true
+    blocks:
+      - type: callout
+        kind: win
+        title: "Never cut this section"
+        body: "If you are running out of time, drop 8, 9 and 10 and keep this. A session that ends with one concrete thing and a card in their inbox is worth more than one that showed two more features and ran to the bell."
+      - type: say
+        body: "One thing to try tomorrow, and only one. Open a long document you have been avoiding, and ask it to summarise that for a colleague who has not read it and has five minutes. That is it. If that works for you, the card has nine more."
+      - type: steps
+        title: "Then, in this order"
+        items:
+          - "Send the prompt card in the meeting chat while they are still in the room. Do not promise to send it later."
+          - "Say plainly that intermediate and advanced sessions are coming, so nobody feels they need to have understood everything."
+          - "Hand to Andrew for the feedback question. He is collecting what worked and what missed at the end of each session and feeding it into the next."
+          - "Say what changed from the previous session if this is day two or three. It shows the feedback was real."
+      - type: say
+        body: "Thank you. If something does not work the way I said it would, tell Andrew or Nathan and it will come back to me before the next session."
+
+  - n: "Between"
+    title: "Between the three sessions"
+    pivot: true
+    blocks:
+      - type: callout
+        kind: note
+        title: "Content stays substantially the same"
+        body: "That was agreed with Andrew. Adjust only for the feedback he collects at the close of each session. Do not redesign it overnight."
+      - type: steps
+        title: "After each session"
+        items:
+          - "Get Andrew's what worked and what missed while it is fresh."
+          - "Change at most two things. Judges talk to each other and the sessions should feel consistent."
+          - "Re-seed the demo inbox if you replied to anything during the demo."
+          - "Note which pivots you actually used. That is what tells you what the intermediate session should be."
+      - type: points
+        title: "Signals worth watching for"
+        items:
+          - label: "If they ask for more on agents"
+            body: "That is the advanced session, and Andrew said he will add one if associates or clerks ask for it."
+          - label: "If they ask about their own documents"
+            body: "That is the real win condition. It means they have stopped watching a demo and started planning their own work."
+          - label: "If nobody asks anything"
+            body: "Do not read it as failure with this audience. Ask Andrew afterwards rather than filling the silence."
+
+  - n: "Tear down"
+    title: "After the third session"
+    pivot: true
+    blocks:
+      - type: steps
+        items:
+          - "Remove the synthetic mail folder: .\\seed-judicial-inbox.ps1 -Remove"
+          - "Send Andrew the prompt card as a file so he can attach it to the published recording."
+          - "Write down what the intermediate session should contain while you still remember which questions came up three times."
+---
+
+Built for three sessions on 21, 22 and 23 September 2026 following the discovery call with
+Andrew Bain and Nathan Pinder on 10 September. Every asset referenced here is synthetic and
+purpose-built, because all three sessions are recorded.

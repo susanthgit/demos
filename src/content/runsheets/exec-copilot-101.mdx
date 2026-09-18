@@ -10,22 +10,23 @@ visibility: noindex
 
 files:
   - name: "Caldova / ColinB - Session Demos / Exec"
-    what: "Gulf retail leadership paper, one page brief, market assessment, two sets of leadership minutes. The safe controlled half."
+    what: "Executive decision paper, one page brief, delivery history review, two sets of executive minutes. Deliberately industry-agnostic so the same pack works for any exec audience."
     where: "Colin Ballinger OneDrive, Caldova tenant"
   - name: "Caldova / ColinB - mail folder 'Exec demo'"
     what: "Nine decision-shaped messages including two people disagreeing on the record."
     where: "Colin Ballinger mailbox, Caldova tenant"
-  - name: "Colin's own Gulf Retail Launch folder"
-    what: "Three partner proposals, scorecard, category plan, legal drafts. Already there, use it."
+  - name: "Colin's own Caldova content"
+    what: "Gulf retail scenario, supplier RFP, finance pack. Pharma-flavoured, so use it only if the audience is in that sector. For a general exec audience stay in Session Demos/Exec."
     where: "Colin Ballinger OneDrive, Caldova tenant"
   - name: "His own laptop"
     what: "The most important asset in the room. He has a licence and real data."
     where: "in front of him"
 
 preflight:
+  - "Deploy the assets if they are not already there: .\\deploy-to-colin.ps1 -Status then -Deploy."
   - "Book the room 10 minutes early. In person means cables, and the room seats six."
   - "Sign in to Caldova as ColinB in a dedicated Edge profile BEFORE they walk in."
-  - "Open the Exec demo mail folder and the Session Demos/Exec folder so nothing is hunted for live."
+  - "Open the 'Exec demo' mail folder and the Session Demos/Exec folder so nothing is hunted for live."
   - "Confirm Nick has an M365 Copilot licence assigned. If he does not, the second half changes completely."
   - "Have the prompt list ready to paste into a chat or email at the end - he will ask for it."
   - "Decide in advance which THREE prompts he will run himself. Do not improvise this."
@@ -42,6 +43,8 @@ gotchas:
     body: "Alle runs his inbox, his calendar and his prep. Half the value of this hour lands on her, not him. Address her directly at least twice and give her the delegation-shaped prompts."
   - title: "Cowork is in the invite title"
     body: "The meeting is called Copilot AND Cowork. Do not let Cowork eat the hour, but do not skip it either. Five minutes at the end, framed as what is coming, is right."
+  - title: "The exec pack is deliberately industry-agnostic"
+    body: "Thornbury Group has no stated sector. The decision is a delivery partner selection, which every organisation does. That is on purpose - it means the same pack works for an MD, a bank exec, a public sector chief executive or a customer in any industry, and you only change the audience, not the asset. Do not swap in Colin's pharma content unless the room is actually in that sector."
   - title: "Enter sends"
     body: "Every prompt here copies as one unbroken block. Paste something with blank lines and only the first sentence is submitted."
 
@@ -148,7 +151,7 @@ sections:
       - type: prompt
         label: "Run this, then click a source"
         body: |-
-          Search my files and email for the Gulf retail partner decision. Tell me what has been decided so far, what is still open, and who is waiting on whom. List your sources.
+          Search my files and email for the delivery partner decision. Tell me what has been decided so far, what is still open, and who is waiting on whom. List your sources.
       - type: callout
         kind: win
         title: "Then do the thing that actually earns trust"
@@ -179,7 +182,7 @@ sections:
       - type: callout
         kind: win
         title: "What a good answer finds"
-        body: "The scorecard favours Meridian but the recommendation is Al Noor, and the paper's own reasoning is that Saudi Arabia cannot be in wave one. A good answer spots that the recommendation contradicts the scorecard and explains why. That is the moment this stops looking like summarising."
+        body: "The scorecard favours Ashcroft but the recommendation is Beckworth, and the paper's own reasoning is that the regional rollout cannot be in phase one. A good answer spots that the recommendation contradicts the scorecard and explains why. That is the moment this stops looking like summarising."
       - type: say
         body: "Notice it did not leave the document. No web, nothing invented. Everything it said is in the paper and you can check it."
 

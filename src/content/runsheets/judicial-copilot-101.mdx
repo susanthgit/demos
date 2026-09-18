@@ -9,9 +9,12 @@ note: "basic level on purpose — intermediate comes later"
 visibility: noindex
 
 files:
+  - name: "Caldova tenant, signed in as ColinB"
+    what: "EVERYTHING runs from here. Colin Ballinger's account in the Caldova demo tenant, not your own. All three sessions are recorded, so nothing real goes on screen."
+    where: "dedicated Edge profile, signed in before the session starts"
   - name: "Consultation paper - Remote participation in civil proceedings.docx"
-    what: "The long document. ~2,600 words, figures buried in prose. Executive briefing, / referencing, speech source."
-    where: "OneDrive · Documents · Microsoft Scout · Judicial Copilot demo"
+    what: "The long document. ~2,000 words over 11 sections, figures buried in prose. Executive briefing, / referencing, speech source."
+    where: "ColinB OneDrive · Session Demos · Judicial"
   - name: "Submissions analysis - Remote participation.docx"
     what: "The comparison partner. Agrees in places, contradicts in four specific checkable ways."
     where: "same folder"
@@ -30,23 +33,24 @@ files:
   - name: "Copilot prompt card - judges.pdf"
     what: "THE HANDOUT. Two pages, one prompt per use case on their own list. Send it after every session."
     where: "same folder"
-  - name: "seed-judicial-inbox.ps1"
-    what: "Creates a synthetic mail folder so inbox triage is demoed without the real inbox."
-    where: "same folder"
+  - name: "Mail folder 'Judicial demo'"
+    what: "Ten judicial messages in Colin's mailbox. Two high importance, two deliberate noise. This is the triage demo."
+    where: "ColinB mailbox, Caldova"
 
 preflight:
-  - "Seed the demo inbox: az login, then .\\seed-judicial-inbox.ps1 -Seed. Check the folder has 10 messages."
+  - "Deploy the assets if they are not already there: .\\deploy-to-colin.ps1 -Status then -Deploy."
+  - "Sign in to Caldova as ColinB in a dedicated Edge profile BEFORE anyone joins."
+  - "Open the 'Judicial demo' mail folder and the Session Demos/Judicial folder so nothing is hunted for live."
   - "Open all five Word documents once so they appear in Recent. The / picker finds recent files fastest."
   - "Open the workbook once and let it calculate."
   - "Close every other window. Everything on screen is being recorded."
-  - "Sign in on the demo account. Never the corporate or admin one."
   - "Confirm the Work / Web toggle is visible in the Copilot box before you start."
   - "Have the prompt card open in a tab, ready to send in the chat at the end."
   - "Decide your ONE thing to try tomorrow line before you start, not during."
 
 gotchas:
   - title: "All three sessions are recorded"
-    body: "Andrew Bain records every session and decides afterwards which to publish. Never open the real inbox, a real file, or anything with a customer or colleague name on it. Every asset in this runsheet is synthetic for exactly this reason. Close Teams notifications before you share."
+    body: "Andrew Bain records every session and decides afterwards which to publish. That is why everything runs from the Caldova demo tenant as ColinB rather than from your own account. Never open your real inbox, a real file, or anything with a customer or colleague name on it. Close Teams notifications before you share."
   - title: "SharePoint is not rolled out to the judiciary"
     body: "They use OneDrive and share drives. Nathan's use case list says 'searches across SharePoint, Teams, OneDrive' but a SharePoint-centric demo will not land and will make the whole session feel like it was written for someone else. Say files and email, not SharePoint."
   - title: "Some judges do not use Teams"
@@ -92,7 +96,7 @@ recovery:
   - when: "A file will not appear in the / picker"
     then: "Open it once in Word, then try again. Recent files surface first."
   - when: "The inbox folder is empty"
-    then: "Run the seeder again, or fall back to the Word documents and do sections 6 and 7 instead. Never open the real inbox."
+    then: "Redeploy with .\\deploy-to-colin.ps1 -Deploy, or fall back to the Word documents and do sections 6 and 7 instead. Never open your own inbox."
   - when: "Someone asks a legal or policy question you cannot answer"
     then: "Say you will come back to them through Andrew. Do not guess in front of judges."
   - when: "Down to 20 minutes"
@@ -236,14 +240,14 @@ sections:
   - n: "5"
     title: "Outlook — triage the morning and draft a reply"
     mode: "Copilot in Outlook"
-    where: "Judicial demo inbox folder"
+    where: "'Judicial demo' mail folder, Caldova"
     minutes: 8
     anchor: true
     blocks:
       - type: callout
         kind: warn
-        title: "The synthetic folder, never the real inbox"
-        body: "This is recorded. Open the Judicial demo inbox folder and nothing else. Ten invented messages from invented people."
+        title: "The demo folder, nothing else"
+        body: "This is recorded and you are signed in as ColinB in Caldova. Open the 'Judicial demo' mail folder and nothing else. Ten invented messages from invented people."
       - type: say
         body: "This is the one most of you will use tomorrow. Associates especially. Ten messages arrived overnight, and the question is not what do they say, it is which of them need me."
       - type: prompt
@@ -457,7 +461,7 @@ sections:
     blocks:
       - type: steps
         items:
-          - "Remove the synthetic mail folder: .\\seed-judicial-inbox.ps1 -Remove"
+          - "Remove the demo content: .\\deploy-to-colin.ps1 -Remove"
           - "Send Andrew the prompt card as a file so he can attach it to the published recording."
           - "Write down what the intermediate session should contain while you still remember which questions came up three times."
 ---

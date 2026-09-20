@@ -49,6 +49,8 @@ preflight:
   - "Decide your ONE thing to try tomorrow line before you start, not during."
 
 gotchas:
+  - title: "The brass tag on each section is what you must have OPEN"
+    body: "Every section header carries a brass-coloured tag. That is the file, folder or screen that must already be open before you send the prompts in that section. Several prompts say 'this document' or 'this sheet', and they fail silently if nothing is open - Copilot answers about the wrong thing rather than telling you. Open it first, then prompt."
   - title: "All three sessions are recorded"
     body: "Andrew Bain records every session and decides afterwards which to publish. That is why everything runs from the Caldova demo tenant as ColinB rather than from your own account. Never open your real inbox, a real file, or anything with a customer or colleague name on it. Close Teams notifications before you share."
   - title: "SharePoint is not rolled out to the judiciary"
@@ -202,10 +204,14 @@ sections:
   - n: "4"
     title: "Four things that make a prompt work"
     mode: "Chat only"
-    where: "Stay where you are"
+    where: "Consultation paper - Remote participation, OPEN IN WORD"
     minutes: 5
     anchor: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Open the document before you start this section"
+        body: "Section 3 was in the chat. This section is not. Open 'Consultation paper - Remote participation in civil proceedings' from Session Demos / Judicial in Word, and open Copilot from the Home tab. Both prompts below say 'this document', and they only work if there is a document to point at. If you would rather stay in the chat, attach the file first using the paperclip - the prompts are the same either way."
       - type: say
         body: "Nathan covered some of this already, so I am reinforcing rather than teaching it fresh. There are four things. You do not need all four every time, but when an answer disappoints you it is usually because one of them is missing."
       - type: table
@@ -277,10 +283,14 @@ sections:
   - n: "6"
     title: "Word — a long paper reduced to something you can act on"
     mode: "Copilot in Word"
-    where: "Consultation paper - Remote participation"
+    where: "Consultation paper - Remote participation, OPEN IN WORD"
     minutes: 8
     anchor: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Which document"
+        body: "Session Demos / Judicial / 'Consultation paper - Remote participation in civil proceedings.docx'. Open it in Word, then Copilot from the Home tab. Both prompts below say 'this paper' and need it open."
       - type: say
         body: "Everyone in this room has a version of this document. Long, worthy, circulated on a Friday, and you are expected to have a view by Tuesday."
       - type: prompt
@@ -309,9 +319,13 @@ sections:
   - n: "7"
     title: "The forward slash, and comparing two papers"
     mode: "m365copilot.com or Word"
-    where: "Both remote participation documents"
+    where: "Both remote participation documents, via the / picker"
     minutes: 6
     blocks:
+      - type: callout
+        kind: warn
+        title: "Which two documents"
+        body: "Both are in Session Demos / Judicial. 'Consultation paper - Remote participation in civil proceedings.docx' and 'Submissions analysis - Remote participation.docx'. You do NOT need either open - that is the point of this section. Type / and pick each one from the list."
       - type: say
         body: "Everything so far has been about the document I had open. This is how you point it at documents you do not have open. Type a forward slash and it offers you your own files."
       - type: callout
@@ -320,9 +334,9 @@ sections:
         body: "This is the single most useful mechanic in the session for clerks and associates, and it is invisible unless you slow down. Type /, pause, let the list appear, pick the file, then carry on typing."
       - type: prompt
         label: "Compare the two papers"
-        note: "Type / and pick each file rather than typing the names out."
+        note: "Type / and pick each file from the list rather than typing the names. The picker inserts the real file name, which is what makes the reference work."
         body: |-
-          Compare the consultation paper on remote participation with the submissions analysis. Tell me where they agree, where the submissions contradict the paper, and what the submissions raise that the paper does not address at all. Where the two documents give different figures for the same thing, give me both numbers.
+          Compare /Consultation paper - Remote participation in civil proceedings with /Submissions analysis - Remote participation. Tell me where they agree, where the submissions contradict the paper, and what the submissions raise that the paper does not address at all. Where the two documents give different figures for the same thing, give me both numbers.
       - type: table
         caption: "The four contradictions are real and checkable. This is what a good answer finds."
         head: ["Topic", "The paper says", "The submissions say"]
@@ -340,10 +354,14 @@ sections:
   - n: "8"
     title: "A speech, and then slides from it"
     mode: "Copilot in Word, then PowerPoint"
-    where: "Draft speech - Judicial Education Conference 2027"
+    where: "Draft speech - Judicial Education Conference 2027, OPEN IN WORD"
     minutes: 5
     pivot: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Which document"
+        body: "Session Demos / Judicial / 'Draft speech - Judicial Education Conference 2027.docx'. Open it in Word. It has six sections marked [TO DO], which is what the first prompt works on."
       - type: say
         body: "This one is for anyone who has been asked to speak and has three quarters of a draft and no time."
       - type: prompt
@@ -361,10 +379,14 @@ sections:
   - n: "9"
     title: "Excel — numbers into a picture"
     mode: "Copilot in Excel"
-    where: "Court workload statistics FY26"
+    where: "Court workload statistics FY26, OPEN IN EXCEL"
     minutes: 4
     pivot: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Which file, and which sheet"
+        body: "Session Demos / Judicial / 'Court workload statistics FY26.xlsx'. Open it in Excel and click into the 'By registry' sheet before you prompt. There are three sheets and Copilot works on the active one."
       - type: say
         body: "Short one. If you get sent workload figures and you want to see them rather than read them."
       - type: prompt

@@ -33,6 +33,8 @@ preflight:
   - "Close every other window. Small room, big screen, nothing personal on it."
 
 gotchas:
+  - title: "The brass tag on each section is what you must have OPEN"
+    body: "Every section header carries a brass-coloured tag. That is the file, folder or screen that must already be open before you send the prompts in that section. Several prompts say 'this paper' or 'this message', and they fail silently if nothing is open - Copilot answers about the wrong thing rather than telling you. Open it first, then prompt."
   - title: "This is not a demo, it is a working session"
     body: "Three people in a six-person room. If you present at them for an hour you have misread it. The win condition is Nick running a prompt on his own data and seeing something useful come back. Everything else is setup for that moment."
   - title: "He is new in the seat"
@@ -162,12 +164,16 @@ sections:
   - n: "3"
     title: "A long paper, reduced"
     mode: "Copilot in Word or the chat"
-    where: "Session Demos / Exec"
+    where: "Partner selection - executive decision paper, OPEN IN WORD"
     minutes: 8
     anchor: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Open the document before you start"
+        body: "Open 'Partner selection - executive decision paper' from Session Demos / Exec in Word, and open Copilot from the Home tab. Both prompts say 'this paper' and need a document to point at. If you prefer the chat, attach the file first with the paperclip - the prompts are identical either way."
       - type: say
-        body: "Here is a leadership decision paper. Nine sections, about two thousand words, lands on a Friday, decision on Thursday. You have all had this document."
+        body: "Here is an executive decision paper. Nine sections, about two thousand words, lands on a Friday, decision on Thursday. You have all had this document."
       - type: prompt
         label: "The exec briefing"
         body: |-
@@ -238,7 +244,7 @@ sections:
         body: |-
           Looking at the same material, what is the thing most likely to be raised that nobody has prepared for? Tell me why you think that and what I would need to know.
       - type: say
-        body: "For the demo version of this, the two sets of leadership minutes in the Caldova folder show it clearly. The September set carries actions forward from the August set rather than closing them, which is exactly the pattern every governance meeting has and nobody tracks."
+        body: "For the demo version of this, use the two files in Session Demos / Exec: 'Executive team minutes - 3 September 2026.docx' and 'Executive team minutes - 17 September 2026.docx'. Reference both with the / picker. The September set carries actions forward from the September 3 set rather than closing them, which is exactly the pattern every governance meeting has and nobody tracks."
       - type: callout
         kind: note
         title: "This is Alle's prompt as much as his"

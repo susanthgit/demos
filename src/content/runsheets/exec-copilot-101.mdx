@@ -170,8 +170,8 @@ sections:
     blocks:
       - type: callout
         kind: warn
-        title: "Open the document before you start"
-        body: "Open 'Partner selection - executive decision paper' from Session Demos / Exec in Word, and open Copilot from the Home tab. Both prompts say 'this paper' and need a document to point at. If you prefer the chat, attach the file first with the paperclip - the prompts are identical either way."
+        title: "Which document"
+        body: "Session Demos / Exec / 'Partner selection - executive decision paper.docx'. Open it in Word, then Copilot from the Home tab. Both prompts say 'this paper' and need a document to point at. If you prefer the chat, attach the file first with the paperclip - the prompts are identical either way."
       - type: say
         body: "Here is an executive decision paper. Nine sections, about two thousand words, lands on a Friday, decision on Thursday. You have all had this document."
       - type: prompt
@@ -229,10 +229,14 @@ sections:
   - n: "5"
     title: "Ten minutes before a meeting"
     mode: "On his account"
-    where: "His own calendar"
+    where: "His own calendar, or the two minutes files"
     minutes: 8
     anchor: true
     blocks:
+      - type: callout
+        kind: warn
+        title: "Which two documents"
+        body: "On Nick's own calendar this needs nothing open — it reads his real meetings. For the DEMO version, reference both of these with the / picker: '/Executive team minutes - 3 September 2026' and '/Executive team minutes - 17 September 2026', both in Session Demos / Exec. The prompts below say 'this' and 'the same material', so without those two files referenced you will get a vague answer."
       - type: say
         body: "This is the one I would put money on you using every week. Open your calendar and pick a meeting you have next week that you have not prepared for."
       - type: prompt
@@ -244,7 +248,7 @@ sections:
         body: |-
           Looking at the same material, what is the thing most likely to be raised that nobody has prepared for? Tell me why you think that and what I would need to know.
       - type: say
-        body: "For the demo version of this, use the two files in Session Demos / Exec: 'Executive team minutes - 3 September 2026.docx' and 'Executive team minutes - 17 September 2026.docx'. Reference both with the / picker. The September set carries actions forward from the September 3 set rather than closing them, which is exactly the pattern every governance meeting has and nobody tracks."
+        body: "The 17 September minutes carry actions forward from the 3 September set rather than closing them, which is exactly the pattern every governance meeting has and nobody tracks."
       - type: callout
         kind: note
         title: "This is Alle's prompt as much as his"

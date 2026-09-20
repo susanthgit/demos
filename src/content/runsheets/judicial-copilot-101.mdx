@@ -210,8 +210,8 @@ sections:
     blocks:
       - type: callout
         kind: warn
-        title: "Open the document before you start this section"
-        body: "Section 3 was in the chat. This section is not. Open 'Consultation paper - Remote participation in civil proceedings' from Session Demos / Judicial in Word, and open Copilot from the Home tab. Both prompts below say 'this document', and they only work if there is a document to point at. If you would rather stay in the chat, attach the file first using the paperclip - the prompts are the same either way."
+        title: "Which document"
+        body: "Session Demos / Judicial / 'Consultation paper - Remote participation in civil proceedings.docx'. Section 3 was in the chat. This section is not. Open it in Word, and open Copilot from the Home tab. Both prompts below say 'this document', and they only work if there is a document to point at. If you would rather stay in the chat, attach the file first using the paperclip - the prompts are the same either way."
       - type: say
         body: "Nathan covered some of this already, so I am reinforcing rather than teaching it fresh. There are four things. You do not need all four every time, but when an answer disappoints you it is usually because one of them is missing."
       - type: table
@@ -252,8 +252,8 @@ sections:
     blocks:
       - type: callout
         kind: warn
-        title: "The demo folder, nothing else"
-        body: "This is recorded and you are signed in as ColinB in Caldova. Open the 'Judicial demo' mail folder and nothing else. Ten invented messages from invented people."
+        title: "Which folder"
+        body: "Session Demos / 'Judicial demo' mail folder in Colin's Outlook, Caldova. Open that folder and nothing else — this is recorded and you are signed in as ColinB. Ten invented messages from invented people. The second prompt needs Judge Thackeray's message open."
       - type: say
         body: "This is the one most of you will use tomorrow. Associates especially. Ten messages arrived overnight, and the question is not what do they say, it is which of them need me."
       - type: prompt
@@ -421,6 +421,10 @@ sections:
             body: "For when the question needs more than one source and you would otherwise spend an afternoon. It takes several minutes and shows you its reasoning as it goes."
           - label: "Analyst"
             body: "For when you have data rather than documents. It writes and runs code to work something out, and shows you the code."
+      - type: callout
+        kind: note
+        title: "If someone asks you to actually show Analyst"
+        body: "The prompt below is Researcher, which needs no file. Analyst needs data attached — use 'Court workload statistics FY26.xlsx' from Session Demos / Judicial and ask it to find the registry that is the outlier and explain the method. Only do this if asked. It takes a few minutes and it is not what Andrew wanted from this session."
       - type: prompt
         label: "If you run one, run this"
         note: "Set expectations: this takes a few minutes. Keep talking while it works."
